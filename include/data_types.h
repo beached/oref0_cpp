@@ -80,8 +80,6 @@ namespace ns {
 		}
 	};	// iob_data_t
 
-	};	// iob_data_t
-	
 	struct autosense_data_t {
 		double ratio;	
 	};	// autosense_data_t

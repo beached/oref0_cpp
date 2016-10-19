@@ -39,6 +39,16 @@ externalproject_add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
 )
 
+externalproject_add(
+    char_range_prj
+    GIT_REPOSITORY "https://github.com/beached/char_range.git"
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/dependencies/char_range"
+    GIT_TAG "master"
+    INSTALL_DIR "${CMAKE_BINARY_DIR}/install"
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
+)
+
+
 set( HEADER_FOLDER "include" )
 set( SOURCE_FOLDER "src" )
 set( TEST_FOLDER "tests" )
@@ -63,7 +73,7 @@ set( SOURCE_FILES
 )
 
 add_library( oref0 ${HEADER_FILES} ${SOURCE_FILES} )
-add_dependencies( oref0 header_libraries_prj parse_json_prj )
+add_dependencies( oref0 header_libraries_prj parse_json_prj char_range_prj )
 target_link_libraries( oref0 parse_json ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 install( TARGETS oref0 DESTINATION lib )
