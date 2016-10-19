@@ -1,2 +1,2 @@
-# oref0_cpp
-A port of OpenAPS Oref0 to C++
+# oref0 cpp
+A port of oref0(https://github.com/openaps/oref0)[https://github.com/openaps/oref0] to C++.
