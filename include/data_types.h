@@ -26,7 +26,10 @@
 #include <boost/optional.hpp>
 #include <chrono>
 #include <cstdint>
+<<<<<<< HEAD
 #include <unordered_map>
+=======
+>>>>>>> bc45c27ec383fd2bd40ab3cf1d917f56a5321dd7
 #include <string>
 
 #include <daw/json/daw_json_link.h>
@@ -47,6 +50,7 @@ namespace ns {
 
 	};	// requested_temp
 
+<<<<<<< HEAD
 	enum class profile_types: size_t { current };
 
 	std::ostream & operator<<( std::ostream & os, profile_types t );
@@ -61,6 +65,16 @@ namespace ns {
 		boost::optional<bool> temp_target_set;
 		boost::optional<dia_t> dia;
 		boost::optional<double> sens;
+=======
+	struct profile_t {
+		enum class profile_types { current };
+		struct dia_t { };
+		bool autosens_adjust_targets;
+		bool override_high_target_with_low;
+		bool skip_neutral_temps;
+		bool temp_target_set;
+		boost::optional<dia_t> dia;
+>>>>>>> bc45c27ec383fd2bd40ab3cf1d917f56a5321dd7
 		boost::optional<glucose_t> max_bg;
 		boost::optional<glucose_t> min_bg;
 		boost::optional<glucose_t> target_bg;
@@ -69,6 +83,7 @@ namespace ns {
 		boost::optional<insulin_t> max_daily_basal;
 		boost::optional<std::string> model;
 		boost::optional<std::string> out_units;
+<<<<<<< HEAD
 		double autosens_max;	// 1.2
 		double autosens_min;	// 0.7
 		double bolussnooze_dia_divider;	// 2.0
@@ -136,6 +151,18 @@ namespace ns {
 		profile_t & operator=( profile_t const & ) = default;
 		profile_t & operator=( profile_t && ) = default;
 
+=======
+		double autosens_max;
+		double autosens_min;
+		double bolussnooze_dia_divider;
+		double carbratio_adjustment_ratio;
+		double current_basal_safety_multiplier;
+		double max_dialy_safety_multiplier;
+		double min_5m_carb_impact;
+		double sens;
+		profile_types type;
+		insulin_t max_iob;
+>>>>>>> bc45c27ec383fd2bd40ab3cf1d917f56a5321dd7
 	};	// profile
 	
 	struct glucose_status_t {

@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 #include <boost/algorithm/string/predicate.hpp>
+<<<<<<< HEAD
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
@@ -71,11 +72,23 @@ std::pair<std::string, std::string> parse_kv_string( boost::string_view line ) {
 struct parameters {
 	std::vector<std::string> ordered_parameters;
 	std::unordered_map<std::string, std::string> optional_parameters;
+=======
+#include <boost/lexical_cast.hpp>
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <vector>
+
+struct parameters {
+	std::vector<std::string> ordered_parameters;
+	std::map<std::string, std::string> optional_parameters;
+>>>>>>> bc45c27ec383fd2bd40ab3cf1d917f56a5321dd7
 
 	template<typename T>
 	T ordered_as( size_t n ) const {
 		return boost::lexical_cast<T>( ordered_parameters.at( n ) );
 	}
+<<<<<<< HEAD
 
 	boost::optional<std::string> kv_get( boost::string_view key ) const {
 		auto it = optional_parameters.find( key.to_string( ) );
@@ -95,6 +108,15 @@ parameters parse_cmd_line( int const argc, char const * const * argv ) {
 	for( int n=1; n<argc; ++n ) {
 		if( boost::starts_with( argv[n], "--" ) ) {
 			result.optional_parameters.insert( parse_kv_string( argv[n] + 2 ) );
+=======
+};
+
+parameters parse_cmd_line( int argc, char** argv ) {
+	parameters result;
+	for( int n=1; n<argc; ++n ) {
+		if( boost::starts_with( argv[n], "--" ) ) {
+
+>>>>>>> bc45c27ec383fd2bd40ab3cf1d917f56a5321dd7
 		} else {
 			result.ordered_parameters.emplace_back( argv[n] );
 		}
@@ -102,6 +124,7 @@ parameters parse_cmd_line( int const argc, char const * const * argv ) {
 	return result;
 }
 
+<<<<<<< HEAD
 struct unnamed_parameters {
 	std::vector<std::string> required;
 	std::vector<std::string> optional;
@@ -147,6 +170,50 @@ int main( int argc, char** argv ) {
 		show_help( argv[0], unnamed );
 		return EXIT_SUCCESS;
 	}
+=======
+int main( int argc, char** argv ) {
+	namespace po = boost::program_options;
+	po::positional_options_description pos_desc;
+	std::vector<std::pair<std::string, bool>> const positional_parameters = {
+			{ "pump_settings", false },
+			{ "bg_targets", false },
+			{ "insulin_sensitivities", false },
+			{ "basal_profile", false },
+			{ "preferences", true },
+			{ "carb_ratios", true },
+			{ "temp_targets", true }
+	};
+	for( auto const & param : positional_parameters ) {
+		pos_desc.add( param.first.c_str( ), 1 );
+	}
+
+	po::options_description desc{ "Options" };
+	desc.add_options( )
+			( "help", "Print option descriptions" )
+			( "model", po::value<std::string>( ), "Pump model" );
+
+	po::variables_map vm;
+	try {
+		po::store( po::command_line_parser( argc, argv ).options( desc ).positional( pos_desc ).run( ), vm );
+
+		if( vm.count( "help" ) ) {
+			std::cout << argv[0];
+			for( auto const & param: positional_parameters ) {
+				auto const bracket_chars = param.second ? std::make_pair<char>( '[', ']' ) : std::make_pair<char>( '<', '>' );
+				std::cout << ' ' << bracket_chars.first << param.first << ".json" << bracket_chars.second;
+			}
+			std::cout << '\n' << desc << std::endl;
+			return EXIT_SUCCESS;
+		}
+		po::notify( vm );
+	} catch( po::error const & po_error ) {
+		std::cerr << "ERROR: " << po_error.what( ) << '\n';
+		std::cerr << desc << std::endl;
+		return EXIT_FAILURE;
+	}
+
+
+>>>>>>> bc45c27ec383fd2bd40ab3cf1d917f56a5321dd7
 
 	return EXIT_SUCCESS;
 }
