@@ -48,6 +48,14 @@ externalproject_add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
 )
 
+externalproject_add(
+    date_prj
+    GIT_REPOSITORY "https://github.com/beached/date.git"
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/dependencies/date"
+    GIT_TAG "master"
+    INSTALL_DIR "${CMAKE_BINARY_DIR}/install"
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
+)
 
 set( HEADER_FOLDER "include" )
 set( SOURCE_FOLDER "src" )
@@ -66,15 +74,21 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/data_types.h
 	${HEADER_FOLDER}/requested_temp.h
 	${HEADER_FOLDER}/round_basal.h
+	${HEADER_FOLDER}/lib_iob_calculate.h
 )
 
 set( SOURCE_FILES
+	${SOURCE_FOLDER}/data_types.cpp
 	${SOURCE_FOLDER}/round_basal.cpp
+	${SOURCE_FOLDER}/lib_iob_calculate.cpp
 )
 
 add_library( oref0 ${HEADER_FILES} ${SOURCE_FILES} )
-add_dependencies( oref0 header_libraries_prj parse_json_prj char_range_prj )
-target_link_libraries( oref0 parse_json ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+add_dependencies( oref0 header_libraries_prj parse_json_prj char_range_prj date_prj )
+target_link_libraries( oref0 parse_json tz ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+
+add_executable( oref0_get_profile ${HEADER_FILES} ${SOURCE_FOLDER}/bin_oref0_get_profile.cpp )
+target_link_libraries( oref0_get_profile oref0 ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 install( TARGETS oref0 DESTINATION lib )
 install( DIRECTORY ${HEADER_FOLDER}/ DESTINATION include/daw/oref0 )
