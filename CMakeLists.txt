@@ -75,12 +75,14 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/requested_temp.h
 	${HEADER_FOLDER}/round_basal.h
 	${HEADER_FOLDER}/lib_iob_calculate.h
+	${HEADER_FOLDER}/iob_calc.h
 )
 
 set( SOURCE_FILES
 	${SOURCE_FOLDER}/data_types.cpp
 	${SOURCE_FOLDER}/round_basal.cpp
 	${SOURCE_FOLDER}/lib_iob_calculate.cpp
+	${SOURCE_FOLDER}/iob_calc.cpp
 )
 
 add_library( oref0 ${HEADER_FILES} ${SOURCE_FILES} )
@@ -89,6 +91,9 @@ target_link_libraries( oref0 parse_json tz char_range ${Boost_LIBRARIES} ${CMAKE
 
 add_executable( oref0_get_profile ${HEADER_FILES} ${SOURCE_FOLDER}/bin_oref0_get_profile.cpp )
 target_link_libraries( oref0_get_profile oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+
+add_executable( iob_calc_test_bin ${HEADER_FILES} ${SOURCE_FOLDER}/iob_calc_test.cpp )
+target_link_libraries( iob_calc_test_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 install( TARGETS oref0 DESTINATION lib )
 install( DIRECTORY ${HEADER_FOLDER}/ DESTINATION include/daw/oref0 )

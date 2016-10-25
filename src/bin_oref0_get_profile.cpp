@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 #include <boost/algorithm/string/predicate.hpp>
-<<<<<<< HEAD
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
@@ -72,23 +71,11 @@ std::pair<std::string, std::string> parse_kv_string( boost::string_view line ) {
 struct parameters {
 	std::vector<std::string> ordered_parameters;
 	std::unordered_map<std::string, std::string> optional_parameters;
-=======
-#include <boost/lexical_cast.hpp>
-#include <cstdlib>
-#include <iostream>
-#include <string>
-#include <vector>
-
-struct parameters {
-	std::vector<std::string> ordered_parameters;
-	std::map<std::string, std::string> optional_parameters;
->>>>>>> bc45c27ec383fd2bd40ab3cf1d917f56a5321dd7
 
 	template<typename T>
 	T ordered_as( size_t n ) const {
 		return boost::lexical_cast<T>( ordered_parameters.at( n ) );
 	}
-<<<<<<< HEAD
 
 	boost::optional<std::string> kv_get( boost::string_view key ) const {
 		auto it = optional_parameters.find( key.to_string( ) );
@@ -108,15 +95,6 @@ parameters parse_cmd_line( int const argc, char const * const * argv ) {
 	for( int n=1; n<argc; ++n ) {
 		if( boost::starts_with( argv[n], "--" ) ) {
 			result.optional_parameters.insert( parse_kv_string( argv[n] + 2 ) );
-=======
-};
-
-parameters parse_cmd_line( int argc, char** argv ) {
-	parameters result;
-	for( int n=1; n<argc; ++n ) {
-		if( boost::starts_with( argv[n], "--" ) ) {
-
->>>>>>> bc45c27ec383fd2bd40ab3cf1d917f56a5321dd7
 		} else {
 			result.ordered_parameters.emplace_back( argv[n] );
 		}
@@ -124,7 +102,6 @@ parameters parse_cmd_line( int argc, char** argv ) {
 	return result;
 }
 
-<<<<<<< HEAD
 struct unnamed_parameters {
 	std::vector<std::string> required;
 	std::vector<std::string> optional;
@@ -132,6 +109,22 @@ struct unnamed_parameters {
 	unnamed_parameters( std::vector<std::string> Required, std::vector<std::string> Optional ):
 			required{ std::move( Required ) },
 			optional{ std::move( Optional ) } { }
+
+	boost::optional<std::string> find( parameters const & param, std::string const & key ) const {
+		{
+			auto const pos = std::find( required.begin( ), required.end( ), key );
+			if( pos != required.end( ) ) {
+				auto const dist = static_cast<size_t>(std::distance( required.begin( ), pos ));
+				return { param.ordered_parameters[dist] };
+			}
+		}
+		auto const pos = std::find( optional.begin( ), optional.end( ), key );
+		if( pos == optional.end( ) ) {
+			return { };
+		}
+		auto const dist = static_cast<size_t>(std::distance( optional.begin( ), pos )) + required.size( );
+		return { param.ordered_parameters[dist] };
+	}
 };
 
 void show_help( char const * name, unnamed_parameters const & unnamed ) {
@@ -142,7 +135,11 @@ void show_help( char const * name, unnamed_parameters const & unnamed ) {
 	for( auto const & param: unnamed.optional ) {
 		std::cout << " [" << param << ".json]";
 	}
-	std::cout << "\nOptional Parameters\n--help - Display this help message\n--model=<pump model> - Model of pump\n--exportDefaults\n--updatePreferences=<true|false>" << std::endl;
+	std::cout << "\nOptional Parameters\n--------------------\n";
+	std::cout << "--help - Display this help message\n";
+	std::cout << "--model=<pump model> - Model of pump\n";
+	std::cout << "--exportDefaults\n";
+	std::cout << "--updatePreferences=<true|false>" << std::endl;
 }
 
 int main( int argc, char** argv ) {
@@ -158,62 +155,29 @@ int main( int argc, char** argv ) {
 	if( params.kv_get( "exportDefaults" ) ) {
 		std::cout << (ns::profile_t{ }).to_string( ) << std::endl;
 		return EXIT_SUCCESS;
+	} else if( params.kv_get( "updatePreferences" ) ) {
+		auto const prefs_file_name = params.kv_get( "updatePreferences" ); 
+		if( prefs_file_name && !prefs_file_name->empty( ) ) {
+			boost::filesystem::path const pref_file{ *prefs_file_name };
+			if( exists( pref_file ) && is_regular_file( pref_file ) ) {
+				try {
+					auto prefs = daw::json::from_file<ns::profile_t>( pref_file.native( ) );	
+					std::cout << prefs.to_string( ) << std::endl;
+					return EXIT_SUCCESS;
+				} catch( std::exception const & ex ) {
+					std::cerr << "Error importing prefernces\n" << ex.what( ) << std::endl;
+					exit( EXIT_FAILURE );
+				}
+			}
+		}
+		std::cout << (ns::profile_t{ }).to_string( ) << std::endl;
+		return EXIT_SUCCESS;
 	}
 
-	auto const update_preferences = [&]( ) {
-		auto const t = params.kv_get( "updatePreferences" );
-		return static_cast<bool>(t) && *t == "true";
-	}( );
-	
 
 	if( params.ordered_count( ) < unnamed.required.size( ) || params.ordered_count( ) > (unnamed.required.size( ) + unnamed.optional.size( )) ) {
 		show_help( argv[0], unnamed );
 		return EXIT_SUCCESS;
 	}
-=======
-int main( int argc, char** argv ) {
-	namespace po = boost::program_options;
-	po::positional_options_description pos_desc;
-	std::vector<std::pair<std::string, bool>> const positional_parameters = {
-			{ "pump_settings", false },
-			{ "bg_targets", false },
-			{ "insulin_sensitivities", false },
-			{ "basal_profile", false },
-			{ "preferences", true },
-			{ "carb_ratios", true },
-			{ "temp_targets", true }
-	};
-	for( auto const & param : positional_parameters ) {
-		pos_desc.add( param.first.c_str( ), 1 );
-	}
-
-	po::options_description desc{ "Options" };
-	desc.add_options( )
-			( "help", "Print option descriptions" )
-			( "model", po::value<std::string>( ), "Pump model" );
-
-	po::variables_map vm;
-	try {
-		po::store( po::command_line_parser( argc, argv ).options( desc ).positional( pos_desc ).run( ), vm );
-
-		if( vm.count( "help" ) ) {
-			std::cout << argv[0];
-			for( auto const & param: positional_parameters ) {
-				auto const bracket_chars = param.second ? std::make_pair<char>( '[', ']' ) : std::make_pair<char>( '<', '>' );
-				std::cout << ' ' << bracket_chars.first << param.first << ".json" << bracket_chars.second;
-			}
-			std::cout << '\n' << desc << std::endl;
-			return EXIT_SUCCESS;
-		}
-		po::notify( vm );
-	} catch( po::error const & po_error ) {
-		std::cerr << "ERROR: " << po_error.what( ) << '\n';
-		std::cerr << desc << std::endl;
-		return EXIT_FAILURE;
-	}
-
-
->>>>>>> bc45c27ec383fd2bd40ab3cf1d917f56a5321dd7
-
 	return EXIT_SUCCESS;
 }
