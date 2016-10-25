@@ -102,49 +102,8 @@ namespace ns {
 		return percentage;
 	}
 
-	double active_insulin_pct( int16_t const time_from_bolus_min, insulin_duration_t insulin_duration ) {
-		if( time_from_bolus_min <= 0 ) {
-			return 0;
-		} else if( time_from_bolus_min >= static_cast<int16_t>( insulin_duration )  ) {
-			return 0;
-		} 
-
-		auto const dbl_time_from_bolus_min = static_cast<double>(time_from_bolus_min);
-		double percentage = 0;
-		switch( insulin_duration ) {
-			case insulin_duration_t::t180:
-				percentage = -0.0000012812 * pow(dbl_time_from_bolus_min,3.0) + -0.0000038436 * pow(dbl_time_from_bolus_min,2.0) - 0.03518 * dbl_time_from_bolus_min + 9.255e-2;
-				break;
-			case insulin_duration_t::t210:
-				percentage = -0.000000159 * pow(dbl_time_from_bolus_min,4.0) + 0.000087168 * pow(time_from_bolus_min,3.0) - 0.014898990 * pow(time_from_bolus_min,2.0) + 0.282046657 * time_from_bolus_min + 99.924242424;
-				break;
-			case insulin_duration_t::t240:
-				percentage = -3.31e-8 * pow(dbl_time_from_bolus_min,4.0) + 2.53e-5 * pow(time_from_bolus_min,3.0) - 5.51e-3 * pow(time_from_bolus_min,2.0) - 9.086e-2 * time_from_bolus_min + 99.95;
-				break;
-			case insulin_duration_t::t300:
-				percentage = -2.95e-8 * pow(dbl_time_from_bolus_min,4.0) + 2.32e-5 * pow(time_from_bolus_min,3.0) - 5.55e-3 * pow(time_from_bolus_min,2.0) + 4.49e-2 * time_from_bolus_min + 99.3;
-				break;
-			case insulin_duration_t::t360:
-				percentage = -1.493e-8 * pow(dbl_time_from_bolus_min,4.0) + 1.413e-5 * pow(time_from_bolus_min,3.0) - 4.095e-3 * pow(time_from_bolus_min,2.0) + 6.365e-2 * time_from_bolus_min + 99.7;
-				break;
-		}
-		percentage *= -0.01;
-
-		// clamp value
-		if( percentage > 1.0 ) {
-			percentage = 1.0;
-		} else if( percentage < 0.0 ) {
-			percentage = 0.0;
-		}
-
-		return percentage;
-
-		return 0.0;
-	}
-
 	dose::dose( double how_much, insulin_duration_t dia, timestamp_t when ):
 		amount{ how_much },
-		change{ 0.0 },
 		dose_time{ when },
 		dose_dia{ dia } { 
 
