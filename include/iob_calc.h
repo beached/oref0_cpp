@@ -147,7 +147,7 @@
 
 namespace ns {
 	enum class insulin_duration_t: int16_t { t180 = 180, t210 = 210, t240 = 240, t300 = 300, t360 = 360 };
-	double insulin_on_board_pct( int16_t const time_from_bolus_min, insulin_duration_t insulin_duration );
+	double insulin_on_board_pct( double const time_from_bolus_min, insulin_duration_t insulin_duration );
 
 	struct dose {
 		using timestamp_t = std::chrono::system_clock::time_point;

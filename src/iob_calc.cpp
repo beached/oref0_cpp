@@ -63,34 +63,49 @@
 #include "iob_calc.h"
 
 namespace ns {
-	double insulin_on_board_pct( int16_t const time_from_bolus_min, insulin_duration_t insulin_duration ) {
+	namespace {
+		constexpr size_t insulin_duration_to_idx( insulin_duration_t const duration ) {	
+			switch( duration ) {
+				case insulin_duration_t::t180: return 0;
+				case insulin_duration_t::t210: return 1;
+				case insulin_duration_t::t240: return 2;
+				case insulin_duration_t::t300: return 3;
+				case insulin_duration_t::t360: return 4;
+			}
+			throw std::runtime_error( "Unknown insulin_duration_t" );
+		}
+
+		template<size_t N, typename T>
+		constexpr T to_power( T value ) {
+			static_assert( N > 0, "" );
+			for( size_t n=1; n<N; ++n ) {
+				value *= value;
+			}
+			return value;
+		}
+	}
+	double insulin_on_board_pct( double const time_from_bolus_min, insulin_duration_t insulin_duration ) {
+		double const params[5][5] = {
+			{  99.951000000,  0.092550000, -0.01759000,  0.000135400, -0.00000032030 },	// t=180
+			{  99.924242424,  0.282046657, -0.01489899,  0.000087168, -0.00000015900 },	// t=210 
+			{  99.950000000, -0.090860000, -0.00551000,  0.000025300, -0.00000003310 },	// t=240
+			{  99.300000000,  0.044900000, -0.00555000,  0.000023200, -0.00000002950 }, // t=300
+			{  99.700000000,  0.063650000, -0.00409500,  0.000014130, -0.00000001493 }	// t=360
+		};
 
 		if( time_from_bolus_min <= 0 ) {
 			return 1.0;
-		} else if( time_from_bolus_min >= static_cast<int16_t>(insulin_duration) ) {
+		} else if( time_from_bolus_min >= static_cast<double>(insulin_duration) ) {
 			return 0.0;
 		} 
 
-		auto const dbl_time_from_bolus_min = static_cast<double>(time_from_bolus_min);
-		double percentage = 100.0;
-		switch( insulin_duration ) {
-			case insulin_duration_t::t180:
-				percentage = -3.203e-7 * pow(dbl_time_from_bolus_min,4.0) + 1.354e-4 * pow(dbl_time_from_bolus_min,3.0) - 1.759e-2 * pow(dbl_time_from_bolus_min,2.0) + 9.255e-2 * dbl_time_from_bolus_min + 99.951;
-				break;
-			case insulin_duration_t::t210:
-				percentage = -0.000000159 * pow(dbl_time_from_bolus_min,4.0) + 0.000087168 * pow(time_from_bolus_min,3.0) - 0.014898990 * pow(time_from_bolus_min,2.0) + 0.282046657 * time_from_bolus_min + 99.924242424;
-				break;
-			case insulin_duration_t::t240:
-				percentage = -3.31e-8 * pow(dbl_time_from_bolus_min,4.0) + 2.53e-5 * pow(time_from_bolus_min,3.0) - 5.51e-3 * pow(time_from_bolus_min,2.0) - 9.086e-2 * time_from_bolus_min + 99.95;
-				break;
-			case insulin_duration_t::t300:
-				percentage = -2.95e-8 * pow(dbl_time_from_bolus_min,4.0) + 2.32e-5 * pow(time_from_bolus_min,3.0) - 5.55e-3 * pow(time_from_bolus_min,2.0) + 4.49e-2 * time_from_bolus_min + 99.3;
-				break;
-			case insulin_duration_t::t360:
-				percentage = -1.493e-8 * pow(dbl_time_from_bolus_min,4.0) + 1.413e-5 * pow(time_from_bolus_min,3.0) - 4.095e-3 * pow(time_from_bolus_min,2.0) + 6.365e-2 * time_from_bolus_min + 99.7;
-				break;
-		}
-		percentage /= 100.0;
+		auto const param = params[insulin_duration_to_idx( insulin_duration )];
+		auto const p1 = param[1] * time_from_bolus_min;
+		auto const p2 = param[2] * to_power<2>( time_from_bolus_min );
+		auto const p3 = param[3] * to_power<3>( time_from_bolus_min );
+		auto const p4 = param[4] * to_power<4>( time_from_bolus_min );
+
+		auto percentage = (param[0] + p1 + p2 + p3 + p4)/100.0;
 
 		// clamp value
 		if( percentage > 1.0 ) {
