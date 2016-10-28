@@ -132,7 +132,7 @@ struct carb_dose_t {
 			}
 			return D;
 		}( );
-		std::cout << "~~~~calc_cob: AT=" << AT << " D=" << D << " cob=" << result << " %=" << ((result/item.amount)*100) << '\n';
+		//std::cout << "~~~~calc_cob: AT=" << AT << " D=" << D << " cob=" << result << " %=" << ((result/item.amount)*100) << '\n';
 		return result;
 	}
 
@@ -161,7 +161,7 @@ double calc_iob( time_point<system_clock> const & ts_now, ns::dose const & item 
 		return 0.0;
 	}
 	auto const pc = ns::insulin_on_board_pct( duration, item.dose_dia );
-	std::cout << "~~~~insulin_dose dia=" << static_cast<int16_t>(item.dose_dia) << " age=" << duration << " %=" << pc << " amount=" << item.amount << " left=" << (pc*item.amount) << '\n';
+	//std::cout << "~~~~insulin_dose dia=" << static_cast<int16_t>(item.dose_dia) << " age=" << duration << " %=" << pc << " amount=" << item.amount << " left=" << (pc*item.amount) << '\n';
 	return item.amount * pc;
 }
 
@@ -175,19 +175,20 @@ int main( int, char ** ) {
 	double last_iob = 0.0;
 	double last_cob = 0.0;
 	glucose_state_t glucose_state;
+	double glucose_delta = 0.05;
+	double insulin_offset = 0.0;
 
 	std::cout << "Based on ICR=" << profile.icr << "g Carb/U ISF=" << profile.isf << "mmol/L/U basal_rate=" << basal_dose_per_hr;
 	std::cout << "U/hr it is estimated that the liver outputs " << est_liver_carb_per_hr << "g/hr of glucose or " << est_liver_carb_per_min << "g/min\n";
-
 	
 	auto const add_insulin_dose = [&last_iob, &insulin_doses]( time_point<system_clock> const & when, double amount, ns::insulin_duration_t dia = ns::insulin_duration_t::t240 ) {
-		std::cout << "~~insulin_dose: " << amount << "U\n";
+		//std::cout << "~~insulin_dose: " << amount << "U\n";
 		last_iob += amount;
 		insulin_doses.emplace_back( amount, dia, when );
 	};
 
 	auto const add_carb_dose = [&last_cob, &carb_doses]( time_point<system_clock> const & when, double amount, double absorption_rate = 0.5 ) {
-		std::cout << "~~carb_dose: " << amount << "g\n";
+		//std::cout << "~~carb_dose: " << amount << "g\n";
 		last_cob += amount;
 		carb_doses.emplace_back( when, amount, absorption_rate );
 	};
@@ -227,27 +228,55 @@ int main( int, char ** ) {
 			last_duration = cur_duration;
 
 			add_carb_dose( ts_now, carb_dose, carb_dose/180.0 );
-			add_insulin_dose( ts_now, carb_dose/profile.icr, ns::insulin_duration_t::t180 );
+			auto ins_dose = carb_dose/profile.icr;
+			if( insulin_offset < -0.2 ) {
+				std::cout << "Lowering basal to offset too much insulin(TMI): need " << insulin_offset << "U and have " << ins_dose << " to give\n";
+				if( ins_dose >= insulin_offset ) {
+					ins_dose -= insulin_offset;
+					insulin_offset = 0;
+				} else {
+					insulin_offset -= ins_dose;
+					ins_dose = 0;
+				}
+			}
+			if( ins_dose > 0 ) {
+				add_insulin_dose( ts_now, ins_dose , ns::insulin_duration_t::t180 );
+			}
 		}
-		if( random_generator( 0, 120 ) < 5 ) {
-			auto const carb_dose = static_cast<double>(random_generator( 1, 75 ));
+		
+		if( random_generator( 0, 150 ) < 5 ) {
+			auto const carb_dose = static_cast<double>(random_generator( 1, 45 ));
 			add_carb_dose( ts_now, carb_dose );
 			add_insulin_dose( ts_now, carb_dose/profile.icr );
 		}
+	
 		double const insulin_drop = iob_diff * profile.isf;
 		double const carb_rise = (cob_diff / profile.icr) * profile.isf;
 		double const glucose_prev = glucose_state.previous_value( );
 		double const glucose_new = glucose_prev + carb_rise - insulin_drop;
 		double const expected_insulin_drop = -(profile.isf * iob);
 		double const expected_carb_rise = ((cob/profile.icr)*profile.isf);
+		double const expected_glucose = glucose_new + expected_insulin_drop + expected_carb_rise;
 		glucose_state.add_value( glucose_new );
 
 		std::cout << ts_now << " t=" << cur_duration << " iob=" << iob << " active_ins=" << iob_diff << " cob=" << cob << "g active_carb=" << cob_diff << "g\n";
 		std::cout << "\t\tisf*iob=" << expected_insulin_drop << "mmol/L (cob/icr)*isf=" << expected_carb_rise << "mmol/L insulin_drop=" << -insulin_drop << "mmol/L carb_rise=" << carb_rise << "mmol/L\n";
-		std::cout << "\t\tprev_glucose=" << glucose_prev << " glucose=" << glucose_new << "mmol/L expected_glucose=" << (glucose_new + expected_insulin_drop + expected_carb_rise) << "mmol/L \n";
+		std::cout << "\t\tprev_glucose=" << glucose_prev << " glucose=" << glucose_new << "mmol/L expected_glucose=" << expected_glucose << "mmol/L \n";
 		ts_now += 5min;
 		//std::this_thread::sleep_for( 1s );
 		clean_up( ts_now, insulin_doses, carb_doses );
+
+		insulin_offset = (expected_glucose - glucose_state.target_value)/profile.isf;
+
+		// If more insulin is needed to offset higher blood glucose give dose now
+		if( insulin_offset > 0.2 ) {
+			std::cout << "Bolusing to offset insulin debt need " << insulin_offset << "U\n";
+			add_insulin_dose( ts_now, insulin_offset );
+			insulin_offset = 0.0;
+		}
+			
+		// Add glucose to blood stream to test reponse
+		glucose_state.add_value( glucose_new + glucose_delta );
 	}
 	return 0;
 }

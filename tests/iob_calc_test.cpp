@@ -106,11 +106,11 @@ struct test_data_t: public daw::json::JsonLink<test_data_t> {
 
 test_data_t::~test_data_t( ) { }
 
-BOOST_AUTO_TEST_CASE( insulin_on_board_pct, *boost::unit_test::tolerance( std::numeric_limits<double>::epsilon( ) ) ) {
+BOOST_AUTO_TEST_CASE( insulin_on_board_pct, *boost::unit_test::tolerance( 1.0e-10 ) ) {
 	auto test_data = daw::json::from_file<test_data_t>( "../tests/iob_calc_test.json" );
 	for( auto const & test: test_data.tests ) {
 		auto const result = ns::insulin_on_board_pct( test.time_offset, test.insulin_duration );
-		std::cout << "insulin_action=" << static_cast<int>(test.insulin_duration) << " t=" << test.time_offset << " expected=" << test.expected << " result=" << result << " difference=" << (test.expected-result) << '\n';
+		std::cout << "insulin_action=" << static_cast<int>(test.insulin_duration) << " t=" << test.time_offset << std::setprecision( std::numeric_limits<double>::digits10 ) << " expected=" << test.expected << " result=" << result << " difference=" << (test.expected-result) << '\n';
 		BOOST_TEST( test.expected == result );
 	}
 
