@@ -186,7 +186,7 @@ int main( int, char ** ) {
 		insulin_doses.emplace_back( amount, dia, when );
 	};
 
-	auto const add_carb_dose = [&last_cob, &carb_doses]( time_point<system_clock> const & when, double amount, double absorption_rate = 0.8 ) {
+	auto const add_carb_dose = [&last_cob, &carb_doses]( time_point<system_clock> const & when, double amount, double absorption_rate = 0.5 ) {
 		std::cout << "~~carb_dose: " << amount << "g\n";
 		last_cob += amount;
 		carb_doses.emplace_back( when, amount, absorption_rate );
@@ -203,7 +203,7 @@ int main( int, char ** ) {
 
 	auto ts_now = system_clock::now( ); 
 
-	add_carb_dose( ts_now, 50, 0.8 );
+	add_carb_dose( ts_now + 45min, 50, 0.5 );
 	add_insulin_dose( ts_now, 50.0/profile.icr );
 
 	while( true ) {
@@ -222,19 +222,18 @@ int main( int, char ** ) {
 		last_iob = iob;
 		last_cob = cob;
 
-		/*
 		if( cur_duration > last_duration ) {
 			auto const carb_dose = est_liver_carb_per_min*(cur_duration-last_duration);
 			last_duration = cur_duration;
 
-			add_carb_dose( ts_now, carb_dose, 180.0/carb_dose );
+			add_carb_dose( ts_now, carb_dose, carb_dose/180.0 );
 			add_insulin_dose( ts_now, carb_dose/profile.icr, ns::insulin_duration_t::t180 );
 		}
 		if( random_generator( 0, 120 ) < 5 ) {
 			auto const carb_dose = static_cast<double>(random_generator( 1, 75 ));
 			add_carb_dose( ts_now, carb_dose );
 			add_insulin_dose( ts_now, carb_dose/profile.icr );
-		}*/
+		}
 		double const insulin_drop = iob_diff * profile.isf;
 		double const carb_rise = (cob_diff / profile.icr) * profile.isf;
 		double const glucose_prev = glucose_state.previous_value( );
