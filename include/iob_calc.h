@@ -1,12 +1,11 @@
-//
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 Perceptus.org
+// Copyright (c) 2016 Darrell Wright
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
+// of this software and associated documentation files( the "Software" ), to deal
 // in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
@@ -15,42 +14,14 @@
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-//
-//  .88888.  dP                            888888ba
-// d8'   `88 88                            88    `8b
-// 88        88 dP    dP .d8888b. .d8888b. 88     88 dP    dP 88d888b.
-// 88   YP88 88 88    88 88'  `"" 88'  `88 88     88 88    88 88'  `88
-// Y8.   .88 88 88.  .88 88.  ... 88.  .88 88    .8P 88.  .88 88    88
-//  `88888'  dP `88888P' `88888P' `88888P' 8888888P  `8888P88 dP    dP
-//                                                        .88
-//                                                    d8888P
-// dP                    888888ba                                                 dP
-// 88                    88    `8b                                                88
-// 88d888b. dP    dP    a88aaaa8P' .d8888b. 88d888b. .d8888b. .d8888b. 88d888b. d8888P dP    dP .d8888b.    .d8888b. 88d888b. .d8888b.
-// 88'  `88 88    88     88        88ooood8 88'  `88 88'  `"" 88ooood8 88'  `88   88   88    88 Y8ooooo.    88'  `88 88'  `88 88'  `88
-// 88.  .88 88.  .88     88        88.  ... 88       88.  ... 88.  ... 88.  .88   88   88.  .88       88 dP 88.  .88 88       88.  .88
-// 88Y8888' `8888P88     dP        `88888P' dP       `88888P' `88888P' 88Y888P'   dP   `88888P' `88888P' 88 `88888P' dP       `8888P88
-//               .88                                                   88                                                          .88
-//           d8888P                                                    dP                                                      d8888P
-//
-// Education is crucial in the treatment of complex and dynamic diseases such as T1D. When patients are aware of the elements that affect
-// variations in their disease, they are able to better understand their situation enabling them to optimize their treatments.
-//
-// Accessibility through the primary method of communication in the present: Digital communication. Live data should be accessible when
-// the patient needs it in the easiest possible way.
-//
-// Autonomy is the dream of every patient with T1D. Life does not happen while being in front of a computer or staring at data on your
-// phone. Most of the times where deviations happen, patients are busy living their lives.
-//
-// Gustavo Muñoz ( @bustavo )
-// Kenneth Stack
-//
+// Adapted from algorithm found at https://raw.githubusercontent.com/Perceptus/iob/master/insulin_on_board_pct.js
+
 
 // insulin_duration in hours
 // curves based on walsh iob curves
@@ -147,7 +118,7 @@
 
 namespace ns {
 	enum class insulin_duration_t: int16_t { t180 = 180, t210 = 210, t240 = 240, t300 = 300, t360 = 360 };
-	double insulin_on_board_pct( double const time_from_bolus_min, insulin_duration_t insulin_duration );
+	double insulin_on_board_pct( double const time_from_bolus_min, insulin_duration_t const insulin_duration );
 
 	struct dose {
 		using timestamp_t = std::chrono::system_clock::time_point;
@@ -164,5 +135,8 @@ namespace ns {
 		dose & operator=( dose const & ) = default;
 		dose & operator=( dose && ) = default;
 	};
+
+	std::ostream & operator<<( std::ostream & os, insulin_duration_t const & duration );
+	std::istream & operator>>( std::istream & is, insulin_duration_t & duration );
 }	// namespace ns
 

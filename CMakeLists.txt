@@ -17,7 +17,7 @@ else( )
 	if( ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" )
 		add_compile_options(-std=c++14 -Weverything -pthread -Wno-c++98-compat -g -Wno-covered-switch-default -Wno-padded -Wno-exit-time-destructors -Wno-c++98-compat-pedantic -Wno-unused-parameter -Wno-missing-noreturn -Wno-missing-prototypes -Wno-disabled-macro-expansion)
 	elseif( ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" )
-		add_compile_options(-std=c++14 -g -Wall -pthread -Wno-deprecated-declarations)
+		add_compile_options(-std=c++14 -ggdb -Wall -pthread -Wno-deprecated-declarations -march=native )
 	endif( )
 endif( )
 
@@ -92,7 +92,10 @@ target_link_libraries( oref0 parse_json tz char_range ${Boost_LIBRARIES} ${CMAKE
 add_executable( oref0_get_profile ${HEADER_FILES} ${SOURCE_FOLDER}/bin_oref0_get_profile.cpp )
 target_link_libraries( oref0_get_profile oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
-add_executable( iob_calc_test_bin ${HEADER_FILES} ${SOURCE_FOLDER}/iob_calc_test.cpp )
+add_executable( simulator_bin ${HEADER_FILES} ${SOURCE_FOLDER}/simulator.cpp )
+target_link_libraries( simulator_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+
+add_executable( iob_calc_test_bin ${HEADER_FILES} ${TEST_FOLDER}/iob_calc_test.cpp )
 target_link_libraries( iob_calc_test_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 install( TARGETS oref0 DESTINATION lib )
