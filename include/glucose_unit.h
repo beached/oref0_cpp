@@ -24,7 +24,7 @@
 
 #include <string>
 
-namespace daw {
+namespace ns {
 	namespace glucose {
 		struct mg_dL;
 
@@ -47,10 +47,8 @@ namespace daw {
 
 			mmol_L & operator+=( mmol_L const & rhs ) noexcept;
 			mmol_L & operator-=( mmol_L const & rhs ) noexcept;
-			mmol_L & operator*=( mmol_L const & rhs ) noexcept;
-			mmol_L & operator/=( mmol_L const & rhs ) noexcept;
-			mmol_L & operator*=( double const & rhs ) noexcept;
-			mmol_L & operator/=( double const & rhs ) noexcept;
+
+			mmol_L & scale( double factor ) noexcept;
 		};	// mmol_L
 
 		void swap( mmol_L & lhs, mmol_L & rhs ) noexcept;
@@ -58,10 +56,6 @@ namespace daw {
 
 		mmol_L operator+( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
 		mmol_L operator-( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
-		mmol_L operator*( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
-		mmol_L operator/( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
-		mmol_L operator*( mmol_L const & lhs, double const & rhs ) noexcept;
-		mmol_L operator/( mmol_L const & lhs, double const & rhs ) noexcept;
 		mmol_L operator-( mmol_L rhs ) noexcept;
 		bool operator==( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
 		bool operator!=( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
@@ -89,10 +83,8 @@ namespace daw {
 
 			mg_dL & operator+=( mg_dL const & rhs ) noexcept;
 			mg_dL & operator-=( mg_dL const & rhs ) noexcept;
-			mg_dL & operator*=( mg_dL const & rhs ) noexcept;
-			mg_dL & operator/=( mg_dL const & rhs ) noexcept;
-			mg_dL & operator*=( double const & rhs ) noexcept;
-			mg_dL & operator/=( double const & rhs ) noexcept;
+
+			mg_dL & scale( double factor ) noexcept;
 		};	// mg_dL
 
 		void swap( mg_dL & lhs, mg_dL & rhs ) noexcept;
@@ -100,10 +92,6 @@ namespace daw {
 
 		mg_dL operator+( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
 		mg_dL operator-( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
-		mg_dL operator*( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
-		mg_dL operator/( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
-		mg_dL operator*( mg_dL const & lhs, double const & rhs ) noexcept;
-		mg_dL operator/( mg_dL const & lhs, double const & rhs ) noexcept;
 		mg_dL operator-( mg_dL rhs ) noexcept;
 		bool operator==( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
 		bool operator!=( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
@@ -112,10 +100,10 @@ namespace daw {
 		bool operator<=( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
 		bool operator>=( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
 	}	// namespace glucose
-}    // namespace daw
+}    // namespace ns
 
-daw::glucose::mmol_L operator"" _mmol_L( long double d ) noexcept;
-daw::glucose::mg_dL operator"" _mg_dL( long double d ) noexcept;
-daw::glucose::mmol_L operator"" _mmol_L( unsigned long long i ) noexcept;
-daw::glucose::mg_dL operator"" _mg_dL( unsigned long long i ) noexcept;
+ns::glucose::mmol_L operator"" _mmol_L( long double d ) noexcept;
+ns::glucose::mg_dL operator"" _mg_dL( long double d ) noexcept;
+ns::glucose::mmol_L operator"" _mmol_L( unsigned long long i ) noexcept;
+ns::glucose::mg_dL operator"" _mg_dL( unsigned long long i ) noexcept;
 

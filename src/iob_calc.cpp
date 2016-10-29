@@ -88,12 +88,12 @@ namespace ns {
 		return percentage;
 	}
 
-	dose::dose( double how_much, insulin_duration_t dia, timestamp_t when ):
+	insulin_dose::insulin_dose( insulin_t how_much, insulin_duration_t dia, timestamp_t when ):
 			amount{ how_much },
 			dose_time{ when },
 			dose_dia{ dia } { 
 
-		assert( amount > 0.0 );
+		assert( amount > 0.0_U );
 	}
 
 	std::ostream & operator<<( std::ostream & os, insulin_duration_t const & duration ) {

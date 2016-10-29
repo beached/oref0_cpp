@@ -27,11 +27,11 @@
 #include "glucose_unit.h"
 
 BOOST_AUTO_TEST_CASE( glucose_unit_001 ) {
-	daw::glucose::mmol_L ca_01{ 5.5 };
-	daw::glucose::mg_dL us_01{ ca_01 };
-	daw::glucose::mg_dL us_02{ 100 };
-	daw::glucose::mmol_L ca_02{ us_02 };
-	daw::glucose::mmol_L ca_03{ -5.5 };
+	ns::glucose::mmol_L ca_01{ 5.5 };
+	ns::glucose::mg_dL us_01{ ca_01 };
+	ns::glucose::mg_dL us_02{ 100 };
+	ns::glucose::mmol_L ca_02{ us_02 };
+	ns::glucose::mmol_L ca_03{ -5.5 };
 	
 	std::cout << "E: 5.5mmol/L -> mg/dL\n";
 	std::cout << "R: " << ca_01 << " " << us_01 << '\n';
@@ -47,5 +47,5 @@ BOOST_AUTO_TEST_CASE( glucose_unit_001 ) {
 	std::cout << ca_01 << std::endl;
 
 	std::cout << "E: 5.5mmol/L * 5\n"; 
-	std::cout << 5.5_mmol_L * 5 << std::endl;
+	std::cout << (5.5_mmol_L).scale( 5 ) << std::endl;
 }

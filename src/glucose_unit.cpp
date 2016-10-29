@@ -26,7 +26,7 @@
 
 #include "glucose_unit.h"
 
-namespace daw {
+namespace ns {
 	namespace glucose {
 		namespace {
 			constexpr double to_mg_dL( mmol_L const & glucose ) noexcept {
@@ -80,23 +80,8 @@ namespace daw {
 			return *this;
 		}
 
-		mmol_L & mmol_L::operator*=( mmol_L const & rhs ) noexcept {
-			value *= rhs.value;
-			return *this;
-		}
-
-		mmol_L & mmol_L::operator/=( mmol_L const & rhs ) noexcept {
-			value /= rhs.value;
-			return *this;
-		}
-
-		mmol_L & mmol_L::operator*=( double const & rhs ) noexcept {
-			value *= rhs;
-			return *this;
-		}
-
-		mmol_L & mmol_L::operator/=( double const & rhs ) noexcept {
-			value /= rhs;
+		mmol_L & mmol_L::scale( double factor ) noexcept {
+			value *= factor;
 			return *this;
 		}
 
@@ -106,22 +91,6 @@ namespace daw {
 
 		mmol_L operator-( mmol_L const & lhs, mmol_L const & rhs ) noexcept {
 			return mmol_L{ lhs.value - rhs.value };
-		}
-
-		mmol_L operator*( mmol_L const & lhs, mmol_L const & rhs ) noexcept {
-			return mmol_L{ lhs.value * rhs.value };
-		}
-
-		mmol_L operator/( mmol_L const & lhs, mmol_L const & rhs ) noexcept {
-			return mmol_L{ lhs.value / rhs.value };
-		}
-
-		mmol_L operator*( mmol_L const & lhs, double const & rhs ) noexcept {
-			return mmol_L{ lhs.value * rhs };
-		}
-
-		mmol_L operator/( mmol_L const & lhs, double const & rhs ) noexcept {
-			return mmol_L{ lhs.value * rhs };
 		}
 
 		mmol_L operator-( mmol_L rhs ) noexcept {
@@ -195,23 +164,8 @@ namespace daw {
 			return *this;
 		}
 
-		mg_dL & mg_dL::operator*=( mg_dL const & rhs ) noexcept {
-			value *= rhs.value;
-			return *this;
-		}
-
-		mg_dL & mg_dL::operator/=( mg_dL const & rhs ) noexcept {
-			value /= rhs.value;
-			return *this;
-		}
-
-		mg_dL & mg_dL::operator*=( double const & rhs ) noexcept {
-			value *= rhs;
-			return *this;
-		}
-
-		mg_dL & mg_dL::operator/=( double const & rhs ) noexcept {
-			value /= rhs;
+		mg_dL & mg_dL::scale( double factor ) noexcept {
+			value *= factor;
 			return *this;
 		}
 
@@ -221,22 +175,6 @@ namespace daw {
 
 		mg_dL operator-( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
 			return mg_dL{ lhs.value - rhs.value };
-		}
-
-		mg_dL operator*( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
-			return mg_dL{ lhs.value * rhs.value };
-		}
-
-		mg_dL operator/( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
-			return mg_dL{ lhs.value / rhs.value };
-		}
-
-		mg_dL operator*( mg_dL const & lhs, double const & rhs ) noexcept {
-			return mg_dL{ lhs.value * rhs };
-		}
-
-		mg_dL operator/( mg_dL const & lhs, double const & rhs ) noexcept {
-			return mg_dL{ lhs.value * rhs };
 		}
 
 		mg_dL operator-( mg_dL rhs ) noexcept {
@@ -269,21 +207,21 @@ namespace daw {
 		}
 	}	// namespace glucose
 
-}  // namespace daw
+}  // namespace ns
  
-daw::glucose::mmol_L operator"" _mmol_L( long double d ) noexcept {
-	return daw::glucose::mmol_L{ static_cast<double>( d ) };
+ns::glucose::mmol_L operator"" _mmol_L( long double d ) noexcept {
+	return ns::glucose::mmol_L{ static_cast<double>( d ) };
 }
 
-daw::glucose::mg_dL operator"" _mg_dL( long double d ) noexcept {
-	return daw::glucose::mg_dL{ static_cast<double>( d ) };
+ns::glucose::mg_dL operator"" _mg_dL( long double d ) noexcept {
+	return ns::glucose::mg_dL{ static_cast<double>( d ) };
 }
 
-daw::glucose::mmol_L operator"" _mmol_L( unsigned long long i ) noexcept {
-	return daw::glucose::mmol_L{ static_cast<double>( i ) };
+ns::glucose::mmol_L operator"" _mmol_L( unsigned long long i ) noexcept {
+	return ns::glucose::mmol_L{ static_cast<double>( i ) };
 }
 
-daw::glucose::mg_dL operator"" _mg_dL( unsigned long long i ) noexcept {
-	return daw::glucose::mg_dL{ static_cast<double>( i ) };
+ns::glucose::mg_dL operator"" _mg_dL( unsigned long long i ) noexcept {
+	return ns::glucose::mg_dL{ static_cast<double>( i ) };
 }
 
