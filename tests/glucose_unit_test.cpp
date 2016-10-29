@@ -31,11 +31,21 @@ BOOST_AUTO_TEST_CASE( glucose_unit_001 ) {
 	daw::glucose::mg_dL us_01{ ca_01 };
 	daw::glucose::mg_dL us_02{ 100 };
 	daw::glucose::mmol_L ca_02{ us_02 };
-
-	std::cout << ca_01 << " " << us_01 << '\n';
+	daw::glucose::mmol_L ca_03{ -5.5 };
+	
+	std::cout << "E: 5.5mmol/L -> mg/dL\n";
+	std::cout << "R: " << ca_01 << " " << us_01 << '\n';
+	std::cout << "E: 100mg/dL -> mmol/L\n";
 	std::cout << ca_02 << " " << us_02 << '\n';
+	std::cout << "Literals 5.5mmol/L and 100mg/dL\n";
 	std::cout << 5.5_mmol_L << " " << 100_mg_dL << '\n';
+	std::cout << "E: -5.5mmol/L\n";
+	std::cout << ca_03 << std::endl;
 
+	std::cout << "E: 5.5mmol/L -> mg/dL -> mmol/L\n";
+	ca_01 = us_01;
+	std::cout << ca_01 << std::endl;
 
-	std::cout << ca_01 * 5 << std::endl;
+	std::cout << "E: 5.5mmol/L * 5\n"; 
+	std::cout << 5.5_mmol_L * 5 << std::endl;
 }

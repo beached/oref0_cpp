@@ -28,14 +28,28 @@
 
 namespace daw {
 	namespace glucose {
+		namespace {
+			constexpr double to_mg_dL( mmol_L const & glucose ) noexcept {
+				return glucose.value / 0.0555;
+			}
+
+			constexpr double to_mmol_L( mg_dL const & glucose ) noexcept {
+				return glucose.value * 0.0555;
+			}
+		}	// namespace anonymous
+
 		mmol_L::mmol_L( double d ) noexcept:
 				value{ std::move( d ) } { }
 
 		mmol_L::mmol_L( mg_dL const & g ) noexcept:
-				value{ g.value * 0.0555 } { }
+				value{ to_mmol_L( g ) } { }
 
 		mmol_L::operator double( ) noexcept {
 			return value;
+		}
+
+		mmol_L & mmol_L::operator=( mg_dL const & rhs ) noexcept {
+			value = to_mmol_L( rhs ); 
 		}
 
 		mmol_L::~mmol_L( ) { }
@@ -54,6 +68,36 @@ namespace daw {
 		std::ostream & operator<<( std::ostream & os, mmol_L const & glucose ) {
 			os << glucose.to_string( );
 			return os;
+		}
+
+		mmol_L & mmol_L::operator+=( mmol_L const & rhs ) noexcept {
+			value += rhs.value;
+			return *this;
+		}
+
+		mmol_L & mmol_L::operator-=( mmol_L const & rhs ) noexcept {
+			value -= rhs.value;
+			return *this;
+		}
+
+		mmol_L & mmol_L::operator*=( mmol_L const & rhs ) noexcept {
+			value *= rhs.value;
+			return *this;
+		}
+
+		mmol_L & mmol_L::operator/=( mmol_L const & rhs ) noexcept {
+			value /= rhs.value;
+			return *this;
+		}
+
+		mmol_L & mmol_L::operator*=( double const & rhs ) noexcept {
+			value *= rhs;
+			return *this;
+		}
+
+		mmol_L & mmol_L::operator/=( double const & rhs ) noexcept {
+			value /= rhs;
+			return *this;
 		}
 
 		mmol_L operator+( mmol_L const & lhs, mmol_L const & rhs ) noexcept {
@@ -78,6 +122,11 @@ namespace daw {
 
 		mmol_L operator/( mmol_L const & lhs, double const & rhs ) noexcept {
 			return mmol_L{ lhs.value * rhs };
+		}
+
+		mmol_L operator-( mmol_L rhs ) noexcept {
+			rhs.value *= -1.0; 
+			return rhs;
 		}
 
 		bool operator==( mmol_L const & lhs, mmol_L const & rhs ) noexcept {
@@ -108,12 +157,16 @@ namespace daw {
 				value{ std::move( d ) } { }
 
 		mg_dL::mg_dL( mmol_L const & g ) noexcept:
-				value{ g.value / 0.0555 } { }
+				value{ to_mg_dL( g ) } { }
 
 		mg_dL::~mg_dL( ) { }
 
 		mg_dL::operator double( ) noexcept {
 			return value;
+		}
+		
+		mg_dL & mg_dL::operator=( mmol_L const & rhs ) noexcept {
+			value = to_mg_dL( rhs ); 
 		}
 
 		void swap( mg_dL & lhs, mg_dL & rhs ) noexcept {
@@ -132,6 +185,88 @@ namespace daw {
 			return os;
 		}
 
+		mg_dL & mg_dL::operator+=( mg_dL const & rhs ) noexcept {
+			value += rhs.value;
+			return *this;
+		}
+
+		mg_dL & mg_dL::operator-=( mg_dL const & rhs ) noexcept {
+			value -= rhs.value;
+			return *this;
+		}
+
+		mg_dL & mg_dL::operator*=( mg_dL const & rhs ) noexcept {
+			value *= rhs.value;
+			return *this;
+		}
+
+		mg_dL & mg_dL::operator/=( mg_dL const & rhs ) noexcept {
+			value /= rhs.value;
+			return *this;
+		}
+
+		mg_dL & mg_dL::operator*=( double const & rhs ) noexcept {
+			value *= rhs;
+			return *this;
+		}
+
+		mg_dL & mg_dL::operator/=( double const & rhs ) noexcept {
+			value /= rhs;
+			return *this;
+		}
+
+		mg_dL operator+( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
+			return mg_dL{ lhs.value + rhs.value };
+		}
+
+		mg_dL operator-( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
+			return mg_dL{ lhs.value - rhs.value };
+		}
+
+		mg_dL operator*( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
+			return mg_dL{ lhs.value * rhs.value };
+		}
+
+		mg_dL operator/( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
+			return mg_dL{ lhs.value / rhs.value };
+		}
+
+		mg_dL operator*( mg_dL const & lhs, double const & rhs ) noexcept {
+			return mg_dL{ lhs.value * rhs };
+		}
+
+		mg_dL operator/( mg_dL const & lhs, double const & rhs ) noexcept {
+			return mg_dL{ lhs.value * rhs };
+		}
+
+		mg_dL operator-( mg_dL rhs ) noexcept {
+			rhs.value *= -1.0; 
+			return rhs;
+		}
+
+		bool operator==( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
+			return lhs.value == rhs.value;
+		}
+
+		bool operator!=( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
+			return lhs.value != rhs.value;
+		}
+
+		bool operator<( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
+			return lhs.value < rhs.value;
+		}
+
+		bool operator>( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
+			return lhs.value > rhs.value;
+		}
+
+		bool operator<=( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
+			return lhs.value <= rhs.value;
+		}
+
+		bool operator>=( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
+			return lhs.value >= rhs.value;
+		}
 	}	// namespace glucose
 
 }  // namespace daw

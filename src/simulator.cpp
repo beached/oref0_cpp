@@ -29,10 +29,12 @@
 #include <daw/json/daw_json_link.h>
 
 #include "iob_calc.h"
+#include "glucose_unit.h"
 
 using namespace std::chrono_literals;
 using namespace std::chrono;
 using namespace date;
+using namespace daw::glucose;
 
 struct profile_t {
 	double isf;
@@ -41,15 +43,15 @@ struct profile_t {
 };	// profile_t
 
 struct glucose_state_t {
-	std::vector<double> values;
+	std::vector<mmol_L> values;
 	size_t value_capacity;
-	double target_value;
+	mmol_L target_value;
 
-	double current_value( ) const {
+	mmol_L current_value( ) const {
 		return values.back( );
 	}
 
-	double previous_value( ) const {
+	mmol_L previous_value( ) const {
 		assert( !values.empty( ) );
 		if( values.size( ) == 1 ) {
 			return values.front( );
@@ -57,14 +59,14 @@ struct glucose_state_t {
 		return *std::prev( values.end( ), 2 );
 	}
 
-	void add_value( double v ) {
+	void add_value( mmol_L v ) {
 		values.push_back( std::move( v ) );
 		while( values.size( ) > value_capacity ) {
 			values.erase( values.begin( ) );
 		}
 	}
 
-	glucose_state_t( double target, size_t capacity = 1 ):
+	glucose_state_t( mmol_L target, size_t capacity = 1 ):
 			values{ },
 			value_capacity{ capacity },
 			target_value{ target } {
@@ -74,7 +76,7 @@ struct glucose_state_t {
 	}
 			
 	glucose_state_t( ):
-			glucose_state_t{ 5.5 } { }
+			glucose_state_t{ 5.5_mmol_L } { }
 
 	~glucose_state_t( ) = default;
 	glucose_state_t( glucose_state_t const & ) = default;
@@ -175,7 +177,7 @@ int main( int, char ** ) {
 	double last_iob = 0.0;
 	double last_cob = 0.0;
 	glucose_state_t glucose_state;
-	double glucose_delta = 0.05;
+	mmol_L glucose_delta = 0.05_mmol_L;
 	double insulin_offset = 0.0;
 
 	std::cout << "Based on ICR=" << profile.icr << "g Carb/U ISF=" << profile.isf << "mmol/L/U basal_rate=" << basal_dose_per_hr;
@@ -250,23 +252,23 @@ int main( int, char ** ) {
 			add_insulin_dose( ts_now, carb_dose/profile.icr );
 		}
 	
-		double const insulin_drop = iob_diff * profile.isf;
-		double const carb_rise = (cob_diff / profile.icr) * profile.isf;
-		double const glucose_prev = glucose_state.previous_value( );
-		double const glucose_new = glucose_prev + carb_rise - insulin_drop;
-		double const expected_insulin_drop = -(profile.isf * iob);
-		double const expected_carb_rise = ((cob/profile.icr)*profile.isf);
-		double const expected_glucose = glucose_new + expected_insulin_drop + expected_carb_rise;
+		auto const insulin_drop = mmol_L{ iob_diff * profile.isf };
+		auto const carb_rise = mmol_L{(cob_diff / profile.icr) * profile.isf};
+		auto const glucose_prev = glucose_state.previous_value( );
+		auto const glucose_new = glucose_prev + carb_rise - insulin_drop;
+		auto const expected_insulin_drop = mmol_L{ -(profile.isf * iob) };
+		auto const expected_carb_rise = mmol_L{ (cob/profile.icr)*profile.isf };
+		auto const expected_glucose = glucose_new + expected_insulin_drop + expected_carb_rise;
 		glucose_state.add_value( glucose_new );
 
 		std::cout << ts_now << " t=" << cur_duration << " iob=" << iob << " active_ins=" << iob_diff << " cob=" << cob << "g active_carb=" << cob_diff << "g\n";
-		std::cout << "\t\tisf*iob=" << expected_insulin_drop << "mmol/L (cob/icr)*isf=" << expected_carb_rise << "mmol/L insulin_drop=" << -insulin_drop << "mmol/L carb_rise=" << carb_rise << "mmol/L\n";
-		std::cout << "\t\tprev_glucose=" << glucose_prev << " glucose=" << glucose_new << "mmol/L expected_glucose=" << expected_glucose << "mmol/L \n";
+		std::cout << "\t\tisf*iob=" << expected_insulin_drop << " (cob/icr)*isf=" << expected_carb_rise << " insulin_drop=" << -insulin_drop << " carb_rise=" << carb_rise << '\n';
+		std::cout << "\t\tprev_glucose=" << glucose_prev << " glucose=" << glucose_new << " expected_glucose=" << expected_glucose << '\n';
 		ts_now += 5min;
 		//std::this_thread::sleep_for( 1s );
 		clean_up( ts_now, insulin_doses, carb_doses );
 
-		insulin_offset = (expected_glucose - glucose_state.target_value)/profile.isf;
+		insulin_offset = static_cast<double>(expected_glucose - glucose_state.target_value)/profile.isf;
 
 		// If more insulin is needed to offset higher blood glucose give dose now
 		if( insulin_offset > 0.2 ) {

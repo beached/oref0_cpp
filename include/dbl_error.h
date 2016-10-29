@@ -29,23 +29,23 @@ namespace daw {
 		double m_value;
 		double m_error;
 	public:
-		constexpr dbl_error( ) noexcept;
+		dbl_error( ) noexcept;
 		~dbl_error( );
-		constexpr explicit dbl_error( double value ) noexcept;
-		constexpr dbl_error( double value, double error ) noexcept;
+		explicit dbl_error( double value ) noexcept;
+		dbl_error( double value, double error ) noexcept;
 
 		dbl_error( dbl_error const & other ) = default;
 		dbl_error( dbl_error && other ) = default;
 		dbl_error & operator=( dbl_error const & rhs ) = default;
 		dbl_error & operator=( dbl_error && rhs ) = default;
 
-		constexpr double & operator*( ) noexcept;
-		constexpr double const & operator*( ) const noexcept;
+		double & operator*( ) noexcept;
+		double const & operator*( ) const noexcept;
 
-		constexpr double const & value( ) const noexcept;
-		constexpr double & value( ) noexcept;
-		constexpr double const & error( ) const noexcept;
-		constexpr double & error( ) noexcept;
+		double const & value( ) const noexcept;
+		double & value( ) noexcept;
+		double const & error( ) const noexcept;
+		double & error( ) noexcept;
 
 		friend dbl_error operator+( dbl_error lhs, dbl_error const & rhs ) noexcept;
 		friend dbl_error operator-( dbl_error lhs, dbl_error const & rhs ) noexcept;

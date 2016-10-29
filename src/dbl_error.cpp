@@ -27,43 +27,43 @@
 #include "dbl_error.h"
 
 namespace daw {
-		constexpr dbl_error::dbl_error( double value, double error ) noexcept:
+		dbl_error::dbl_error( double value, double error ) noexcept:
 				m_value{ value },
 				m_error{ error } { }
 
-		constexpr dbl_error::dbl_error( ) noexcept:
+		dbl_error::dbl_error( ) noexcept:
 				dbl_error{ 0.0, 0.0 } { }
 
-		constexpr dbl_error::dbl_error( double value ) noexcept:
+		dbl_error::dbl_error( double value ) noexcept:
 				dbl_error{ value, 0.0 } { }
 
 		dbl_error::~dbl_error( ) { }
 
-		constexpr double & dbl_error::operator*( ) noexcept {
+		double & dbl_error::operator*( ) noexcept {
 			return m_value;
 		}
 
-		constexpr double const & dbl_error::operator*( ) const noexcept {
+		double const & dbl_error::operator*( ) const noexcept {
 			return m_value;
 		}
 
-		constexpr double const & dbl_error::value( ) const noexcept {
+		double const & dbl_error::value( ) const noexcept {
 			return m_value;
 		}
 
-		constexpr double & dbl_error::value( ) noexcept {
+		double & dbl_error::value( ) noexcept {
 			return m_value;
 		}
 
-		constexpr double const & dbl_error::error( ) const noexcept {
+		double const & dbl_error::error( ) const noexcept {
 			return m_error;
 		}
 
-		constexpr double & dbl_error::error( ) noexcept {
+		double & dbl_error::error( ) noexcept {
 			return m_error;
 		}
 		namespace {
-			constexpr double pow2( double const & value ) noexcept {
+			double pow2( double const & value ) noexcept {
 				return value*value;
 			}
 

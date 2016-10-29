@@ -35,6 +35,7 @@ namespace daw {
 			mmol_L( mg_dL const & g ) noexcept;
 			~mmol_L( );
 			explicit operator double( ) noexcept;
+			mmol_L & operator=( mg_dL const & rhs ) noexcept;
 
 			mmol_L( ) = default;
 			mmol_L( mmol_L const & ) = default;
@@ -43,6 +44,13 @@ namespace daw {
 			mmol_L & operator=( mmol_L && ) = default;
 			friend void swap( mmol_L & lhs, mmol_L & rhs ) noexcept;
 			std::string to_string( ) const;
+
+			mmol_L & operator+=( mmol_L const & rhs ) noexcept;
+			mmol_L & operator-=( mmol_L const & rhs ) noexcept;
+			mmol_L & operator*=( mmol_L const & rhs ) noexcept;
+			mmol_L & operator/=( mmol_L const & rhs ) noexcept;
+			mmol_L & operator*=( double const & rhs ) noexcept;
+			mmol_L & operator/=( double const & rhs ) noexcept;
 		};	// mmol_L
 
 		void swap( mmol_L & lhs, mmol_L & rhs ) noexcept;
@@ -54,6 +62,7 @@ namespace daw {
 		mmol_L operator/( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
 		mmol_L operator*( mmol_L const & lhs, double const & rhs ) noexcept;
 		mmol_L operator/( mmol_L const & lhs, double const & rhs ) noexcept;
+		mmol_L operator-( mmol_L rhs ) noexcept;
 		bool operator==( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
 		bool operator!=( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
 		bool operator<( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
@@ -68,6 +77,7 @@ namespace daw {
 			mg_dL( mmol_L const & g ) noexcept;
 			~mg_dL( );
 			explicit operator double( ) noexcept;
+			mg_dL & operator=( mmol_L const & rhs ) noexcept;
 
 			mg_dL( ) = default;
 			mg_dL( mg_dL const & ) = default;
@@ -76,11 +86,31 @@ namespace daw {
 			mg_dL & operator=( mg_dL && ) = default;
 			friend void swap( mg_dL & lhs, mg_dL & rhs ) noexcept;
 			std::string to_string( ) const;
+
+			mg_dL & operator+=( mg_dL const & rhs ) noexcept;
+			mg_dL & operator-=( mg_dL const & rhs ) noexcept;
+			mg_dL & operator*=( mg_dL const & rhs ) noexcept;
+			mg_dL & operator/=( mg_dL const & rhs ) noexcept;
+			mg_dL & operator*=( double const & rhs ) noexcept;
+			mg_dL & operator/=( double const & rhs ) noexcept;
 		};	// mg_dL
 
 		void swap( mg_dL & lhs, mg_dL & rhs ) noexcept;
 		std::ostream & operator<<( std::ostream & os, mg_dL const & glucose );	
 
+		mg_dL operator+( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
+		mg_dL operator-( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
+		mg_dL operator*( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
+		mg_dL operator/( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
+		mg_dL operator*( mg_dL const & lhs, double const & rhs ) noexcept;
+		mg_dL operator/( mg_dL const & lhs, double const & rhs ) noexcept;
+		mg_dL operator-( mg_dL rhs ) noexcept;
+		bool operator==( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
+		bool operator!=( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
+		bool operator<( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
+		bool operator>( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
+		bool operator<=( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
+		bool operator>=( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
 	}	// namespace glucose
 }    // namespace daw
 
