@@ -28,28 +28,40 @@
 
 namespace ns {
 	namespace glucose {
-		namespace {
-			constexpr double to_mg_dL( mmol_L const & glucose ) noexcept {
-				return glucose.value / 0.0555;
-			}
+		glucose_t::~glucose_t( ) { }
 
-			constexpr double to_mmol_L( mg_dL const & glucose ) noexcept {
-				return glucose.value * 0.0555;
-			}
-		}	// namespace anonymous
+		std::ostream & operator<<( std::ostream & os, glucose_t const & glucose ) {
+			os << glucose.to_string( );
+			return os;
+		}
 
+		namespace impl {
+			namespace {
+				constexpr double to_mg_dL( mmol_L const & glucose ) noexcept {
+					return glucose.value / 0.0555;
+				}
+
+				constexpr double to_mmol_L( mg_dL const & glucose ) noexcept {
+					return glucose.value * 0.0555;
+				}
+
+			}	// namespace anonymous
+		}	// namespace impl
 		mmol_L::mmol_L( double d ) noexcept:
+				glucose_t{ },
 				value{ std::move( d ) } { }
 
 		mmol_L::mmol_L( mg_dL const & g ) noexcept:
-				value{ to_mmol_L( g ) } { }
+				glucose_t{ },
+				value{ impl::to_mmol_L( g ) } { }
 
 		mmol_L::operator double( ) noexcept {
 			return value;
 		}
 
 		mmol_L & mmol_L::operator=( mg_dL const & rhs ) noexcept {
-			value = to_mmol_L( rhs ); 
+			value = impl::to_mmol_L( rhs ); 
+			return *this;
 		}
 
 		mmol_L::~mmol_L( ) { }
@@ -65,11 +77,6 @@ namespace ns {
 			return ss.str( );
 		}
 
-		std::ostream & operator<<( std::ostream & os, mmol_L const & glucose ) {
-			os << glucose.to_string( );
-			return os;
-		}
-
 		mmol_L & mmol_L::operator+=( mmol_L const & rhs ) noexcept {
 			value += rhs.value;
 			return *this;
@@ -83,6 +90,10 @@ namespace ns {
 		mmol_L & mmol_L::scale( double factor ) noexcept {
 			value *= factor;
 			return *this;
+		}
+
+		mmol_L mmol_L::scale( double factor ) const noexcept {
+			return mmol_L{ value * factor };
 		}
 
 		mmol_L operator+( mmol_L const & lhs, mmol_L const & rhs ) noexcept {
@@ -123,10 +134,12 @@ namespace ns {
 		}
 
 		mg_dL::mg_dL( double d ) noexcept:
+				glucose_t{ },
 				value{ std::move( d ) } { }
 
 		mg_dL::mg_dL( mmol_L const & g ) noexcept:
-				value{ to_mg_dL( g ) } { }
+				glucose_t{ },
+				value{ impl::to_mg_dL( g ) } { }
 
 		mg_dL::~mg_dL( ) { }
 
@@ -135,7 +148,8 @@ namespace ns {
 		}
 		
 		mg_dL & mg_dL::operator=( mmol_L const & rhs ) noexcept {
-			value = to_mg_dL( rhs ); 
+			value = impl::to_mg_dL( rhs ); 
+			return *this;
 		}
 
 		void swap( mg_dL & lhs, mg_dL & rhs ) noexcept {
@@ -147,11 +161,6 @@ namespace ns {
 			std::stringstream ss;
 			ss << value << "mg/dL";
 			return ss.str( );
-		}
-
-		std::ostream & operator<<( std::ostream & os, mg_dL const & glucose ) {
-			os << glucose.to_string( );
-			return os;
 		}
 
 		mg_dL & mg_dL::operator+=( mg_dL const & rhs ) noexcept {
@@ -167,6 +176,10 @@ namespace ns {
 		mg_dL & mg_dL::scale( double factor ) noexcept {
 			value *= factor;
 			return *this;
+		}
+
+		mg_dL mg_dL::scale( double factor ) const noexcept {
+			return mg_dL{ value * factor };
 		}
 
 		mg_dL operator+( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
@@ -204,6 +217,22 @@ namespace ns {
 
 		bool operator>=( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
 			return lhs.value >= rhs.value;
+		}
+
+		mg_dL to_mg_dL( mg_dL glucose ) noexcept {
+			return glucose;
+		}
+
+		mg_dL to_mg_dL( mmol_L const & glucose ) noexcept {
+			return mg_dL{ glucose };
+		}
+
+		mmol_L to_mmol_L( mg_dL const & glucose ) noexcept {
+			return mmol_L{ glucose };
+		}
+
+		mmol_L to_mmol_L( mmol_L glucose ) noexcept {
+			return glucose;
 		}
 	}	// namespace glucose
 

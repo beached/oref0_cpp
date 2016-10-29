@@ -26,9 +26,22 @@
 
 namespace ns {
 	namespace glucose {
+		struct glucose_t {
+			glucose_t( ) = default;
+			glucose_t( glucose_t const & ) = default;
+			glucose_t( glucose_t && ) = default;
+			glucose_t & operator=( glucose_t const & ) = default;
+			glucose_t & operator=( glucose_t && ) = default;
+
+			virtual ~glucose_t( );
+			virtual std::string to_string( ) const = 0;
+		};	// glucose_t
+
+		std::ostream & operator<<( std::ostream & os, glucose_t const & glucose );	
+
 		struct mg_dL;
 
-		struct mmol_L{
+		struct mmol_L: public glucose_t {
 			double value;
 
 			explicit mmol_L( double d ) noexcept;
@@ -43,16 +56,16 @@ namespace ns {
 			mmol_L & operator=( mmol_L const & ) = default;
 			mmol_L & operator=( mmol_L && ) = default;
 			friend void swap( mmol_L & lhs, mmol_L & rhs ) noexcept;
-			std::string to_string( ) const;
+			std::string to_string( ) const override;
 
 			mmol_L & operator+=( mmol_L const & rhs ) noexcept;
 			mmol_L & operator-=( mmol_L const & rhs ) noexcept;
 
 			mmol_L & scale( double factor ) noexcept;
+			mmol_L scale( double factor ) const noexcept;
 		};	// mmol_L
 
 		void swap( mmol_L & lhs, mmol_L & rhs ) noexcept;
-		std::ostream & operator<<( std::ostream & os, mmol_L const & glucose );	
 
 		mmol_L operator+( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
 		mmol_L operator-( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
@@ -64,7 +77,7 @@ namespace ns {
 		bool operator<=( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
 		bool operator>=( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
 
-		struct mg_dL {
+		struct mg_dL: public glucose_t {
 			double value;
 
 			explicit mg_dL( double d ) noexcept;
@@ -79,16 +92,16 @@ namespace ns {
 			mg_dL & operator=( mg_dL const & ) = default;
 			mg_dL & operator=( mg_dL && ) = default;
 			friend void swap( mg_dL & lhs, mg_dL & rhs ) noexcept;
-			std::string to_string( ) const;
+			std::string to_string( ) const override;
 
 			mg_dL & operator+=( mg_dL const & rhs ) noexcept;
 			mg_dL & operator-=( mg_dL const & rhs ) noexcept;
 
 			mg_dL & scale( double factor ) noexcept;
+			mg_dL scale( double factor ) const noexcept;
 		};	// mg_dL
 
 		void swap( mg_dL & lhs, mg_dL & rhs ) noexcept;
-		std::ostream & operator<<( std::ostream & os, mg_dL const & glucose );	
 
 		mg_dL operator+( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
 		mg_dL operator-( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
@@ -99,6 +112,11 @@ namespace ns {
 		bool operator>( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
 		bool operator<=( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
 		bool operator>=( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
+
+		mg_dL to_mg_dL( mg_dL const & glucose ) noexcept;
+		mg_dL to_mg_dL( mmol_L const & glucose ) noexcept;
+		mmol_L to_mmol_L( mg_dL const & glucose ) noexcept;
+		mmol_L to_mmol_L( mmol_L const & glucose ) noexcept;
 	}	// namespace glucose
 }    // namespace ns
 
