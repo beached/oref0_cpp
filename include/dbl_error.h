@@ -22,6 +22,8 @@
 
 #pragma once
 
+#include <cmath>
+
 namespace daw {
 	class dbl_error {
 		double m_value;
@@ -49,6 +51,13 @@ namespace daw {
 		friend dbl_error operator-( dbl_error lhs, dbl_error const & rhs ) noexcept;
 		friend dbl_error operator*( dbl_error const & lhs, dbl_error const & rhs ) noexcept;
 		friend dbl_error operator/( dbl_error const & lhs, dbl_error const & rhs ) noexcept;
+
+		friend dbl_error fabs( dbl_error value ) noexcept;
+		friend dbl_error pow( dbl_error const & base, dbl_error const & exponent ) noexcept;
+		friend dbl_error sqrt( dbl_error const & value ) noexcept;
+
+		template<typename N> 
+		friend dbl_error pow( dbl_error const & base, N const & exponent ) noexcept;
 	};	// dbl_error
 
 	dbl_error operator+( dbl_error lhs, dbl_error const & rhs ) noexcept;
@@ -62,8 +71,9 @@ namespace daw {
 
 	template<typename N>
 	dbl_error pow( dbl_error const & base, N const & exponent ) noexcept {
+		// TODO: determine what to do with a 0
 		dbl_error result{ pow( base.m_value, exponent ) };
-		result.m_error = base.m_value != 0 ? fabs( exponent ) * (base.m_error/fabs(base.m_value)) * result.m_value : 
+		result.m_error = FP_ZERO == std::fpclassify( base.m_value ) ? std::fabs( exponent ) * (base.m_error/std::fabs(base.m_value)) * result.m_value : base.m_error;
 		return result;
 	}
 }    // namespace daw

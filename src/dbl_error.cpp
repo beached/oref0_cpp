@@ -21,6 +21,8 @@
 // SOFTWARE.
 
 #include <cmath>
+#include <exception>
+#include <stdexcept>
 
 #include "dbl_error.h"
 
@@ -66,7 +68,7 @@ namespace daw {
 			}
 
 			double sqrt_sum_of_sqrs( double const & v1, double const & v2 ) noexcept {
-				return sqrt( pow2( v1 ) + pow2( v2 ) );
+				return std::sqrt( pow2( v1 ) + pow2( v2 ) );
 			}
 		}	// namespace anonymous
 
@@ -84,28 +86,28 @@ namespace daw {
 
 		dbl_error operator*( dbl_error const & lhs, dbl_error const & rhs ) noexcept {
 			dbl_error result{ lhs.m_value * rhs.m_value }; 
-			result.m_error = fabs( result.m_value ) * sqrt_sum_of_sqrs( lhs.m_error/lhs.m_value, rhs.m_error/rhs.m_value );
+			result.m_error = std::fabs( result.m_value ) * sqrt_sum_of_sqrs( lhs.m_error/lhs.m_value, rhs.m_error/rhs.m_value );
 			return result;
 		}
 
 		dbl_error operator/( dbl_error const & lhs, dbl_error const & rhs ) noexcept {
 			dbl_error result{ lhs.m_value / rhs.m_value }; 
-			result.m_error = fabs( result.m_value ) * sqrt_sum_of_sqrs( lhs.m_error/lhs.m_value, rhs.m_error/rhs.m_value );
+			result.m_error = std::fabs( result.m_value ) * sqrt_sum_of_sqrs( lhs.m_error/lhs.m_value, rhs.m_error/rhs.m_value );
 			return result;
 		}
 
 		dbl_error fabs( dbl_error value ) noexcept {
-			value.m_value = fabs( value.m_value );
+			value.m_value = std::fabs( value.m_value );
 			return value;
 		}
 
 		dbl_error pow( dbl_error const & base, dbl_error const & exponent ) noexcept {
-
+			throw std::runtime_error{ "Not Implemented" };
+			return dbl_error{ };
 		}
 
 		dbl_error sqrt( dbl_error const & value ) noexcept {
-			dbl_error result{ sqrt( value.m_value ) };
-			result.m_error = 
+			dbl_error result{ std::sqrt( value.m_value ) };
 
 			return result;
 		}

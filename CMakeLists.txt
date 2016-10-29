@@ -73,6 +73,7 @@ link_directories( ${Boost_LIBRARY_DIRS} )
 set( HEADER_FILES
 	${HEADER_FOLDER}/data_types.h
 	${HEADER_FOLDER}/dbl_error.h
+	${HEADER_FOLDER}/glucose_unit.h
 	${HEADER_FOLDER}/requested_temp.h
 	${HEADER_FOLDER}/round_basal.h
 	${HEADER_FOLDER}/lib_iob_calculate.h
@@ -82,6 +83,7 @@ set( HEADER_FILES
 set( SOURCE_FILES
 	${SOURCE_FOLDER}/data_types.cpp
 	${SOURCE_FOLDER}/dbl_error.cpp
+	${SOURCE_FOLDER}/glucose_unit.cpp
 	${SOURCE_FOLDER}/round_basal.cpp
 	${SOURCE_FOLDER}/lib_iob_calculate.cpp
 	${SOURCE_FOLDER}/iob_calc.cpp
@@ -99,6 +101,9 @@ target_link_libraries( simulator_bin oref0 parse_json char_range ${Boost_LIBRARI
 
 add_executable( iob_calc_test_bin ${HEADER_FILES} ${TEST_FOLDER}/iob_calc_test.cpp )
 target_link_libraries( iob_calc_test_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+
+add_executable( glucose_unit_test_bin ${HEADER_FILES} ${TEST_FOLDER}/glucose_unit_test.cpp )
+target_link_libraries( glucose_unit_test_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 install( TARGETS oref0 DESTINATION lib )
 install( DIRECTORY ${HEADER_FOLDER}/ DESTINATION include/daw/oref0 )
