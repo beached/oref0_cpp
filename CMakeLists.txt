@@ -72,6 +72,7 @@ link_directories( ${Boost_LIBRARY_DIRS} )
 
 set( HEADER_FILES
 	${HEADER_FOLDER}/data_types.h
+	${HEADER_FOLDER}/dbl_error.h
 	${HEADER_FOLDER}/requested_temp.h
 	${HEADER_FOLDER}/round_basal.h
 	${HEADER_FOLDER}/lib_iob_calculate.h
@@ -80,6 +81,7 @@ set( HEADER_FILES
 
 set( SOURCE_FILES
 	${SOURCE_FOLDER}/data_types.cpp
+	${SOURCE_FOLDER}/dbl_error.cpp
 	${SOURCE_FOLDER}/round_basal.cpp
 	${SOURCE_FOLDER}/lib_iob_calculate.cpp
 	${SOURCE_FOLDER}/iob_calc.cpp
