@@ -110,11 +110,11 @@ namespace ns {
 	}
 }    // namespace ns
 
-ns::carb_t operator"" _g( long double d ) noexcept {
+ns::carb_t operator"" _g_CHO( long double d ) noexcept {
 	return ns::carb_t{ static_cast<double>( d ) };
 }
 
-ns::carb_t operator"" _g( unsigned long long i ) noexcept {
+ns::carb_t operator"" _g_CHO( unsigned long long i ) noexcept {
 	return ns::carb_t{ static_cast<double>( i ) };
 }
 

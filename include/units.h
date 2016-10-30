@@ -1,4 +1,3 @@
-
 // The MIT License (MIT)
 //
 // Copyright (c) 2016 Darrell Wright
@@ -21,12 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "insulin_time_unit.h"
+#pragma once
 
-ns::insulin_per_hour_t operator"" _U_hr( long double d ) noexcept {
-	return ns::insulin_per_hour_t{ ns::insulin_t{ static_cast<double>(d) } };
-}
-ns::insulin_per_hour_t operator"" _U_hr( unsigned long long i ) noexcept {
-	return ns::insulin_per_hour_t{ ns::insulin_t{ static_cast<double>(i) } };
-}
+#include <carb_unit.h>
+#include <glucose_unit.h>
+#include <icr_unit.h>
+#include <insulin_time_unit.h>
+#include <insulin_unit.h>
 

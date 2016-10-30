@@ -62,5 +62,5 @@ namespace ns {
 	bool operator>=( carb_t const & lhs, carb_t const & rhs ) noexcept;
 }    // namespace ns
 
-ns::carb_t operator"" _g( long double d ) noexcept;
-ns::carb_t operator"" _g( unsigned long long i ) noexcept;
+ns::carb_t operator"" _g_CHO( long double d ) noexcept;
+ns::carb_t operator"" _g_CHO( unsigned long long i ) noexcept;

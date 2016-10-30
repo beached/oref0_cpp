@@ -29,22 +29,31 @@
 #include "insulin_unit.h"
 
 namespace ns {
-	template<size_t MINUTES>
-	struct insulin_per_MINUTES_t{
+	template<size_t SECONDS>
+	struct insulin_per_SECONDS_t{
 		insulin_t value;
 
-		explicit insulin_per_MINUTES_t( insulin_t insulin ) noexcept:
+		explicit insulin_per_SECONDS_t( insulin_t insulin ) noexcept:
 				value{ std::move( insulin ) } { }		
 
-		~insulin_per_MINUTES_t( ) = default;
+		template<size_t UNIT_TIME>
+		insulin_per_SECONDS_t( insulin_per_SECONDS_t<UNIT_TIME> const & other ) noexcept:
+				value{ other.per( SECONDS ) } { }
 
-		insulin_per_MINUTES_t( ) = default;
-		insulin_per_MINUTES_t( insulin_per_MINUTES_t const & ) = default;
-		insulin_per_MINUTES_t( insulin_per_MINUTES_t && ) = default;
-		insulin_per_MINUTES_t & operator=( insulin_per_MINUTES_t const & ) = default;
-		insulin_per_MINUTES_t & operator=( insulin_per_MINUTES_t && ) = default;
+		template<size_t UNIT_TIME>
+		insulin_per_SECONDS_t & operator=( insulin_per_SECONDS_t<UNIT_TIME> const & other ) noexcept {
+			value = other.per( SECONDS );
+		}
 
-		friend void swap( insulin_per_MINUTES_t & lhs, insulin_per_MINUTES_t & rhs ) noexcept {
+		~insulin_per_SECONDS_t( ) = default;
+
+		insulin_per_SECONDS_t( ) = default;
+		insulin_per_SECONDS_t( insulin_per_SECONDS_t const & ) = default;
+		insulin_per_SECONDS_t( insulin_per_SECONDS_t && ) = default;
+		insulin_per_SECONDS_t & operator=( insulin_per_SECONDS_t const & ) = default;
+		insulin_per_SECONDS_t & operator=( insulin_per_SECONDS_t && ) = default;
+
+		friend void swap( insulin_per_SECONDS_t & lhs, insulin_per_SECONDS_t & rhs ) noexcept {
 			using std::swap;
 			swap( lhs.value, rhs.value );
 		}
@@ -52,44 +61,50 @@ namespace ns {
 		std::string to_string( ) const {
 			std::stringstream ss;
 			ss << value;
-			switch( MINUTES ) {
-			case 1:
+			switch( SECONDS ) {
+			case 60:
 				ss << "/min";
 				break;
-			case 60:
+			case 3600:
 				ss << "/hr";
 				break;
 			default:
-				ss << "/" << MINUTES << "min";
+				ss << "/" << SECONDS << "min";
 				break;
 			}
 			return ss.str( );		
 		}
 
-		insulin_per_MINUTES_t & scale( double factor ) noexcept {
+		insulin_per_SECONDS_t & scale( double factor ) noexcept {
 			value.scale( factor );
 			return *this;
 		}
 
-		insulin_per_MINUTES_t scale( double factor ) const noexcept {
-			insulin_per_MINUTES_t result{ *this };
+		insulin_per_SECONDS_t scale( double factor ) const noexcept {
+			insulin_per_SECONDS_t result{ *this };
 			result.scale( factor );
 			return result;
 		}
 
-		insulin_t per( std::chrono::minutes duration ) const {
+		template<typename... Args>
+		insulin_t per( std::chrono::duration<Args...> duration ) const {
 			auto result = value;
-			auto const factor = static_cast<double>(duration.count( )/MINUTES);
+			auto const factor = static_cast<double>(std::chrono::duration_cast<std::chrono::seconds>(duration).count( )/SECONDS);
 			value.scale( factor );
 			return value;
 		}
-	};	// insulin_per_MINUTES_t
+	};	// insulin_per_SECONDS_t
 
-	using insulin_per_hour_t = insulin_per_MINUTES_t<60>;
-	using insulin_per_minute_t = insulin_per_MINUTES_t<1>;
+	using insulin_per_hour_t = insulin_per_SECONDS_t<3600>;
 
-	template<size_t MINUTES>
-	std::ostream & operator<<( std::ostream & os, insulin_per_MINUTES_t<MINUTES> const & insulin_rate ) {
+	template<typename... Args>
+	insulin_per_hour_t operator/( insulin_t const & lhs, std::chrono::duration<Args...> const & rhs ) noexcept {
+		double const tp = std::chrono::duration_cast<std::chrono::seconds>( rhs ).count( );
+		return insulin_per_hour_t{ lhs.scale( tp / 3600.0 ) };
+	}
+
+	template<size_t SECONDS>
+	std::ostream & operator<<( std::ostream & os, insulin_per_SECONDS_t<SECONDS> const & insulin_rate ) {
 		os << insulin_rate.to_string( );
 		return os;
 	}
@@ -97,5 +112,3 @@ namespace ns {
 
 ns::insulin_per_hour_t operator"" _U_hr( long double d ) noexcept;
 ns::insulin_per_hour_t operator"" _U_hr( unsigned long long i ) noexcept;
-ns::insulin_per_minute_t operator"" _U_min( long double d ) noexcept;
-ns::insulin_per_minute_t operator"" _U_min( unsigned long long i ) noexcept;

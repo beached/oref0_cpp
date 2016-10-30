@@ -74,6 +74,7 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/data_types.h
 	${HEADER_FOLDER}/dbl_error.h
 	${HEADER_FOLDER}/glucose_unit.h
+	${HEADER_FOLDER}/icr_unit.h
 	${HEADER_FOLDER}/insulin_unit.h
 	${HEADER_FOLDER}/insulin_time_unit.h
 	${HEADER_FOLDER}/carb_unit.h
@@ -87,6 +88,7 @@ set( SOURCE_FILES
 	${SOURCE_FOLDER}/data_types.cpp
 	${SOURCE_FOLDER}/dbl_error.cpp
 	${SOURCE_FOLDER}/glucose_unit.cpp
+	${SOURCE_FOLDER}/icr_unit.cpp
 	${SOURCE_FOLDER}/insulin_unit.cpp
 	${SOURCE_FOLDER}/insulin_time_unit.cpp
 	${SOURCE_FOLDER}/carb_unit.cpp
