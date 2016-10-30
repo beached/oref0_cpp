@@ -25,13 +25,14 @@
 #include <sstream>
 
 #include "glucose_unit.h"
+#include "insulin_unit.h"
 #include "isf_unit.h"
 
 namespace ns {
-	isf_t::icr_t( glucose_t carb ) noexcept:
+	isf_t::isf_t( glucose_t carb ) noexcept:
 			value{ std::move( carb ) } { }
 
-	isf_t::~icr_t( ) { }
+	isf_t::~isf_t( ) { }
 
 	std::string isf_t::to_string( ) const {
 		std::stringstream ss;
@@ -39,47 +40,59 @@ namespace ns {
 		return ss.str( );
 	}
 
-	isf_t & icr_t::scale( double factor ) noexcept {
+	isf_t & isf_t::scale( double factor ) noexcept {
 		value.scale( factor );
 		return *this;
 	}
 
-	isf_t icr_t::scale( double factor ) const noexcept {
+	isf_t isf_t::scale( double factor ) const noexcept {
 		value.scale( factor );
 		return *this;
 	}
 
-	void swap( isf_t & lhs, icr_t & rhs ) noexcept {
+	void swap( isf_t & lhs, isf_t & rhs ) noexcept {
 		using std::swap;
 		swap( lhs.value, rhs.value );
 	}
 
-	std::ostream & operator<<( std::ostream & os, isf_t const & icr ) {
+	std::ostream & operator<<( std::ostream & os, isf_t const & isf ) {
 		os << isf.to_string( );
 		return os;
 	}
 
-	bool operator==( isf_t const & lhs, icr_t const & rhs ) noexcept {
+	insulin_t operator/( glucose_t const & lhs, isf_t const & rhs ) noexcept {
+		return insulin_t{ lhs.value/rhs.value.value };
+	}
+
+	glucose_t operator*( insulin_t const & lhs, isf_t const & rhs ) noexcept {
+		return glucose_t{ lhs.value*rhs.value.value };
+	}
+
+	glucose_t operator*( isf_t const & lhs, insulin_t const & rhs ) noexcept {
+		return glucose_t{ lhs.value.value*rhs.value };
+	}
+
+	bool operator==( isf_t const & lhs, isf_t const & rhs ) noexcept {
 		return lhs.value == rhs.value;
 	}
 
-	bool operator!=( isf_t const & lhs, icr_t const & rhs ) noexcept {
+	bool operator!=( isf_t const & lhs, isf_t const & rhs ) noexcept {
 		return lhs.value != rhs.value;
 	}
 
-	bool operator<( isf_t const & lhs, icr_t const & rhs ) noexcept {
+	bool operator<( isf_t const & lhs, isf_t const & rhs ) noexcept {
 		return lhs.value < rhs.value;
 	}
 
-	bool operator>( isf_t const & lhs, icr_t const & rhs ) noexcept {
+	bool operator>( isf_t const & lhs, isf_t const & rhs ) noexcept {
 		return lhs.value > rhs.value;
 	}
 
-	bool operator<=( isf_t const & lhs, icr_t const & rhs ) noexcept {
+	bool operator<=( isf_t const & lhs, isf_t const & rhs ) noexcept {
 		return lhs.value <= rhs.value;
 	}
 
-	bool operator>=( isf_t const & lhs, icr_t const & rhs ) noexcept {
+	bool operator>=( isf_t const & lhs, isf_t const & rhs ) noexcept {
 		return lhs.value >= rhs.value;
 	}
 }    // namespace ns

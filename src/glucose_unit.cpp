@@ -73,13 +73,17 @@ namespace ns {
 		return glucose_t{ d };
 	}
 
-	std::string glucose_t::to_string( ) const {
+	std::string glucose_t::to_string( glucose_unit unit ) const {
 		std::stringstream ss;
-		switch( get_static_glucose_unit( ) ) {
+		switch( unit ) {
 			case glucose_unit::mmol_L: ss << to_mmol_L( value ) << "mmol/L"; break;
-			case glucose_unit::mg_dL: ss << "mg_dL"; break;
+			case glucose_unit::mg_dL: ss << value << "mg_dL"; break;
 		}
 		return ss.str( );
+	}
+
+	std::string glucose_t::to_string( ) const {
+		return to_string( get_static_glucose_unit( ) );
 	}
 
 	glucose_t & glucose_t::operator+=( glucose_t const & rhs ) noexcept {
@@ -101,17 +105,21 @@ namespace ns {
 		return glucose_t{ value * factor };
 	}
 
-	glucose_t operator+( glucose_t const & lhs, glucose_t const & rhs ) noexcept {
-		return glucose_t{ lhs.value + rhs.value };
+	glucose_t operator+( glucose_t lhs, glucose_t const & rhs ) noexcept {
+		return lhs += rhs;
 	}
 
-	glucose_t operator-( glucose_t const & lhs, glucose_t const & rhs ) noexcept {
-		return glucose_t{ lhs.value - rhs.value };
+	glucose_t operator-( glucose_t lhs, glucose_t const & rhs ) noexcept {
+		return lhs -= rhs;
 	}
 
-	glucose_t operator-( glucose_t rhs ) noexcept {
-		rhs.value *= -1.0; 
-		return rhs;
+	glucose_t & glucose_t::operator-( ) noexcept {
+		value *= -1.0; 
+		return *this;
+	}
+
+	glucose_t glucose_t::operator-( ) const noexcept {
+		return glucose_t{ value * -1.0 };
 	}
 
 	bool operator==( glucose_t const & lhs, glucose_t const & rhs ) noexcept {

@@ -37,7 +37,7 @@ using namespace date;
 using namespace ns;
 
 struct profile_t {
-	double isf;
+	isf_t isf;
 	icr_t icr;
 
 };	// profile_t
@@ -134,7 +134,7 @@ struct carb_dose_t {
 			}
 			return D;
 		}( );
-		std::cout << "~~~~calc_cob: AT=" << AT << " D=" << D << " cob=" << result << " %=" << ((result/item.amount.value)*100) << '\n';
+		//std::cout << "~~~~calc_cob: AT=" << AT << " D=" << D << " cob=" << result << " %=" << ((result/item.amount.value)*100) << '\n';
 		return carb_t{ result };
 	}
 
@@ -168,8 +168,9 @@ insulin_t calc_iob( time_point<system_clock> const & ts_now, insulin_dose item )
 }
 
 int main( int, char ** ) {
+	//set_default_glucose_display_unit( glucose_unit::mg_dL );
 	auto const basal_rate = 1.2_U_hr;
-	profile_t profile { 3.5, icr_t{ 15_g_CHO } }; 
+	profile_t profile { isf_t{ 3.5_mmol_L }, icr_t{ 15_g_CHO } }; 
 	carb_t const est_liver_carb_per_hr = basal_rate.value*profile.icr;	// UNITS need carbs/hr
 	auto const est_liver_carb_per_min = est_liver_carb_per_hr.scale( 1.0/60.0 );	// UNITS
 	std::vector<insulin_dose> insulin_doses;
@@ -184,13 +185,13 @@ int main( int, char ** ) {
 	std::cout << " it is estimated that the liver outputs " << est_liver_carb_per_hr << "/hr of glucose or " << est_liver_carb_per_min << "/min\n";
 	
 	auto const add_insulin_dose = [&last_iob, &insulin_doses]( time_point<system_clock> const & when, insulin_t amount, insulin_duration_t dia = insulin_duration_t::t240 ) {
-		std::cout << "~~insulin_dose: " << amount << '\n';
+		//std::cout << "~~insulin_dose: " << amount << '\n';
 		last_iob += amount;
 		insulin_doses.emplace_back( amount, dia, when );
 	};
 
 	auto const add_carb_dose = [&last_cob, &carb_doses]( time_point<system_clock> const & when, carb_t amount, double absorption_rate = 0.5 ) {
-		std::cout << "~~carb_dose: " << amount << '\n';
+		//std::cout << "~~carb_dose: " << amount << '\n';
 		last_cob += amount;
 		carb_doses.emplace_back( when, amount, absorption_rate );
 	};
@@ -247,12 +248,12 @@ int main( int, char ** ) {
 			add_insulin_dose( ts_now, carb_dose/profile.icr );
 		}
 	
-		auto const insulin_drop = mmol_L( iob_diff.value * profile.isf );	// UNITS
-		auto const carb_rise = mmol_L((cob_diff / profile.icr).value * profile.isf);// UNITS
+		auto const insulin_drop = iob_diff * profile.isf;
+		auto const carb_rise = (cob_diff / profile.icr) * profile.isf;
 		auto const glucose_prev = glucose_state.previous_value( );
 		auto const glucose_new = glucose_prev + carb_rise - insulin_drop;
-		auto const expected_insulin_drop = mmol_L( -profile.isf * iob.value );	// UNITS
-		auto const expected_carb_rise = mmol_L( (cob/profile.icr).value*profile.isf );	// UNITS 
+		auto const expected_insulin_drop = -(profile.isf * iob);
+		auto const expected_carb_rise = (cob/profile.icr)*profile.isf; 
 		auto const expected_glucose = glucose_new + expected_insulin_drop + expected_carb_rise;
 		glucose_state.add_value( glucose_new );
 		if( glucose_new < min_bg ) {
@@ -263,12 +264,12 @@ int main( int, char ** ) {
 		}
 		std::cout << ts_now << " t=" << cur_duration << " iob=" << iob << " active_ins=" << iob_diff << " cob=" << cob << " active_carb=" << cob_diff << "\n";
 		std::cout << "\t\tisf*iob=" << expected_insulin_drop << " (cob/icr)*isf=" << expected_carb_rise << " insulin_drop=" << -insulin_drop << " carb_rise=" << carb_rise << '\n';
-		std::cout << "\t\tprev_glucose=" << glucose_prev << " glucose=" << glucose_new << " expected_glucose=" << expected_glucose << "min=" << min_bg << " max=" << max_bg << '\n';
+		std::cout << "\t\tprev_glucose=" << glucose_prev << " glucose=" << glucose_new << " expected_glucose=" << expected_glucose << " min=" << min_bg << " max=" << max_bg << '\n';
 		ts_now += 5min;
 		//std::this_thread::sleep_for( 1s );
 		clean_up( ts_now, insulin_doses, carb_doses );
 
-		insulin_offset = insulin_t{ static_cast<double>(expected_glucose - glucose_state.target_value)/profile.isf };
+		insulin_offset = (expected_glucose - glucose_state.target_value)/profile.isf;
 
 		// If more insulin is needed to offset higher blood glucose give dose now
 		if( insulin_offset > 0.2_U ) {

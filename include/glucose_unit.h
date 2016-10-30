@@ -30,10 +30,9 @@ namespace ns {
 	glucose_unit get_default_glucose_display_unit( );
 	void set_default_glucose_display_unit( glucose_unit unit );
 
-	class glucose_t {
+	struct glucose_t {
 		double value;
 
-	public:
 		explicit glucose_t( double d ) noexcept;
 		~glucose_t( );
 		explicit operator double( ) noexcept;
@@ -44,10 +43,14 @@ namespace ns {
 		glucose_t & operator=( glucose_t const & ) = default;
 		glucose_t & operator=( glucose_t && ) = default;
 		friend void swap( glucose_t & lhs, glucose_t & rhs ) noexcept;
+
 		std::string to_string( ) const;
+		std::string to_string( glucose_unit unit ) const;
 
 		glucose_t & operator+=( glucose_t const & rhs ) noexcept;
 		glucose_t & operator-=( glucose_t const & rhs ) noexcept;
+		glucose_t & operator-( ) noexcept;
+		glucose_t operator-( ) const noexcept;
 
 		glucose_t & scale( double factor ) noexcept;
 		glucose_t scale( double factor ) const noexcept;
@@ -61,9 +64,8 @@ namespace ns {
 	glucose_t mmol_L( double d ) noexcept;
 	glucose_t mg_dL( double d ) noexcept;
 
-	glucose_t operator+( glucose_t const & lhs, glucose_t const & rhs ) noexcept;
-	glucose_t operator-( glucose_t const & lhs, glucose_t const & rhs ) noexcept;
-	glucose_t operator-( glucose_t rhs ) noexcept;
+	glucose_t operator+( glucose_t lhs, glucose_t const & rhs ) noexcept;
+	glucose_t operator-( glucose_t lhs, glucose_t const & rhs ) noexcept;
 	bool operator==( glucose_t const & lhs, glucose_t const & rhs ) noexcept;
 	bool operator!=( glucose_t const & lhs, glucose_t const & rhs ) noexcept;
 	bool operator<( glucose_t const & lhs, glucose_t const & rhs ) noexcept;

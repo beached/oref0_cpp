@@ -25,6 +25,7 @@
 #include <string>
 
 #include "glucose_unit.h"
+#include "insulin_unit.h"
 
 namespace ns {
 	struct isf_t{
@@ -47,6 +48,10 @@ namespace ns {
 
 	void swap( isf_t & lhs, isf_t & rhs ) noexcept;
 	std::ostream & operator<<( std::ostream & os, isf_t const & isf );	
+
+	insulin_t operator/( glucose_t const & lhs, isf_t const & rhs ) noexcept;
+	glucose_t operator*( insulin_t const & lhs, isf_t const & rhs ) noexcept;
+	glucose_t operator*( isf_t const & lhs, insulin_t const & rhs ) noexcept;
 
 	bool operator==( isf_t const & lhs, isf_t const & rhs ) noexcept;
 	bool operator!=( isf_t const & lhs, isf_t const & rhs ) noexcept;
