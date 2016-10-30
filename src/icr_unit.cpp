@@ -46,8 +46,9 @@ namespace ns {
 	}
 
 	icr_t icr_t::scale( double factor ) const noexcept {
-		value.scale( factor );
-		return *this;
+		icr_t result{ *this };
+		result.scale( factor );
+		return result;
 	}
 
 	void swap( icr_t & lhs, icr_t & rhs ) noexcept {

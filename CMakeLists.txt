@@ -71,32 +71,37 @@ link_directories( "${CMAKE_BINARY_DIR}/install/lib" )
 link_directories( ${Boost_LIBRARY_DIRS} )
 
 set( HEADER_FILES
+	${HEADER_FOLDER}/carb_time_unit.h
 	${HEADER_FOLDER}/carb_unit.h
 	${HEADER_FOLDER}/data_types.h
 	${HEADER_FOLDER}/dbl_error.h
 	${HEADER_FOLDER}/glucose_unit.h
 	${HEADER_FOLDER}/icr_unit.h
-	${HEADER_FOLDER}/insulin_unit.h
 	${HEADER_FOLDER}/insulin_time_unit.h
-	${HEADER_FOLDER}/isf_unit.h
-	${HEADER_FOLDER}/requested_temp.h
-	${HEADER_FOLDER}/round_basal.h
-	${HEADER_FOLDER}/lib_iob_calculate.h
+	${HEADER_FOLDER}/insulin_unit.h
 	${HEADER_FOLDER}/iob_calc.h
+	${HEADER_FOLDER}/isf_unit.h
+	${HEADER_FOLDER}/lib_iob_calculate.h
+	${HEADER_FOLDER}/requested_temp.h
+	${HEADER_FOLDER}/iob_calc.h
+	${HEADER_FOLDER}/round_basal.h
+	${HEADER_FOLDER}/units.h
 )
 
 set( SOURCE_FILES
+	${SOURCE_FOLDER}/carb_time_unit.cpp
+	${SOURCE_FOLDER}/carb_unit.cpp
 	${SOURCE_FOLDER}/data_types.cpp
 	${SOURCE_FOLDER}/dbl_error.cpp
 	${SOURCE_FOLDER}/glucose_unit.cpp
 	${SOURCE_FOLDER}/icr_unit.cpp
-	${SOURCE_FOLDER}/insulin_unit.cpp
 	${SOURCE_FOLDER}/insulin_time_unit.cpp
-	${SOURCE_FOLDER}/isf_unit.cpp
-	${SOURCE_FOLDER}/carb_unit.cpp
-	${SOURCE_FOLDER}/round_basal.cpp
-	${SOURCE_FOLDER}/lib_iob_calculate.cpp
+	${SOURCE_FOLDER}/insulin_unit.cpp
 	${SOURCE_FOLDER}/iob_calc.cpp
+	${SOURCE_FOLDER}/isf_unit.cpp
+	${SOURCE_FOLDER}/lib_iob_calculate.cpp
+	${SOURCE_FOLDER}/round_basal.cpp
+	${SOURCE_FOLDER}/units.cpp
 )
 
 add_library( oref0 ${HEADER_FILES} ${SOURCE_FILES} )

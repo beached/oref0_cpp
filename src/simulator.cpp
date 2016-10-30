@@ -103,7 +103,7 @@ double calc_duration( time_point<system_clock> const & lhs, time_point<system_cl
 
 struct carb_dose_t {
 	carb_t amount;
-	double absorption_rate;
+	carb_per_hour_t absorption_rate;
 	time_point<system_clock> dose_time;
 
 	carb_dose_t( ) = delete;
@@ -113,9 +113,9 @@ struct carb_dose_t {
 	carb_dose_t( carb_dose_t && ) = default;
 	carb_dose_t & operator=( carb_dose_t && ) = default;
 
-	carb_dose_t( time_point<system_clock> doseTime, carb_t Amount, double absorptionRate ):
+	carb_dose_t( time_point<system_clock> doseTime, carb_t Amount, carb_per_hour_t absorptionRate ):
 			amount{ Amount < 0_g_CHO ? 0_g_CHO : Amount },
-			absorption_rate{ absorptionRate < 0 ? 0 : absorptionRate },
+			absorption_rate{ absorptionRate < 0_g_CHO_hr ? 0_g_CHO_hr : absorptionRate },
 			dose_time{ doseTime } { }
 
 	static carb_t calc_cob( carb_dose_t const & item, time_point<system_clock> const & current_ts ) {
@@ -124,7 +124,7 @@ struct carb_dose_t {
 		if( t < 0 ) {
 			return item.amount;
 		}
-		double const AT = item.amount.value/item.absorption_rate;
+		double const AT = item.amount.value/item.absorption_rate.value;
 		auto const & D = item.amount.value;
 		auto result = D - [&]( ) { 
 			if( t < AT/2.0 ) {
@@ -190,7 +190,7 @@ int main( int, char ** ) {
 		insulin_doses.emplace_back( amount, dia, when );
 	};
 
-	auto const add_carb_dose = [&last_cob, &carb_doses]( time_point<system_clock> const & when, carb_t amount, double absorption_rate = 0.5 ) {
+	auto const add_carb_dose = [&last_cob, &carb_doses]( time_point<system_clock> const & when, carb_t amount, carb_per_hour_t absorption_rate = 0.5_g_CHO_hr ) {
 		//std::cout << "~~carb_dose: " << amount << '\n';
 		last_cob += amount;
 		carb_doses.emplace_back( when, amount, absorption_rate );

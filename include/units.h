@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include <carb_time_unit.h>
 #include <carb_unit.h>
 #include <glucose_unit.h>
 #include <icr_unit.h>
@@ -29,3 +30,7 @@
 #include <insulin_unit.h>
 #include <isf_unit.h>
 
+namespace ns {
+	carb_per_hour_t operator*( insulin_per_hour_t const & lhs, icr_t const & rhs );
+
+}	// namespace ns

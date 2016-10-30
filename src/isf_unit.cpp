@@ -46,8 +46,9 @@ namespace ns {
 	}
 
 	isf_t isf_t::scale( double factor ) const noexcept {
-		value.scale( factor );
-		return *this;
+		isf_t result{ *this };
+		result.scale( factor );
+		return result;
 	}
 
 	void swap( isf_t & lhs, isf_t & rhs ) noexcept {
