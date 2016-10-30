@@ -27,230 +27,144 @@
 #include "glucose_unit.h"
 
 namespace ns {
-	namespace glucose {
-		glucose_t::~glucose_t( ) { }
-
-		std::ostream & operator<<( std::ostream & os, glucose_t const & glucose ) {
-			os << glucose.to_string( );
-			return os;
+	namespace {
+		constexpr double to_mg_dL( double const & glucose ) noexcept {
+			return glucose / 0.0555;
 		}
 
-		namespace impl {
-			namespace {
-				constexpr double to_mg_dL( mmol_L const & glucose ) noexcept {
-					return glucose.value / 0.0555;
-				}
-
-				constexpr double to_mmol_L( mg_dL const & glucose ) noexcept {
-					return glucose.value * 0.0555;
-				}
-
-			}	// namespace anonymous
-		}	// namespace impl
-		mmol_L::mmol_L( double d ) noexcept:
-				glucose_t{ },
-				value{ std::move( d ) } { }
-
-		mmol_L::mmol_L( mg_dL const & g ) noexcept:
-				glucose_t{ },
-				value{ impl::to_mmol_L( g ) } { }
-
-		mmol_L::operator double( ) noexcept {
-			return value;
+		constexpr double to_mmol_L( double const & glucose ) noexcept {
+			return glucose * 0.0555;
 		}
 
-		mmol_L & mmol_L::operator=( mg_dL const & rhs ) noexcept {
-			value = impl::to_mmol_L( rhs ); 
-			return *this;
+		glucose_unit & get_static_glucose_unit( ) {
+			static glucose_unit result = glucose_unit::mmol_L;
+			return result;
 		}
+	}	// namespace anonymous
 
-		mmol_L::~mmol_L( ) { }
 
-		void swap( mmol_L & lhs, mmol_L & rhs ) noexcept {
-			using std::swap;
-			swap( lhs.value, rhs.value );
+	glucose_unit get_default_glucose_display_unit( ) {
+		return get_static_glucose_unit( );
+	}
+
+	void set_default_glucose_display_unit( glucose_unit unit ) {
+		get_static_glucose_unit( ) = unit;
+	}
+
+	glucose_t::glucose_t( double d ) noexcept:
+			value{ std::move( d ) } { }
+
+	glucose_t::~glucose_t( ) { }
+
+	glucose_t::operator double( ) noexcept {
+		return value;
+	}
+	
+	void swap( glucose_t & lhs, glucose_t & rhs ) noexcept {
+		using std::swap;
+		swap( lhs.value, rhs.value );
+	}
+
+	glucose_t mmol_L( double d ) noexcept {
+		return glucose_t{ to_mg_dL( d ) };
+	}
+
+	glucose_t mg_dL( double d ) noexcept {
+		return glucose_t{ d };
+	}
+
+	std::string glucose_t::to_string( ) const {
+		std::stringstream ss;
+		switch( get_static_glucose_unit( ) ) {
+			case glucose_unit::mmol_L: ss << to_mmol_L( value ) << "mmol/L"; break;
+			case glucose_unit::mg_dL: ss << "mg_dL"; break;
 		}
+		return ss.str( );
+	}
 
-		std::string mmol_L::to_string( ) const {
-			std::stringstream ss;
-			ss << value << "mmol/L";
-			return ss.str( );
-		}
+	glucose_t & glucose_t::operator+=( glucose_t const & rhs ) noexcept {
+		value += rhs.value;
+		return *this;
+	}
 
-		mmol_L & mmol_L::operator+=( mmol_L const & rhs ) noexcept {
-			value += rhs.value;
-			return *this;
-		}
+	glucose_t & glucose_t::operator-=( glucose_t const & rhs ) noexcept {
+		value -= rhs.value;
+		return *this;
+	}
 
-		mmol_L & mmol_L::operator-=( mmol_L const & rhs ) noexcept {
-			value -= rhs.value;
-			return *this;
-		}
+	glucose_t & glucose_t::scale( double factor ) noexcept {
+		value *= factor;
+		return *this;
+	}
 
-		mmol_L & mmol_L::scale( double factor ) noexcept {
-			value *= factor;
-			return *this;
-		}
+	glucose_t glucose_t::scale( double factor ) const noexcept {
+		return glucose_t{ value * factor };
+	}
 
-		mmol_L mmol_L::scale( double factor ) const noexcept {
-			return mmol_L{ value * factor };
-		}
+	glucose_t operator+( glucose_t const & lhs, glucose_t const & rhs ) noexcept {
+		return glucose_t{ lhs.value + rhs.value };
+	}
 
-		mmol_L operator+( mmol_L const & lhs, mmol_L const & rhs ) noexcept {
-			return mmol_L{ lhs.value + rhs.value };
-		}
+	glucose_t operator-( glucose_t const & lhs, glucose_t const & rhs ) noexcept {
+		return glucose_t{ lhs.value - rhs.value };
+	}
 
-		mmol_L operator-( mmol_L const & lhs, mmol_L const & rhs ) noexcept {
-			return mmol_L{ lhs.value - rhs.value };
-		}
+	glucose_t operator-( glucose_t rhs ) noexcept {
+		rhs.value *= -1.0; 
+		return rhs;
+	}
 
-		mmol_L operator-( mmol_L rhs ) noexcept {
-			rhs.value *= -1.0; 
-			return rhs;
-		}
+	bool operator==( glucose_t const & lhs, glucose_t const & rhs ) noexcept {
+		return lhs.value == rhs.value;
+	}
 
-		bool operator==( mmol_L const & lhs, mmol_L const & rhs ) noexcept {
-			return lhs.value == rhs.value;
-		}
+	bool operator!=( glucose_t const & lhs, glucose_t const & rhs ) noexcept {
+		return lhs.value != rhs.value;
+	}
 
-		bool operator!=( mmol_L const & lhs, mmol_L const & rhs ) noexcept {
-			return lhs.value != rhs.value;
-		}
+	bool operator<( glucose_t const & lhs, glucose_t const & rhs ) noexcept {
+		return lhs.value < rhs.value;
+	}
 
-		bool operator<( mmol_L const & lhs, mmol_L const & rhs ) noexcept {
-			return lhs.value < rhs.value;
-		}
+	bool operator>( glucose_t const & lhs, glucose_t const & rhs ) noexcept {
+		return lhs.value > rhs.value;
+	}
 
-		bool operator>( mmol_L const & lhs, mmol_L const & rhs ) noexcept {
-			return lhs.value > rhs.value;
-		}
+	bool operator<=( glucose_t const & lhs, glucose_t const & rhs ) noexcept {
+		return lhs.value <= rhs.value;
+	}
 
-		bool operator<=( mmol_L const & lhs, mmol_L const & rhs ) noexcept {
-			return lhs.value <= rhs.value;
-		}
+	bool operator>=( glucose_t const & lhs, glucose_t const & rhs ) noexcept {
+		return lhs.value >= rhs.value;
+	}
 
-		bool operator>=( mmol_L const & lhs, mmol_L const & rhs ) noexcept {
-			return lhs.value >= rhs.value;
-		}
+	double glucose_t::as_mmol_L( ) const noexcept {
+		return to_mmol_L( value );
+	}
 
-		mg_dL::mg_dL( double d ) noexcept:
-				glucose_t{ },
-				value{ std::move( d ) } { }
+	double glucose_t::as_mg_dL( ) const noexcept {
+		return value;
+	}
 
-		mg_dL::mg_dL( mmol_L const & g ) noexcept:
-				glucose_t{ },
-				value{ impl::to_mg_dL( g ) } { }
-
-		mg_dL::~mg_dL( ) { }
-
-		mg_dL::operator double( ) noexcept {
-			return value;
-		}
-		
-		mg_dL & mg_dL::operator=( mmol_L const & rhs ) noexcept {
-			value = impl::to_mg_dL( rhs ); 
-			return *this;
-		}
-
-		void swap( mg_dL & lhs, mg_dL & rhs ) noexcept {
-			using std::swap;
-			swap( lhs.value, rhs.value );
-		}
-
-		std::string mg_dL::to_string( ) const {
-			std::stringstream ss;
-			ss << value << "mg/dL";
-			return ss.str( );
-		}
-
-		mg_dL & mg_dL::operator+=( mg_dL const & rhs ) noexcept {
-			value += rhs.value;
-			return *this;
-		}
-
-		mg_dL & mg_dL::operator-=( mg_dL const & rhs ) noexcept {
-			value -= rhs.value;
-			return *this;
-		}
-
-		mg_dL & mg_dL::scale( double factor ) noexcept {
-			value *= factor;
-			return *this;
-		}
-
-		mg_dL mg_dL::scale( double factor ) const noexcept {
-			return mg_dL{ value * factor };
-		}
-
-		mg_dL operator+( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
-			return mg_dL{ lhs.value + rhs.value };
-		}
-
-		mg_dL operator-( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
-			return mg_dL{ lhs.value - rhs.value };
-		}
-
-		mg_dL operator-( mg_dL rhs ) noexcept {
-			rhs.value *= -1.0; 
-			return rhs;
-		}
-
-		bool operator==( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
-			return lhs.value == rhs.value;
-		}
-
-		bool operator!=( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
-			return lhs.value != rhs.value;
-		}
-
-		bool operator<( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
-			return lhs.value < rhs.value;
-		}
-
-		bool operator>( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
-			return lhs.value > rhs.value;
-		}
-
-		bool operator<=( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
-			return lhs.value <= rhs.value;
-		}
-
-		bool operator>=( mg_dL const & lhs, mg_dL const & rhs ) noexcept {
-			return lhs.value >= rhs.value;
-		}
-
-		mg_dL to_mg_dL( mg_dL glucose ) noexcept {
-			return glucose;
-		}
-
-		mg_dL to_mg_dL( mmol_L const & glucose ) noexcept {
-			return mg_dL{ glucose };
-		}
-
-		mmol_L to_mmol_L( mg_dL const & glucose ) noexcept {
-			return mmol_L{ glucose };
-		}
-
-		mmol_L to_mmol_L( mmol_L glucose ) noexcept {
-			return glucose;
-		}
-	}	// namespace glucose
-
+	std::ostream & operator<<( std::ostream & os, glucose_t const & glucose ) {
+		os << glucose.to_string( );
+		return os;
+	}
 }  // namespace ns
  
-ns::glucose::mmol_L operator"" _mmol_L( long double d ) noexcept {
-	return ns::glucose::mmol_L{ static_cast<double>( d ) };
+ns::glucose_t operator"" _mmol_L( long double d ) noexcept {
+	return ns::glucose_t{ ns::to_mg_dL( d ) };
 }
 
-ns::glucose::mg_dL operator"" _mg_dL( long double d ) noexcept {
-	return ns::glucose::mg_dL{ static_cast<double>( d ) };
+ns::glucose_t operator"" _mg_dL( long double d ) noexcept {
+	return ns::glucose_t{ static_cast<double>( d ) };
 }
 
-ns::glucose::mmol_L operator"" _mmol_L( unsigned long long i ) noexcept {
-	return ns::glucose::mmol_L{ static_cast<double>( i ) };
+ns::glucose_t operator"" _mmol_L( unsigned long long i ) noexcept {
+	return ns::glucose_t{ ns::to_mg_dL( i ) };
 }
 
-ns::glucose::mg_dL operator"" _mg_dL( unsigned long long i ) noexcept {
-	return ns::glucose::mg_dL{ static_cast<double>( i ) };
+ns::glucose_t operator"" _mg_dL( unsigned long long i ) noexcept {
+	return ns::glucose_t{ static_cast<double>( i ) };
 }
 

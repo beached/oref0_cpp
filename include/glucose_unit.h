@@ -25,103 +25,57 @@
 #include <string>
 
 namespace ns {
-	namespace glucose {
-		struct glucose_t {
-			glucose_t( ) = default;
-			glucose_t( glucose_t const & ) = default;
-			glucose_t( glucose_t && ) = default;
-			glucose_t & operator=( glucose_t const & ) = default;
-			glucose_t & operator=( glucose_t && ) = default;
+	enum class glucose_unit { mmol_L, mg_dL };
 
-			virtual ~glucose_t( );
-			virtual std::string to_string( ) const = 0;
-		};	// glucose_t
+	glucose_unit get_default_glucose_display_unit( );
+	void set_default_glucose_display_unit( glucose_unit unit );
 
-		std::ostream & operator<<( std::ostream & os, glucose_t const & glucose );	
+	class glucose_t {
+		double value;
 
-		struct mg_dL;
+	public:
+		explicit glucose_t( double d ) noexcept;
+		~glucose_t( );
+		explicit operator double( ) noexcept;
 
-		struct mmol_L: public glucose_t {
-			double value;
+		glucose_t( ) = default;
+		glucose_t( glucose_t const & ) = default;
+		glucose_t( glucose_t && ) = default;
+		glucose_t & operator=( glucose_t const & ) = default;
+		glucose_t & operator=( glucose_t && ) = default;
+		friend void swap( glucose_t & lhs, glucose_t & rhs ) noexcept;
+		std::string to_string( ) const;
 
-			explicit mmol_L( double d ) noexcept;
-			mmol_L( mg_dL const & g ) noexcept;
-			~mmol_L( );
-			explicit operator double( ) noexcept;
-			mmol_L & operator=( mg_dL const & rhs ) noexcept;
+		glucose_t & operator+=( glucose_t const & rhs ) noexcept;
+		glucose_t & operator-=( glucose_t const & rhs ) noexcept;
 
-			mmol_L( ) = default;
-			mmol_L( mmol_L const & ) = default;
-			mmol_L( mmol_L && ) = default;
-			mmol_L & operator=( mmol_L const & ) = default;
-			mmol_L & operator=( mmol_L && ) = default;
-			friend void swap( mmol_L & lhs, mmol_L & rhs ) noexcept;
-			std::string to_string( ) const override;
+		glucose_t & scale( double factor ) noexcept;
+		glucose_t scale( double factor ) const noexcept;
 
-			mmol_L & operator+=( mmol_L const & rhs ) noexcept;
-			mmol_L & operator-=( mmol_L const & rhs ) noexcept;
+		double as_mmol_L( ) const noexcept;
+		double as_mg_dL( ) const noexcept;
+	};	// glucose_t
 
-			mmol_L & scale( double factor ) noexcept;
-			mmol_L scale( double factor ) const noexcept;
-		};	// mmol_L
+	void swap( glucose_t & lhs, glucose_t & rhs ) noexcept;
 
-		void swap( mmol_L & lhs, mmol_L & rhs ) noexcept;
+	glucose_t mmol_L( double d ) noexcept;
+	glucose_t mg_dL( double d ) noexcept;
 
-		mmol_L operator+( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
-		mmol_L operator-( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
-		mmol_L operator-( mmol_L rhs ) noexcept;
-		bool operator==( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
-		bool operator!=( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
-		bool operator<( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
-		bool operator>( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
-		bool operator<=( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
-		bool operator>=( mmol_L const & lhs, mmol_L const & rhs ) noexcept;
+	glucose_t operator+( glucose_t const & lhs, glucose_t const & rhs ) noexcept;
+	glucose_t operator-( glucose_t const & lhs, glucose_t const & rhs ) noexcept;
+	glucose_t operator-( glucose_t rhs ) noexcept;
+	bool operator==( glucose_t const & lhs, glucose_t const & rhs ) noexcept;
+	bool operator!=( glucose_t const & lhs, glucose_t const & rhs ) noexcept;
+	bool operator<( glucose_t const & lhs, glucose_t const & rhs ) noexcept;
+	bool operator>( glucose_t const & lhs, glucose_t const & rhs ) noexcept;
+	bool operator<=( glucose_t const & lhs, glucose_t const & rhs ) noexcept;
+	bool operator>=( glucose_t const & lhs, glucose_t const & rhs ) noexcept;
 
-		struct mg_dL: public glucose_t {
-			double value;
+	std::ostream & operator<<( std::ostream & os, glucose_t const & glucose );	
+}	// namespace ns
 
-			explicit mg_dL( double d ) noexcept;
-			mg_dL( mmol_L const & g ) noexcept;
-			~mg_dL( );
-			explicit operator double( ) noexcept;
-			mg_dL & operator=( mmol_L const & rhs ) noexcept;
-
-			mg_dL( ) = default;
-			mg_dL( mg_dL const & ) = default;
-			mg_dL( mg_dL && ) = default;
-			mg_dL & operator=( mg_dL const & ) = default;
-			mg_dL & operator=( mg_dL && ) = default;
-			friend void swap( mg_dL & lhs, mg_dL & rhs ) noexcept;
-			std::string to_string( ) const override;
-
-			mg_dL & operator+=( mg_dL const & rhs ) noexcept;
-			mg_dL & operator-=( mg_dL const & rhs ) noexcept;
-
-			mg_dL & scale( double factor ) noexcept;
-			mg_dL scale( double factor ) const noexcept;
-		};	// mg_dL
-
-		void swap( mg_dL & lhs, mg_dL & rhs ) noexcept;
-
-		mg_dL operator+( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
-		mg_dL operator-( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
-		mg_dL operator-( mg_dL rhs ) noexcept;
-		bool operator==( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
-		bool operator!=( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
-		bool operator<( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
-		bool operator>( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
-		bool operator<=( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
-		bool operator>=( mg_dL const & lhs, mg_dL const & rhs ) noexcept;
-
-		mg_dL to_mg_dL( mg_dL const & glucose ) noexcept;
-		mg_dL to_mg_dL( mmol_L const & glucose ) noexcept;
-		mmol_L to_mmol_L( mg_dL const & glucose ) noexcept;
-		mmol_L to_mmol_L( mmol_L const & glucose ) noexcept;
-	}	// namespace glucose
-}    // namespace ns
-
-ns::glucose::mmol_L operator"" _mmol_L( long double d ) noexcept;
-ns::glucose::mg_dL operator"" _mg_dL( long double d ) noexcept;
-ns::glucose::mmol_L operator"" _mmol_L( unsigned long long i ) noexcept;
-ns::glucose::mg_dL operator"" _mg_dL( unsigned long long i ) noexcept;
+ns::glucose_t operator"" _mmol_L( long double d ) noexcept;
+ns::glucose_t operator"" _mg_dL( long double d ) noexcept;
+ns::glucose_t operator"" _mmol_L( unsigned long long i ) noexcept;
+ns::glucose_t operator"" _mg_dL( unsigned long long i ) noexcept;
 

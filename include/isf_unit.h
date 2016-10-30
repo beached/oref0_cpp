@@ -22,10 +22,37 @@
 
 #pragma once
 
-#include <carb_unit.h>
-#include <glucose_unit.h>
-#include <icr_unit.h>
-#include <insulin_time_unit.h>
-#include <insulin_unit.h>
-#include <isf_unit.h>
+#include <string>
+
+#include "glucose_unit.h"
+
+namespace ns {
+	struct isf_t{
+		glucose_t value;
+
+		explicit isf_t( glucose_t carb ) noexcept;
+		~isf_t( );
+
+		isf_t( ) = default;
+		isf_t( isf_t const & ) = default;
+		isf_t( isf_t && ) = default;
+		isf_t & operator=( isf_t const & ) = default;
+		isf_t & operator=( isf_t && ) = default;
+		friend void swap( isf_t & lhs, isf_t & rhs ) noexcept;
+		std::string to_string( ) const;
+
+		isf_t & scale( double factor ) noexcept;
+		isf_t scale( double factor ) const noexcept;
+	};	// isf_t
+
+	void swap( isf_t & lhs, isf_t & rhs ) noexcept;
+	std::ostream & operator<<( std::ostream & os, isf_t const & isf );	
+
+	bool operator==( isf_t const & lhs, isf_t const & rhs ) noexcept;
+	bool operator!=( isf_t const & lhs, isf_t const & rhs ) noexcept;
+	bool operator<( isf_t const & lhs, isf_t const & rhs ) noexcept;
+	bool operator>( isf_t const & lhs, isf_t const & rhs ) noexcept;
+	bool operator<=( isf_t const & lhs, isf_t const & rhs ) noexcept;
+	bool operator>=( isf_t const & lhs, isf_t const & rhs ) noexcept;
+}    // namespace ns
 
