@@ -27,10 +27,10 @@
 #include "carb_unit.h"
 
 namespace ns {
-	carb_t::carb_t( double d ) noexcept:
+	carb_t::carb_t( carb_t::value_t d ) noexcept:
 			value{ std::move( d ) } { }
 
-	carb_t::operator double( ) noexcept {
+	carb_t::operator carb_t::value_t( ) noexcept {
 		return value;
 	}
 
@@ -62,7 +62,7 @@ namespace ns {
 		return *this;
 	}
 
-	carb_t & carb_t::scale( double factor ) noexcept {
+	carb_t & carb_t::scale( carb_t::value_t factor ) noexcept {
 		value *= factor;
 		return *this;
 	}

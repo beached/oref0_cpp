@@ -27,11 +27,12 @@
 
 namespace ns {
 	struct carb_t{
-		double value;
+		using value_t = double;
+		value_t value;
 
-		explicit carb_t( double d ) noexcept;
+		explicit carb_t( value_t d ) noexcept;
 		~carb_t( );
-		explicit operator double( ) noexcept;
+		explicit operator value_t( ) noexcept;
 
 		carb_t( ) = default;
 		carb_t( carb_t const & ) = default;
@@ -44,8 +45,8 @@ namespace ns {
 		carb_t & operator+=( carb_t const & rhs ) noexcept;
 		carb_t & operator-=( carb_t const & rhs ) noexcept;
 
-		carb_t & scale( double factor ) noexcept;
-		carb_t scale( double factor ) const noexcept;
+		carb_t & scale( value_t factor ) noexcept;
+		carb_t scale( value_t factor ) const noexcept;
 	};	// carb_t
 
 	void swap( carb_t & lhs, carb_t & rhs ) noexcept;

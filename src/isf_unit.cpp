@@ -36,7 +36,7 @@ namespace ns {
 
 	std::string isf_t::to_string( ) const {
 		std::stringstream ss;
-		ss << value << "mmol/L/U";
+		ss << value << "/U";
 		return ss.str( );
 	}
 

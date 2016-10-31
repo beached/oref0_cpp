@@ -96,6 +96,61 @@ namespace ns {
 	};	// insulin_per_SECONDS_t
 
 	using insulin_per_hour_t = insulin_per_SECONDS_t<3600>;
+	using basal_rate_t = insulin_per_hour_t;
+
+	template<size_t SECONDS_lhs, size_t SECONDS_rhs>
+	bool operator==( insulin_per_SECONDS_t<SECONDS_lhs> const & lhs, insulin_per_SECONDS_t<SECONDS_rhs> const & rhs ) noexcept {
+		if( SECONDS_lhs == SECONDS_rhs ) {
+			return lhs.value == rhs.value;
+		}
+		static auto const factor = static_cast<double>(SECONDS_lhs)/static_cast<double>(SECONDS_rhs);
+		return lhs.value == rhs.value.scale( factor ); 
+	}
+
+	template<size_t SECONDS_lhs, size_t SECONDS_rhs>
+	bool operator!=( insulin_per_SECONDS_t<SECONDS_lhs> const & lhs, insulin_per_SECONDS_t<SECONDS_rhs> const & rhs ) noexcept {
+		if( SECONDS_lhs == SECONDS_rhs ) {
+			return lhs.value != rhs.value;
+		}
+		static auto const factor = static_cast<double>(SECONDS_lhs)/static_cast<double>(SECONDS_rhs);
+		return lhs.value != rhs.value.scale( factor ); 
+	}
+
+	template<size_t SECONDS_lhs, size_t SECONDS_rhs>
+	bool operator<( insulin_per_SECONDS_t<SECONDS_lhs> const & lhs, insulin_per_SECONDS_t<SECONDS_rhs> const & rhs ) noexcept {
+		if( SECONDS_lhs == SECONDS_rhs ) {
+			return lhs.value < rhs.value;
+		}
+		static auto const factor = static_cast<double>(SECONDS_lhs)/static_cast<double>(SECONDS_rhs);
+		return lhs.value < rhs.value.scale( factor ); 
+	}
+
+	template<size_t SECONDS_lhs, size_t SECONDS_rhs>
+	bool operator>( insulin_per_SECONDS_t<SECONDS_lhs> const & lhs, insulin_per_SECONDS_t<SECONDS_rhs> const & rhs ) noexcept {
+		if( SECONDS_lhs == SECONDS_rhs ) {
+			return lhs.value > rhs.value;
+		}
+		static auto const factor = static_cast<double>(SECONDS_lhs)/static_cast<double>(SECONDS_rhs);
+		return lhs.value > rhs.value.scale( factor ); 
+	}
+
+	template<size_t SECONDS_lhs, size_t SECONDS_rhs>
+	bool operator<=( insulin_per_SECONDS_t<SECONDS_lhs> const & lhs, insulin_per_SECONDS_t<SECONDS_rhs> const & rhs ) noexcept {
+		if( SECONDS_lhs == SECONDS_rhs ) {
+			return lhs.value <= rhs.value;
+		}
+		static auto const factor = static_cast<double>(SECONDS_lhs)/static_cast<double>(SECONDS_rhs);
+		return lhs.value <= rhs.value.scale( factor ); 
+	}
+
+	template<size_t SECONDS_lhs, size_t SECONDS_rhs>
+	bool operator>=( insulin_per_SECONDS_t<SECONDS_lhs> const & lhs, insulin_per_SECONDS_t<SECONDS_rhs> const & rhs ) noexcept {
+		if( SECONDS_lhs == SECONDS_rhs ) {
+			return lhs.value >= rhs.value;
+		}
+		static auto const factor = static_cast<double>(SECONDS_lhs)/static_cast<double>(SECONDS_rhs);
+		return lhs.value >= rhs.value.scale( factor ); 
+	}
 
 	template<typename... Args>
 	insulin_per_hour_t operator/( insulin_t const & lhs, std::chrono::duration<Args...> const & rhs ) noexcept {
