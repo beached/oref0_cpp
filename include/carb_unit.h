@@ -25,28 +25,29 @@
 
 #include <string>
 
+#include "data_types.h"
+
 namespace ns {
 	struct carb_t{
-		using value_t = double;
-		value_t value;
+		real_t value;
 
-		explicit carb_t( value_t d ) noexcept;
+		explicit carb_t( real_t d ) noexcept;
 		~carb_t( );
-		explicit operator value_t( ) noexcept;
 
 		carb_t( ) = default;
 		carb_t( carb_t const & ) = default;
 		carb_t( carb_t && ) = default;
 		carb_t & operator=( carb_t const & ) = default;
 		carb_t & operator=( carb_t && ) = default;
+
 		friend void swap( carb_t & lhs, carb_t & rhs ) noexcept;
 		std::string to_string( ) const;
 
 		carb_t & operator+=( carb_t const & rhs ) noexcept;
 		carb_t & operator-=( carb_t const & rhs ) noexcept;
 
-		carb_t & scale( value_t factor ) noexcept;
-		carb_t scale( value_t factor ) const noexcept;
+		carb_t & scale( real_t factor ) noexcept;
+		carb_t scale( real_t factor ) const noexcept;
 	};	// carb_t
 
 	void swap( carb_t & lhs, carb_t & rhs ) noexcept;

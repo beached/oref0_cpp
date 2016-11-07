@@ -25,14 +25,11 @@
 #include <utility>
 
 #include "carb_unit.h"
+#include "data_types.h"
 
 namespace ns {
-	carb_t::carb_t( carb_t::value_t d ) noexcept:
+	carb_t::carb_t( real_t d ) noexcept:
 			value{ std::move( d ) } { }
-
-	carb_t::operator carb_t::value_t( ) noexcept {
-		return value;
-	}
 
 	carb_t::~carb_t( ) { }
 
@@ -62,21 +59,27 @@ namespace ns {
 		return *this;
 	}
 
-	carb_t & carb_t::scale( carb_t::value_t factor ) noexcept {
+	carb_t & carb_t::scale( real_t factor ) noexcept {
 		value *= factor;
 		return *this;
 	}
 
-	carb_t carb_t::scale( double factor ) const noexcept {
-		return carb_t{ value * factor };
+	carb_t carb_t::scale( real_t factor ) const noexcept {
+		carb_t result;
+		result.value *= factor;
+		return result;
 	}
 
 	carb_t operator+( carb_t const & lhs, carb_t const & rhs ) noexcept {
-		return carb_t{ lhs.value + rhs.value };
+		carb_t result;
+		result.value = lhs.value + rhs.value;
+		return result;
 	}
 
 	carb_t operator-( carb_t const & lhs, carb_t const & rhs ) noexcept {
-		return carb_t{ lhs.value - rhs.value };
+		carb_t result;
+		result.value = lhs.value - rhs.value;
+		return result;
 	}
 
 	carb_t operator-( carb_t rhs ) noexcept {

@@ -23,6 +23,7 @@
 #pragma once
 
 #include <string>
+#include "data_types.h"
 
 namespace ns {
 	enum class glucose_unit { mmol_L, mg_dL };
@@ -31,11 +32,12 @@ namespace ns {
 	void set_default_glucose_display_unit( glucose_unit unit );
 
 	struct glucose_t {
-		double value;
+		real_t value;
 
-		explicit glucose_t( double d ) noexcept;
+		explicit glucose_t( real_t d ) noexcept;
 		~glucose_t( );
-		explicit operator double( ) noexcept;
+
+		operator real_t( ) noexcept;
 
 		glucose_t( ) = default;
 		glucose_t( glucose_t const & ) = default;
@@ -52,17 +54,17 @@ namespace ns {
 		glucose_t & operator-( ) noexcept;
 		glucose_t operator-( ) const noexcept;
 
-		glucose_t & scale( double factor ) noexcept;
-		glucose_t scale( double factor ) const noexcept;
+		glucose_t & scale( real_t factor ) noexcept;
+		glucose_t scale( real_t factor ) const noexcept;
 
-		double as_mmol_L( ) const noexcept;
-		double as_mg_dL( ) const noexcept;
+		real_t as_mmol_L( ) const noexcept;
+		real_t as_mg_dL( ) const noexcept;
 	};	// glucose_t
 
 	void swap( glucose_t & lhs, glucose_t & rhs ) noexcept;
 
-	glucose_t mmol_L( double d ) noexcept;
-	glucose_t mg_dL( double d ) noexcept;
+	glucose_t mmol_L( real_t d ) noexcept;
+	glucose_t mg_dL( real_t d ) noexcept;
 
 	glucose_t operator+( glucose_t lhs, glucose_t const & rhs ) noexcept;
 	glucose_t operator-( glucose_t lhs, glucose_t const & rhs ) noexcept;

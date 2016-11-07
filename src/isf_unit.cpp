@@ -40,12 +40,12 @@ namespace ns {
 		return ss.str( );
 	}
 
-	isf_t & isf_t::scale( double factor ) noexcept {
+	isf_t & isf_t::scale( real_t factor ) noexcept {
 		value.scale( factor );
 		return *this;
 	}
 
-	isf_t isf_t::scale( double factor ) const noexcept {
+	isf_t isf_t::scale( real_t factor ) const noexcept {
 		isf_t result{ *this };
 		result.scale( factor );
 		return result;
@@ -62,15 +62,24 @@ namespace ns {
 	}
 
 	insulin_t operator/( glucose_t const & lhs, isf_t const & rhs ) noexcept {
-		return insulin_t{ lhs.value/rhs.value.value };
+		auto tmp = lhs.value/rhs.value.value;
+		insulin_t result;
+		result.value = tmp;
+		return result;
 	}
 
 	glucose_t operator*( insulin_t const & lhs, isf_t const & rhs ) noexcept {
-		return glucose_t{ lhs.value*rhs.value.value };
+		auto tmp = lhs.value * rhs.value.value;
+		glucose_t result;
+		result.value = tmp;
+		return result;
 	}
 
 	glucose_t operator*( isf_t const & lhs, insulin_t const & rhs ) noexcept {
-		return glucose_t{ lhs.value.value*rhs.value };
+		auto tmp = lhs.value.value * rhs.value;
+		glucose_t result;
+		result.value = tmp;
+		return result;
 	}
 
 	bool operator==( isf_t const & lhs, isf_t const & rhs ) noexcept {

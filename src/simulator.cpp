@@ -99,8 +99,8 @@ size_t random_generator(size_t min, size_t max) {
 	return dist( rng );
 }
 
-constexpr auto calc_duration( time_point<system_clock> const & lhs, time_point<system_clock> const & rhs ) {
-	return duration_cast<minutes>( rhs - lhs );
+constexpr std::chrono::minutes calc_duration( time_point<system_clock> const & lhs, time_point<system_clock> const & rhs ) {
+	return duration_cast<minutes>( rhs - lhs);
 }
 
 template<typename T>
@@ -127,14 +127,16 @@ struct carb_dose_t {
 			dose_time{ doseTime } { }
 
 	carb_t tick( time_point<system_clock> const & current_ts ) const {
-		return calculations::calc_cob( amount, amount/absorption_rate, calc_duration( dose_time, current_ts ) );
+		auto const carb_duration = amount/absorption_rate;
+		std::cout << "carb_duration=" << carb_duration << " absorption_rate=" << absorption_rate << '\n';
+		return calculations::calc_cob( amount, carb_duration, calc_duration( dose_time, current_ts ) );
 	}
 };	// carb_dose_t
 
 void clean_up( time_point<system_clock> const & ts_now, std::vector<insulin_dose> & insulin_doses, std::vector<carb_dose_t> & carb_doses ) {
 	insulin_doses.erase( std::remove_if( insulin_doses.begin( ), insulin_doses.end( ), [&]( auto const & item ) {
 		auto const duration = calc_duration( item.dose_time, ts_now );
-		return duration >= static_cast<intmax_t>(item.dose_dia);
+		return duration >= item.dose_dia;
 	} ), insulin_doses.end( ) );
 
 	carb_doses.erase( std::remove_if( carb_doses.begin( ), carb_doses.end( ), [&]( auto const & item ) {
@@ -146,8 +148,8 @@ insulin_t calc_iob( time_point<system_clock> const & ts_now, insulin_dose item )
 	if( ts_now < item.dose_time ) {	// Ignore future insulin
 		return item.amount;
 	}
-	auto const duration = duration_cast<minutes>( ts_now - item.dose_time ).count( );
-	if( duration > static_cast<intmax_t>(item.dose_dia) ) {
+	auto const duration = duration_cast<minutes>( ts_now - item.dose_time );
+	if( duration > item.dose_dia ) {
 		return 0.0_U;
 	}
 	auto const pc = insulin_on_board_pct( duration, item.dose_dia );
@@ -213,7 +215,7 @@ int main( int, char ** ) {
 			auto const carb_dose = est_liver_carb_rate.carbs_per( cur_duration-last_duration );
 			last_duration = cur_duration;
 
-			add_carb_dose( ts_now, carb_dose, carb_dose/3h );
+			//add_carb_dose( ts_now, carb_dose, carb_dose/3h );
 			auto ins_dose = carb_dose/profile.icr;
 			if( insulin_offset < -0.2_U ) {
 				std::cout << "Lowering basal to offset too much insulin(TMI): need " << insulin_offset << "U and have " << ins_dose << " to give\n";
@@ -229,13 +231,13 @@ int main( int, char ** ) {
 				add_insulin_dose( ts_now, ins_dose , insulin_duration_t::t180 );
 			}
 		}
-		
-		if( random_generator( 0, 150 ) < 5 ) {
+	
+/*		if( random_generator( 0, 150 ) < 5 ) {
 			auto const carb_dose = carb_t{ static_cast<double>(random_generator( 1, 45 )) };
 			add_carb_dose( ts_now, carb_dose );
 			add_insulin_dose( ts_now, carb_dose/profile.icr );
 		}
-	
+*/	
 		auto const insulin_drop = iob_diff * profile.isf;
 		auto const carb_rise = (cob_diff / profile.icr) * profile.isf;
 		auto const glucose_prev = glucose_state.previous_value( );

@@ -75,12 +75,12 @@ namespace ns {
 			return ss.str( );		
 		}
 
-		insulin_per_SECONDS_t & scale( double factor ) noexcept {
+		insulin_per_SECONDS_t & scale( real_t factor ) noexcept {
 			value.scale( factor );
 			return *this;
 		}
 
-		insulin_per_SECONDS_t scale( double factor ) const noexcept {
+		insulin_per_SECONDS_t scale( real_t factor ) const noexcept {
 			insulin_per_SECONDS_t result{ *this };
 			result.scale( factor );
 			return result;
@@ -89,7 +89,7 @@ namespace ns {
 		template<typename... Args>
 		insulin_t per( std::chrono::duration<Args...> duration ) const {
 			auto result = value;
-			auto const factor = static_cast<double>(std::chrono::duration_cast<std::chrono::seconds>(duration).count( )/SECONDS);
+			double const factor = static_cast<double>(std::chrono::duration_cast<std::chrono::seconds>(duration).count( ))/static_cast<double>(SECONDS);
 			value.scale( factor );
 			return value;
 		}

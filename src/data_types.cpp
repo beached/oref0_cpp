@@ -24,39 +24,13 @@
 #include "data_types.h"
 
 namespace ns {
-	profile_t::~profile_t( ) { }
 
-	std::ostream & operator<<( std::ostream & os, profile_types t ) {
-		using namespace std::literals::string_literals;
-		static std::array<std::string, 1> const results = { {"current"s} };
-		os << results[static_cast<size_t>(t)];
-		return os;
-	}
-
-	std::istream & operator>>( std::istream & is, profile_types & t ) {
-		using namespace std::literals::string_literals;
-		static std::unordered_map<std::string, profile_types> const results = { {"current"s, profile_types::current} };
-		std::string s;
-		is >> s;
-		t = results.at( s );
-		return is;
-	}
-
-	iob_data_t::iob_data_t( double bolusSnooze, insulin_t Activity, insulin_t Iob, boost::optional<insulin_t> basalIob, boost::optional<insulin_t> netBasalInsulin, boost::optional<insulin_t> highTempInsulin ):
-			daw::json::JsonLink<iob_data_t>{ },
+	iob_data_t::iob_data_t( double bolusSnooze, real_t Activity, real_t Iob, boost::optional<real_t> basalIob, boost::optional<real_t> netBasalInsulin, boost::optional<real_t> highTempInsulin ):
 			bolussnooze{ std::move( bolusSnooze ) },
 			activity{ std::move( Activity ) },
 			iob{ std::move( Iob ) },
 			basaliob{ std::move( basalIob ) },
-			hightempinsulin{ std::move( highTempInsulin ) } {
-
-		link_real( "bolussnooze", bolussnooze );
-		link_real( "activity", activity );
-		link_real( "iob", iob );				
-		link_real( "basaliob", basaliob );
-		link_real( "netbasalinsulin", netbasalinsulin );
-		link_real( "hightempinsulin", hightempinsulin );
-	}
+			hightempinsulin{ std::move( highTempInsulin ) } { }
 
 	iob_data_t::iob_data_t( ):
 			iob_data_t{ { }, { }, { }, boost::none, boost::none, boost::none } { }

@@ -25,6 +25,7 @@
 
 #include <string>
 
+#include "data_types.h"
 #include "carb_unit.h"
 #include "insulin_unit.h"
 
@@ -43,8 +44,8 @@ namespace ns {
 		friend void swap( icr_t & lhs, icr_t & rhs ) noexcept;
 		std::string to_string( ) const;
 
-		icr_t & scale( double factor ) noexcept;
-		icr_t scale( double factor ) const noexcept;
+		icr_t & scale( real_t factor ) noexcept;
+		icr_t scale( real_t factor ) const noexcept;
 	};	// icr_t
 
 	void swap( icr_t & lhs, icr_t & rhs ) noexcept;

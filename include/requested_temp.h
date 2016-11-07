@@ -56,7 +56,7 @@ namespace ns {
 
 	constexpr auto convert_bg( glucose_t const & value, profile_t const & profile ) {
 		if( profile.out_units == "mmol/L" ) {
-			return to_fixed( round_to( static_cast<double>(value) * 0.0555, 1 ), 1 );
+			return to_fixed( round_to( static_cast<real_t>(value) * 0.0555, 1 ), 1 );
 		}
 		return to_fixed( value, 0 );
 	}

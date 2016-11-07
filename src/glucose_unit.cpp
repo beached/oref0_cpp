@@ -28,11 +28,11 @@
 
 namespace ns {
 	namespace {
-		constexpr double to_mg_dL( double const & glucose ) noexcept {
+		real_t to_mg_dL( real_t const & glucose ) noexcept {
 			return glucose / 0.0555;
 		}
 
-		constexpr double to_mmol_L( double const & glucose ) noexcept {
+		real_t to_mmol_L( real_t const & glucose ) noexcept {
 			return glucose * 0.0555;
 		}
 
@@ -51,12 +51,12 @@ namespace ns {
 		get_static_glucose_unit( ) = unit;
 	}
 
-	glucose_t::glucose_t( double d ) noexcept:
+	glucose_t::glucose_t( real_t d ) noexcept:
 			value{ std::move( d ) } { }
 
 	glucose_t::~glucose_t( ) { }
 
-	glucose_t::operator double( ) noexcept {
+	glucose_t::operator real_t( ) noexcept {
 		return value;
 	}
 	
@@ -65,11 +65,11 @@ namespace ns {
 		swap( lhs.value, rhs.value );
 	}
 
-	glucose_t mmol_L( double d ) noexcept {
+	glucose_t mmol_L( real_t d ) noexcept {
 		return glucose_t{ to_mg_dL( d ) };
 	}
 
-	glucose_t mg_dL( double d ) noexcept {
+	glucose_t mg_dL( real_t d ) noexcept {
 		return glucose_t{ d };
 	}
 
@@ -96,13 +96,15 @@ namespace ns {
 		return *this;
 	}
 
-	glucose_t & glucose_t::scale( double factor ) noexcept {
+	glucose_t & glucose_t::scale( real_t factor ) noexcept {
 		value *= factor;
 		return *this;
 	}
 
-	glucose_t glucose_t::scale( double factor ) const noexcept {
-		return glucose_t{ value * factor };
+	glucose_t glucose_t::scale( real_t factor ) const noexcept {
+		glucose_t result{ *this };
+		result.value *= factor; 
+		return result;
 	}
 
 	glucose_t operator+( glucose_t lhs, glucose_t const & rhs ) noexcept {
@@ -119,7 +121,9 @@ namespace ns {
 	}
 
 	glucose_t glucose_t::operator-( ) const noexcept {
-		return glucose_t{ value * -1.0 };
+		glucose_t result{ *this };
+		result.value *= -1.0;
+		return result;
 	}
 
 	bool operator==( glucose_t const & lhs, glucose_t const & rhs ) noexcept {
@@ -146,11 +150,11 @@ namespace ns {
 		return lhs.value >= rhs.value;
 	}
 
-	double glucose_t::as_mmol_L( ) const noexcept {
+	real_t glucose_t::as_mmol_L( ) const noexcept {
 		return to_mmol_L( value );
 	}
 
-	double glucose_t::as_mg_dL( ) const noexcept {
+	real_t glucose_t::as_mg_dL( ) const noexcept {
 		return value;
 	}
 

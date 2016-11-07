@@ -33,18 +33,32 @@
 
 #include "iob_calc.h"
 
+using namespace date;
+using namespace std::chrono_literals;
 namespace ns {
 	namespace {
-		constexpr size_t insulin_duration_to_idx( insulin_duration_t const duration ) {	
+		size_t insulin_duration_to_idx( std::chrono::minutes const duration ) {	
+			switch( duration.count( ) ) {
+				case 180: return 0;
+				case 210: return 1;
+				case 240: return 2;
+				case 300: return 3;
+				case 360: return 4;
+			}
+			std::abort( );
+		}
+
+		constexpr auto insulin_duration_to_min( insulin_duration_t const duration ) {	
 			switch( duration ) {
-				case insulin_duration_t::t180: return 0;
-				case insulin_duration_t::t210: return 1;
-				case insulin_duration_t::t240: return 2;
-				case insulin_duration_t::t300: return 3;
-				case insulin_duration_t::t360: return 4;
-				default: return std::numeric_limits<size_t>::max( );	// should never happen but may as well go for the stars
+				case insulin_duration_t::t180: return 180min;
+				case insulin_duration_t::t210: return 210min;
+				case insulin_duration_t::t240: return 240min;
+				case insulin_duration_t::t300: return 300min;
+				case insulin_duration_t::t360: return 360min;
+				default: return std::chrono::minutes{ std::numeric_limits<size_t>::max( ) };	// should never happen but may as well go for the stars
 			}
 		}
+
 
 		template<size_t N>
 			constexpr double to_power( double const & value ) {
@@ -57,7 +71,7 @@ namespace ns {
 			}
 	}
 
-	double insulin_on_board_pct( double const time_from_bolus_min, insulin_duration_t const insulin_duration ) {
+	double insulin_on_board_pct( std::chrono::minutes const time_from_bolus_min, std::chrono::minutes const insulin_duration ) {
 		double const params[5][5] = {
 			{  99.951000000,  0.092550000, -0.01759000,  0.000135400, -0.00000032030 },	// t=180
 			{  99.924242424,  0.282046657, -0.01489899,  0.000087168, -0.00000015900 },	// t=210 
@@ -66,16 +80,17 @@ namespace ns {
 			{  99.700000000,  0.063650000, -0.00409500,  0.000014130, -0.00000001493 }	// t=360
 		};
 
-		if( time_from_bolus_min <= 0 ) {
+		if( time_from_bolus_min <= 0min ) {
 			return 1.0;
-		} else if( time_from_bolus_min >= static_cast<double>(insulin_duration) ) {
+		} else if( time_from_bolus_min >= insulin_duration ) {
 			return 0.0;
 		} 
+		double const t = time_from_bolus_min.count( );
 		auto const & param = params[insulin_duration_to_idx( insulin_duration )];
-		auto const p1 = param[1] * time_from_bolus_min;
-		auto const p2 = param[2] * to_power<2>( time_from_bolus_min );
-		auto const p3 = param[3] * to_power<3>( time_from_bolus_min );
-		auto const p4 = param[4] * to_power<4>( time_from_bolus_min );
+		auto const p1 = param[1] * t;
+		auto const p2 = param[2] * to_power<2>( t );
+		auto const p3 = param[3] * to_power<3>( t );
+		auto const p4 = param[4] * to_power<4>( t );
 
 		auto percentage = (p4 + p3 + p2 + p1 + param[0])/100.0;
 
@@ -91,20 +106,14 @@ namespace ns {
 	insulin_dose::insulin_dose( insulin_t how_much, insulin_duration_t dia, timestamp_t when ):
 			amount{ how_much },
 			dose_time{ when },
-			dose_dia{ dia } { 
+			dose_dia{ insulin_duration_to_min( dia ) } { 
 
 		assert( amount > 0.0_U );
 	}
 
 	std::ostream & operator<<( std::ostream & os, insulin_duration_t const & duration ) {
-		switch( duration ) {
-			case insulin_duration_t::t180: os << 180; return os;
-			case insulin_duration_t::t210: os << 210; return os;
-			case insulin_duration_t::t240: os << 240; return os;
-			case insulin_duration_t::t300: os << 300; return os;
-			case insulin_duration_t::t360: os << 360; return os;
-			default: throw std::runtime_error( "Unknown duration" );
-		}
+		os << insulin_duration_to_min( duration ).count( );
+		return os;
 	}
 
 	std::istream & operator>>( std::istream & is, insulin_duration_t & duration ) {

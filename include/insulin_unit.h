@@ -23,14 +23,15 @@
 #pragma once
 
 #include <string>
+#include "data_types.h"
 
 namespace ns {
 	struct insulin_t{
-		double value;
+		real_t value;
 
-		explicit insulin_t( double d ) noexcept;
+		explicit insulin_t( real_t d ) noexcept;
 		~insulin_t( );
-		explicit operator double( ) noexcept;
+		explicit operator real_t( ) noexcept;
 
 		insulin_t( ) = default;
 		insulin_t( insulin_t const & ) = default;
@@ -43,15 +44,15 @@ namespace ns {
 		insulin_t & operator+=( insulin_t const & rhs ) noexcept;
 		insulin_t & operator-=( insulin_t const & rhs ) noexcept;
 
-		insulin_t & scale( double factor ) noexcept;
-		insulin_t scale( double factor ) const noexcept;
+		insulin_t & scale( real_t factor ) noexcept;
+		insulin_t scale( real_t factor ) const noexcept;
 	};	// insulin_t
 
 	void swap( insulin_t & lhs, insulin_t & rhs ) noexcept;
 	std::ostream & operator<<( std::ostream & os, insulin_t const & glucose );	
 
-	insulin_t operator+( insulin_t const & lhs, insulin_t const & rhs ) noexcept;
-	insulin_t operator-( insulin_t const & lhs, insulin_t const & rhs ) noexcept;
+	insulin_t operator+( insulin_t lhs, insulin_t const & rhs ) noexcept;
+	insulin_t operator-( insulin_t lhs, insulin_t const & rhs ) noexcept;
 	insulin_t operator-( insulin_t rhs ) noexcept;
 	bool operator==( insulin_t const & lhs, insulin_t const & rhs ) noexcept;
 	bool operator!=( insulin_t const & lhs, insulin_t const & rhs ) noexcept;

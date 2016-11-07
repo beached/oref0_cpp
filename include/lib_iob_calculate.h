@@ -31,10 +31,10 @@ namespace ns {
 	namespace lib {
 		namespace iob {
 			struct iob_calc_t {
-				boost::optional<insulin_t> iobContrib;
-				boost::optional<insulin_t> activityContrib;
+				boost::optional<real_t> iobContrib;
+				boost::optional<real_t> activityContrib;
 				
-				iob_calc_t( boost::optional<insulin_t> iob_contrib, boost::optional<insulin_t> activity_contrib );
+				iob_calc_t( boost::optional<real_t> iob_contrib, boost::optional<real_t> activity_contrib );
 				iob_calc_t( );
 				~iob_calc_t( );
 				iob_calc_t( iob_calc_t const & ) = default;
@@ -61,14 +61,14 @@ namespace ns {
 					 */
 					if( minAgo < peak ) {
 						auto const x = minAgo/5.0 + 1.0;
-						insulin_t iobContrib = treatment.insulin * (1.0 - 0.001852 * sqr( x ) + 0.001852 * x);
-						insulin_t activityContrib = treatment.insulin * (2.0 / dia / 60.0 / peak ) * minAgo;
+						real_t iobContrib = treatment.insulin * (1.0 - 0.001852 * sqr( x ) + 0.001852 * x);
+						real_t activityContrib = treatment.insulin * (2.0 / dia / 60.0 / peak ) * minAgo;
 
 						return { {std::move( iobContrib )}, {std::move( activityContrib )} };
 					} else if( minAgo < end ) {
 						auto const y = (minAgo-peak)/5.0;
-						insulin_t iobContrib = treatment.insulin  * (0.001323 * sqr( y ) - 0.054233 * y + 0.55556);
-						insulin_t activityContrib = treatment.insulin * (2.0 / dia / 60.0 - (minAgo - peak) * 2.0 / dia / 60.0 / (60.0 * dia - peak)); 
+						real_t iobContrib = treatment.insulin  * (0.001323 * sqr( y ) - 0.054233 * y + 0.55556);
+						real_t activityContrib = treatment.insulin * (2.0 / dia / 60.0 - (minAgo - peak) * 2.0 / dia / 60.0 / (60.0 * dia - peak)); 
 
 						return { {std::move( iobContrib )}, {std::move( activityContrib )} };
 					}

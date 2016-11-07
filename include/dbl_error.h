@@ -23,29 +23,30 @@
 #pragma once
 
 #include <cmath>
+#include "data_types.h"
 
 namespace daw {
-	class dbl_error {
-		double m_value;
-		double m_error;
+	struct dbl_error {
+		ns::real_t m_value;
+		ns::real_t m_error;
 	public:
 		dbl_error( ) noexcept;
 		~dbl_error( );
-		explicit dbl_error( double value ) noexcept;
-		dbl_error( double value, double error ) noexcept;
+		explicit dbl_error( ns::real_t value ) noexcept;
+		dbl_error( ns::real_t value, ns::real_t error ) noexcept;
 
 		dbl_error( dbl_error const & other ) = default;
 		dbl_error( dbl_error && other ) = default;
 		dbl_error & operator=( dbl_error const & rhs ) = default;
 		dbl_error & operator=( dbl_error && rhs ) = default;
 
-		double & operator*( ) noexcept;
-		double const & operator*( ) const noexcept;
+		ns::real_t & operator*( ) noexcept;
+		ns::real_t const & operator*( ) const noexcept;
 
-		double const & value( ) const noexcept;
-		double & value( ) noexcept;
-		double const & error( ) const noexcept;
-		double & error( ) noexcept;
+		ns::real_t const & value( ) const noexcept;
+		ns::real_t & value( ) noexcept;
+		ns::real_t const & error( ) const noexcept;
+		ns::real_t & error( ) noexcept;
 
 		friend dbl_error operator+( dbl_error lhs, dbl_error const & rhs ) noexcept;
 		friend dbl_error operator-( dbl_error lhs, dbl_error const & rhs ) noexcept;
@@ -73,7 +74,7 @@ namespace daw {
 	dbl_error pow( dbl_error const & base, N const & exponent ) noexcept {
 		// TODO: determine what to do with a 0
 		dbl_error result{ pow( base.m_value, exponent ) };
-		result.m_error = FP_ZERO == std::fpclassify( base.m_value ) ? std::fabs( exponent ) * (base.m_error/std::fabs(base.m_value)) * result.m_value : base.m_error;
+		result.m_error = 0 == base.m_value ? abs( exponent ) * (base.m_error/abs(base.m_value)) * result.m_value : base.m_error;
 		return result;
 	}
 }    // namespace daw

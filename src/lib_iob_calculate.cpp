@@ -29,7 +29,7 @@
 namespace ns {
 	namespace lib {
 		namespace iob {
-			iob_calc_t::iob_calc_t( boost::optional<insulin_t> iob_contrib, boost::optional<insulin_t> activity_contrib ):
+			iob_calc_t::iob_calc_t( boost::optional<real_t> iob_contrib, boost::optional<real_t> activity_contrib ):
 					iobContrib{ std::move( iob_contrib ) },
 					activityContrib{ std::move( activity_contrib ) } { }
 

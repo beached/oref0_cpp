@@ -28,10 +28,10 @@
 #include "insulin_unit.h"
 
 namespace ns {
-	insulin_t::insulin_t( double d ) noexcept:
+	insulin_t::insulin_t( real_t d ) noexcept:
 			value{ std::move( d ) } { }
 
-	insulin_t::operator double( ) noexcept {
+	insulin_t::operator real_t( ) noexcept {
 		return value;
 	}
 
@@ -63,21 +63,25 @@ namespace ns {
 		return *this;
 	}
 
-	insulin_t & insulin_t::scale( double factor ) noexcept {
+	insulin_t & insulin_t::scale( real_t factor ) noexcept {
 		value *= factor;
 		return *this;
 	}
 
-	insulin_t insulin_t::scale( double factor ) const noexcept {
-		return insulin_t{ value * factor };
+	insulin_t insulin_t::scale( real_t factor ) const noexcept {
+		insulin_t result{ *this };
+		result.value *= factor;
+		return result;
 	}
 
-	insulin_t operator+( insulin_t const & lhs, insulin_t const & rhs ) noexcept {
-		return insulin_t{ lhs.value + rhs.value };
+	insulin_t operator+( insulin_t lhs, insulin_t const & rhs ) noexcept {
+		lhs.value += rhs.value;
+		return lhs;
 	}
 
-	insulin_t operator-( insulin_t const & lhs, insulin_t const & rhs ) noexcept {
-		return insulin_t{ lhs.value - rhs.value };
+	insulin_t operator-( insulin_t lhs, insulin_t const & rhs ) noexcept {
+		lhs.value -= rhs.value;
+		return lhs;
 	}
 
 	insulin_t operator-( insulin_t rhs ) noexcept {

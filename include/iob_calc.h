@@ -35,13 +35,13 @@
 
 namespace ns {
 	enum class insulin_duration_t: int16_t { t180 = 180, t210 = 210, t240 = 240, t300 = 300, t360 = 360 };
-	double insulin_on_board_pct( double const time_from_bolus_min, insulin_duration_t const insulin_duration );
+	double insulin_on_board_pct( std::chrono::minutes const time_from_bolus_min, std::chrono::minutes const insulin_duration );
 
 	struct insulin_dose {
 		using timestamp_t = std::chrono::system_clock::time_point;
 		insulin_t amount;	// Amount of insulin
 		timestamp_t dose_time;
-		insulin_duration_t dose_dia;	// DIA in minutes, must be > 0
+		std::chrono::minutes dose_dia;	// DIA in minutes, must be > 0
 		
 		insulin_dose( insulin_t how_much, insulin_duration_t dia = insulin_duration_t::t240, timestamp_t when = std::chrono::system_clock::now( ) );
 
