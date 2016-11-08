@@ -25,6 +25,7 @@
 #include <array>
 #include <boost/optional.hpp>
 #include <chrono>
+#include <cmath>
 #include <cstdint>
 #include <unordered_map>
 #include <string>

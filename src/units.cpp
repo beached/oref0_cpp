@@ -20,37 +20,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <boost/algorithm/string/predicate.hpp>
-#include <cmath>
-
-#include "data_types.h"
-#include "round_basal.h"
+#include <chrono>
+#include "units.h"
 
 namespace ns {
-	auto round_basal( double const & basal, profile_t const & profile ) {
-		/*
-		 * x23 and x54 pumps change basal increment depending on how much basal is being delivered:
-		 * 0.025u for 0.025 < x < 0.975
-		 * 0.05u for 1 < x < 9.95
-		 * 0.1u for 10 < x
-		 * To round numbers nicely for the pump, use a scale factor of (1 / increment).
-		 */
-		auto const lowest_rate_scale = [&profile]( ) -> double { 
-			if( profile.model ) {
-				auto const & model = *profile.model;
-				if( boost::algorithm::ends_with( model, "54" ) || boost::algorithm::ends_with( model, "23" ) ) {
-					return 40;
-				}
-			}
-			return 20;
-		}( );
-		assert( basal > 0 );
-		if( basal < 1 ) {
-			return round( basal * lowest_rate_scale)/lowest_rate_scale;
-		} else if( basal < 10 ) {
-			return round( basal * 20.0 )/20.0;
-		}
-		return round( basal * 10.0 )/10.0;	
-	}
-}    // namespace ns 
+	using namespace std::chrono_literals;
 
+	carb_rate_t operator*( insulin_per_hour_t const & lhs, icr_t const & rhs ) {
+		carb_t tmp;
+		tmp.value = lhs.value.value * rhs.value.value;
+		return carb_rate_t{ tmp, 60min };
+	}
+
+	carb_rate_t operator*( icr_t const & lhs, insulin_per_hour_t const & rhs ) {
+		carb_t tmp;
+		tmp.value = rhs.value.value * lhs.value.value;
+		return carb_rate_t{ tmp, 60min };
+	}
+}	// namespace ns

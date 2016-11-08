@@ -68,6 +68,7 @@ namespace daw {
 			}
 
 			ns::real_t sqrt_sum_of_sqrs( ns::real_t const & v1, ns::real_t const & v2 ) noexcept {
+				using std::sqrt;
 				return sqrt( pow2( v1 ) + pow2( v2 ) );
 			}
 		}	// namespace anonymous
@@ -110,6 +111,7 @@ namespace daw {
 
 		dbl_error sqrt( dbl_error const & value ) noexcept {
 			dbl_error result;
+			using std::sqrt;
 			result.m_value = sqrt( value.m_value );
 
 			return result;

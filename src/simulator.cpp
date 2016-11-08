@@ -189,7 +189,7 @@ int main( int, char ** ) {
 
 	auto ts_now = system_clock::now( ); 
 
-	add_carb_dose( ts_now + 45min, 50.0_g_CHO, 0.5_g_CHO_min );
+	add_carb_dose( ts_now, 50.0_g_CHO, 0.5_g_CHO_min );
 	add_insulin_dose( ts_now, 50.0_g_CHO/profile.icr );
 	auto max_bg = 0_mmol_L;
 	auto min_bg = 1000_mmol_L;
@@ -252,7 +252,7 @@ int main( int, char ** ) {
 		if( glucose_new > max_bg ) {
 			max_bg = glucose_new;
 		}
-		std::cout << ts_now << " t=" << cur_duration << " iob=" << iob << " active_ins=" << iob_diff << " cob=" << cob << " active_carb=" << cob_diff << "\n";
+		std::cout << " t=" << cur_duration << " iob=" << iob << " active_ins=" << iob_diff << " cob=" << cob << " active_carb=" << cob_diff << "\n";
 		std::cout << "\t\tisf*iob=" << expected_insulin_drop << " (cob/icr)*isf=" << expected_carb_rise << " insulin_drop=" << -insulin_drop << " carb_rise=" << carb_rise << '\n';
 		std::cout << "\t\tprev_glucose=" << glucose_prev << " glucose=" << glucose_new << " expected_glucose=" << expected_glucose << " min=" << min_bg << " max=" << max_bg << '\n';
 		ts_now += 5min;
