@@ -23,6 +23,9 @@
 
 #pragma once
 
+#include <algorithm>
+#include <numeric>
+
 #include "units.h"
 
 namespace ns {
