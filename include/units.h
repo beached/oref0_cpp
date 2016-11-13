@@ -31,8 +31,9 @@
 #include <isf_unit.h>
 
 namespace ns {
-	carb_rate_t operator*( insulin_per_hour_t const & lhs, icr_t const & rhs );
-	carb_rate_t operator*( icr_t const & lhs, insulin_per_hour_t const & rhs );
+	carb_rate_t operator*( insulin_rate_t const & lhs, icr_t const & rhs );
+	carb_rate_t operator*( icr_t const & lhs, insulin_rate_t const & rhs );
 
 }	// namespace ns
+
 

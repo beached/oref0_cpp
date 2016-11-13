@@ -26,144 +26,48 @@
 #include <sstream>
 #include <string>
 #include <chrono>
+
+#include "data_types.h"
 #include "insulin_unit.h"
 
 namespace ns {
-	template<size_t SECONDS>
-	struct insulin_per_SECONDS_t{
+	struct insulin_rate_t{
 		insulin_t value;
 
-		explicit insulin_per_SECONDS_t( insulin_t insulin ) noexcept:
-				value{ std::move( insulin ) } { }		
+		explicit insulin_rate_t( insulin_t insulin ) noexcept;
+		insulin_t insulin_per( std::chrono::minutes const & time_period ) const;
+		~insulin_rate_t( );
 
-		template<size_t UNIT_TIME>
-		insulin_per_SECONDS_t( insulin_per_SECONDS_t<UNIT_TIME> const & other ) noexcept:
-				value{ other.per( SECONDS ) } { }
+		insulin_rate_t( ) = default;
+		insulin_rate_t( insulin_rate_t const & ) = default;
+		insulin_rate_t( insulin_rate_t && ) = default;
+		insulin_rate_t & operator=( insulin_rate_t const & ) = default;
+		insulin_rate_t & operator=( insulin_rate_t && ) = default;
 
-		template<size_t UNIT_TIME>
-		insulin_per_SECONDS_t & operator=( insulin_per_SECONDS_t<UNIT_TIME> const & other ) noexcept {
-			value = other.per( SECONDS );
-		}
+		friend void swap( insulin_rate_t & lhs, insulin_rate_t & rhs ) noexcept;
+		std::string to_string( ) const;
+		insulin_rate_t & scale( real_t factor ) noexcept;
+		insulin_rate_t scale( real_t factor ) const noexcept;
 
-		~insulin_per_SECONDS_t( ) = default;
+	};	// insulin_rate_t
 
-		insulin_per_SECONDS_t( ) = default;
-		insulin_per_SECONDS_t( insulin_per_SECONDS_t const & ) = default;
-		insulin_per_SECONDS_t( insulin_per_SECONDS_t && ) = default;
-		insulin_per_SECONDS_t & operator=( insulin_per_SECONDS_t const & ) = default;
-		insulin_per_SECONDS_t & operator=( insulin_per_SECONDS_t && ) = default;
+	void swap( insulin_rate_t & lhs, insulin_rate_t & rhs ) noexcept;
 
-		friend void swap( insulin_per_SECONDS_t & lhs, insulin_per_SECONDS_t & rhs ) noexcept {
-			using std::swap;
-			swap( lhs.value, rhs.value );
-		}
-
-		std::string to_string( ) const {
-			std::stringstream ss;
-			ss << value;
-			switch( SECONDS ) {
-			case 60:
-				ss << "/min";
-				break;
-			case 3600:
-				ss << "/hr";
-				break;
-			default:
-				ss << "/" << SECONDS << "min";
-				break;
-			}
-			return ss.str( );		
-		}
-
-		insulin_per_SECONDS_t & scale( real_t factor ) noexcept {
-			value.scale( factor );
-			return *this;
-		}
-
-		insulin_per_SECONDS_t scale( real_t factor ) const noexcept {
-			insulin_per_SECONDS_t result{ *this };
-			result.scale( factor );
-			return result;
-		}
-
-		template<typename... Args>
-		insulin_t per( std::chrono::duration<Args...> duration ) const {
-			auto result = value;
-			double const factor = static_cast<double>(std::chrono::duration_cast<std::chrono::seconds>(duration).count( ))/static_cast<double>(SECONDS);
-			value.scale( factor );
-			return value;
-		}
-	};	// insulin_per_SECONDS_t
-
-	using insulin_per_hour_t = insulin_per_SECONDS_t<3600>;
-	using basal_rate_t = insulin_per_hour_t;
-
-	template<size_t SECONDS_lhs, size_t SECONDS_rhs>
-	bool operator==( insulin_per_SECONDS_t<SECONDS_lhs> const & lhs, insulin_per_SECONDS_t<SECONDS_rhs> const & rhs ) noexcept {
-		if( SECONDS_lhs == SECONDS_rhs ) {
-			return lhs.value == rhs.value;
-		}
-		static auto const factor = static_cast<double>(SECONDS_lhs)/static_cast<double>(SECONDS_rhs);
-		return lhs.value == rhs.value.scale( factor ); 
-	}
-
-	template<size_t SECONDS_lhs, size_t SECONDS_rhs>
-	bool operator!=( insulin_per_SECONDS_t<SECONDS_lhs> const & lhs, insulin_per_SECONDS_t<SECONDS_rhs> const & rhs ) noexcept {
-		if( SECONDS_lhs == SECONDS_rhs ) {
-			return lhs.value != rhs.value;
-		}
-		static auto const factor = static_cast<double>(SECONDS_lhs)/static_cast<double>(SECONDS_rhs);
-		return lhs.value != rhs.value.scale( factor ); 
-	}
-
-	template<size_t SECONDS_lhs, size_t SECONDS_rhs>
-	bool operator<( insulin_per_SECONDS_t<SECONDS_lhs> const & lhs, insulin_per_SECONDS_t<SECONDS_rhs> const & rhs ) noexcept {
-		if( SECONDS_lhs == SECONDS_rhs ) {
-			return lhs.value < rhs.value;
-		}
-		static auto const factor = static_cast<double>(SECONDS_lhs)/static_cast<double>(SECONDS_rhs);
-		return lhs.value < rhs.value.scale( factor ); 
-	}
-
-	template<size_t SECONDS_lhs, size_t SECONDS_rhs>
-	bool operator>( insulin_per_SECONDS_t<SECONDS_lhs> const & lhs, insulin_per_SECONDS_t<SECONDS_rhs> const & rhs ) noexcept {
-		if( SECONDS_lhs == SECONDS_rhs ) {
-			return lhs.value > rhs.value;
-		}
-		static auto const factor = static_cast<double>(SECONDS_lhs)/static_cast<double>(SECONDS_rhs);
-		return lhs.value > rhs.value.scale( factor ); 
-	}
-
-	template<size_t SECONDS_lhs, size_t SECONDS_rhs>
-	bool operator<=( insulin_per_SECONDS_t<SECONDS_lhs> const & lhs, insulin_per_SECONDS_t<SECONDS_rhs> const & rhs ) noexcept {
-		if( SECONDS_lhs == SECONDS_rhs ) {
-			return lhs.value <= rhs.value;
-		}
-		static auto const factor = static_cast<double>(SECONDS_lhs)/static_cast<double>(SECONDS_rhs);
-		return lhs.value <= rhs.value.scale( factor ); 
-	}
-
-	template<size_t SECONDS_lhs, size_t SECONDS_rhs>
-	bool operator>=( insulin_per_SECONDS_t<SECONDS_lhs> const & lhs, insulin_per_SECONDS_t<SECONDS_rhs> const & rhs ) noexcept {
-		if( SECONDS_lhs == SECONDS_rhs ) {
-			return lhs.value >= rhs.value;
-		}
-		static auto const factor = static_cast<double>(SECONDS_lhs)/static_cast<double>(SECONDS_rhs);
-		return lhs.value >= rhs.value.scale( factor ); 
-	}
+	bool operator==( insulin_rate_t const & lhs, insulin_rate_t const & rhs ) noexcept;
+	bool operator!=( insulin_rate_t const & lhs, insulin_rate_t const & rhs ) noexcept;
+	bool operator<( insulin_rate_t const & lhs, insulin_rate_t const & rhs ) noexcept;
+	bool operator>( insulin_rate_t const & lhs, insulin_rate_t const & rhs ) noexcept;
+	bool operator<=( insulin_rate_t const & lhs, insulin_rate_t const & rhs ) noexcept;
+	bool operator>=( insulin_rate_t const & lhs, insulin_rate_t const & rhs ) noexcept;
 
 	template<typename... Args>
-	insulin_per_hour_t operator/( insulin_t const & lhs, std::chrono::duration<Args...> const & rhs ) noexcept {
-		double const tp = std::chrono::duration_cast<std::chrono::seconds>( rhs ).count( );
-		return insulin_per_hour_t{ lhs.scale( tp / 3600.0 ) };
+	insulin_rate_t operator/( insulin_t const & lhs, std::chrono::duration<Args...> const & rhs ) noexcept {
+		real_t const factor = static_cast<real_t>(std::chrono::duration_cast<std::chrono::seconds>( rhs ).count( ))/3600.0;
+		return insulin_rate_t{ lhs.scale( factor ) };
 	}
 
-	template<size_t SECONDS>
-	std::ostream & operator<<( std::ostream & os, insulin_per_SECONDS_t<SECONDS> const & insulin_rate ) {
-		os << insulin_rate.to_string( );
-		return os;
-	}
+	std::ostream & operator<<( std::ostream & os, insulin_rate_t const & insulin_rate );
 }    // namespace ns
 
-ns::insulin_per_hour_t operator"" _U_hr( long double d ) noexcept;
-ns::insulin_per_hour_t operator"" _U_hr( unsigned long long i ) noexcept;
+ns::insulin_rate_t operator"" _U_hr( long double d ) noexcept;
+ns::insulin_rate_t operator"" _U_hr( unsigned long long i ) noexcept;

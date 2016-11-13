@@ -65,7 +65,7 @@ namespace ns {
 	}
 
 	carb_t carb_t::scale( real_t factor ) const noexcept {
-		carb_t result;
+		carb_t result{ *this };
 		result.value *= factor;
 		return result;
 	}

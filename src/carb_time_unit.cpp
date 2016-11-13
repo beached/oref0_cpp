@@ -72,8 +72,9 @@ namespace ns {
 	}
 
 	carb_t carb_rate_t::carbs_per( std::chrono::minutes const & time_period ) const {
-		auto const factor = static_cast<double>(time_period.count( ))/60.0;
-		return value.scale( factor );
+		auto const factor = static_cast<real_t>(time_period.count( ))/60.0;
+		auto result = value.scale( factor );
+		return result;
 	}
 
 	bool operator==( carb_rate_t const & lhs, carb_rate_t const & rhs ) noexcept {

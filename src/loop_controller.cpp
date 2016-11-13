@@ -20,21 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <chrono>
-#include "units.h"
-
 namespace ns {
-	using namespace std::chrono_literals;
 
-	carb_rate_t operator*( insulin_rate_t const & lhs, icr_t const & rhs ) {
-		carb_t tmp;
-		tmp.value = lhs.value.value * rhs.value.value;
-		return carb_rate_t{ tmp, 60min };
-	}
+}    // namespace ns
 
-	carb_rate_t operator*( icr_t const & lhs, insulin_rate_t const & rhs ) {
-		carb_t tmp;
-		tmp.value = rhs.value.value * lhs.value.value;
-		return carb_rate_t{ tmp, 60min };
-	}
-}	// namespace ns

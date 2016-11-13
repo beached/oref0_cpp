@@ -35,7 +35,7 @@ namespace ns {
 	namespace calculations {
 		using namespace std::chrono_literals;
 
-		ns::carb_rate_t	liver_glucose_output( ns::basal_rate_t const & b, ns::icr_t const & icr ) {
+		carb_rate_t	liver_glucose_output( insulin_rate_t const & b, icr_t const & icr ) {
 			return b * icr;
 		}
 		namespace {

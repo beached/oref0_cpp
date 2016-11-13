@@ -47,7 +47,7 @@ namespace ns {
 	/// fall to get eventualBG to target over DIA/2 hours
 	template<typename T> 
 	constexpr auto calculate_expected_delta( T const & dia, glucose_t const & target_bg, glucose_t const & eventual_bg, glucose_t const & bgi ) {
-		// (hours*mins_per_hour)/5 = how many 5 minute periods in a dia/2
+		// (hours*mins_rate)/5 = how many 5 minute periods in a dia/2
 		auto const dia_in_5min_blocks = (dia/2 * 60)/5;
 		auto const target_delta = target_bg - eventual_bg;
 		auto expected_delta = round_to( bgi + (target_delta / dia_in_5min_blocks), 1 );

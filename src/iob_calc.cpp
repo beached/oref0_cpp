@@ -32,12 +32,13 @@
 #include <date/date.h>
 
 #include "iob_calc.h"
+#include "data_types.h"
 
 using namespace date;
 using namespace std::chrono_literals;
 namespace ns {
 	namespace {
-		size_t insulin_duration_to_idx( std::chrono::minutes const duration ) {	
+		size_t insulin_duration_to_idx( std::chrono::minutes const duration ) noexcept {	
 			switch( duration.count( ) ) {
 				case 180: return 0;
 				case 210: return 1;
@@ -61,9 +62,9 @@ namespace ns {
 
 
 		template<size_t N>
-			constexpr double to_power( double const & value ) {
+			real_t to_power( real_t const & value ) noexcept {
 				static_assert( N > 0, "" );
-				double result = value;
+				real_t result = value;
 				for( size_t n=1; n<N; ++n ) {
 					result *= value;
 				}
@@ -71,8 +72,8 @@ namespace ns {
 			}
 	}
 
-	double insulin_on_board_pct( std::chrono::minutes const time_from_bolus_min, std::chrono::minutes const insulin_duration ) {
-		double const params[5][5] = {
+	real_t insulin_on_board_pct( std::chrono::minutes const time_from_bolus_min, std::chrono::minutes const insulin_duration ) noexcept {
+		real_t const params[5][5] = {
 			{  99.951000000,  0.092550000, -0.01759000,  0.000135400, -0.00000032030 },	// t=180
 			{  99.924242424,  0.282046657, -0.01489899,  0.000087168, -0.00000015900 },	// t=210 
 			{  99.950000000, -0.090860000, -0.00551000,  0.000025300, -0.00000003310 },	// t=240
@@ -85,7 +86,7 @@ namespace ns {
 		} else if( time_from_bolus_min >= insulin_duration ) {
 			return 0.0;
 		} 
-		double const t = time_from_bolus_min.count( );
+		real_t const t = time_from_bolus_min.count( );
 		auto const & param = params[insulin_duration_to_idx( insulin_duration )];
 		auto const p1 = param[1] * t;
 		auto const p2 = param[2] * to_power<2>( t );
@@ -96,9 +97,9 @@ namespace ns {
 
 		// clamp value
 		if( percentage > 1.0 ) {
-			percentage = 1;
+			return 1.0;
 		} else if( percentage < 0.0 ) {
-			percentage = 0;
+			return 0.0;
 		}
 		return percentage;
 	}

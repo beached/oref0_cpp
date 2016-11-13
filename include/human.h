@@ -20,21 +20,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <chrono>
+#pragma once
+
+#include "data_types.h"
 #include "units.h"
 
 namespace ns {
-	using namespace std::chrono_literals;
 
-	carb_rate_t operator*( insulin_rate_t const & lhs, icr_t const & rhs ) {
-		carb_t tmp;
-		tmp.value = lhs.value.value * rhs.value.value;
-		return carb_rate_t{ tmp, 60min };
-	}
+	struct human_t {
+		virtual ~human_t( );
+		virtual void add_carbohydrate( carb_t amount ) = 0;
+		virtual void add_insulin( insulin_t amount ) = 0;
+		virtual glucose_t get_glucose( ) const = 0;
+	};	// human_t
 
-	carb_rate_t operator*( icr_t const & lhs, insulin_rate_t const & rhs ) {
-		carb_t tmp;
-		tmp.value = rhs.value.value * lhs.value.value;
-		return carb_rate_t{ tmp, 60min };
-	}
-}	// namespace ns
+	
+	struct simulator_human_t: public human_t {
+		glucose_t current_glucose;
+
+		~simulator_human_t( );
+		void add_carbohydrate( carb_t amount ) override; 
+		void add_insulin( insulin_t amount ) override;
+		glucose_t get_glucose( ) const override;
+	};	// simulator_human_t
+}    // namespace ns
+
