@@ -237,9 +237,9 @@ int main( int, char ** ) {
 //	add_carb_dose( ts_now, 50.0_g_CHO, 0.3_g_CHO_min );
 //	add_insulin_dose( ts_now, insulin_offset + calculate_bolus( ts_now, 240min, profile, 50_g_CHO, 0.3_g_CHO_min ) );
 	insulin_offset = 0_U;
-	simulator_human_t human;
+	simulator_human_t human{ 5.5_mmol_L, 1.2_U_hr };
 	auto min_bg = human.get_glucose( );
-	auto max_bg = human.get_glucose( );
+	auto max_bg = min_bg;
 
 	auto cur_duration = duration_cast<minutes>( ts_now - ts_start );
 	auto last_duration = cur_duration;

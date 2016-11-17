@@ -1,0 +1,217 @@
+{
+    "items": {
+        "required": true, 
+        "type": "object", 
+        "id": "0", 
+        "properties": {
+            "startDate": {
+                "required": true, 
+                "type": "string", 
+                "id": "startDate"
+            }, 
+            "created_at": {
+                "required": true, 
+                "type": "string", 
+                "id": "created_at"
+            }, 
+            "mills": {
+                "required": true, 
+                "type": "string", 
+                "id": "mills"
+            }, 
+            "_id": {
+                "required": true, 
+                "type": "string", 
+                "id": "_id"
+            }, 
+            "defaultProfile": {
+                "required": true, 
+                "type": "string", 
+                "id": "defaultProfile"
+            }, 
+            "store": {
+                "required": true, 
+                "type": "object", 
+                "id": "store", 
+                "properties": {
+                    "Default": {
+                        "required": true, 
+                        "type": "object", 
+                        "id": "Default", 
+                        "properties": {
+                            "startDate": {
+                                "required": true, 
+                                "type": "string", 
+                                "id": "startDate"
+                            }, 
+                            "target_high": {
+                                "items": {
+                                    "required": true, 
+                                    "type": "object", 
+                                    "id": "0", 
+                                    "properties": {
+                                        "time": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "time"
+                                        }, 
+                                        "value": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "value"
+                                        }, 
+                                        "timeAsSeconds": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "timeAsSeconds"
+                                        }
+                                    }
+                                }, 
+                                "required": true, 
+                                "type": "array", 
+                                "id": "target_high"
+                            }, 
+                            "carbratio": {
+                                "items": {
+                                    "required": true, 
+                                    "type": "object", 
+                                    "id": "0", 
+                                    "properties": {
+                                        "time": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "time"
+                                        }, 
+                                        "value": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "value"
+                                        }, 
+                                        "timeAsSeconds": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "timeAsSeconds"
+                                        }
+                                    }
+                                }, 
+                                "required": true, 
+                                "type": "array", 
+                                "id": "carbratio"
+                            }, 
+                            "dia": {
+                                "required": true, 
+                                "type": "string", 
+                                "id": "dia"
+                            }, 
+                            "basal": {
+                                "items": {
+                                    "required": true, 
+                                    "type": "object", 
+                                    "id": "0", 
+                                    "properties": {
+                                        "time": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "time"
+                                        }, 
+                                        "value": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "value"
+                                        }, 
+                                        "timeAsSeconds": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "timeAsSeconds"
+                                        }
+                                    }
+                                }, 
+                                "required": true, 
+                                "type": "array", 
+                                "id": "basal"
+                            }, 
+                            "carbs_hr": {
+                                "required": true, 
+                                "type": "string", 
+                                "id": "carbs_hr"
+                            }, 
+                            "target_low": {
+                                "items": {
+                                    "required": true, 
+                                    "type": "object", 
+                                    "id": "0", 
+                                    "properties": {
+                                        "time": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "time"
+                                        }, 
+                                        "value": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "value"
+                                        }, 
+                                        "timeAsSeconds": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "timeAsSeconds"
+                                        }
+                                    }
+                                }, 
+                                "required": true, 
+                                "type": "array", 
+                                "id": "target_low"
+                            }, 
+                            "delay": {
+                                "required": true, 
+                                "type": "string", 
+                                "id": "delay"
+                            }, 
+                            "timezone": {
+                                "required": true, 
+                                "type": "string", 
+                                "id": "timezone"
+                            }, 
+                            "units": {
+                                "required": true, 
+                                "type": "string", 
+                                "id": "units"
+                            }, 
+                            "sens": {
+                                "items": {
+                                    "required": true, 
+                                    "type": "object", 
+                                    "id": "0", 
+                                    "properties": {
+                                        "time": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "time"
+                                        }, 
+                                        "value": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "value"
+                                        }, 
+                                        "timeAsSeconds": {
+                                            "required": true, 
+                                            "type": "string", 
+                                            "id": "timeAsSeconds"
+                                        }
+                                    }
+                                }, 
+                                "required": true, 
+                                "type": "array", 
+                                "id": "sens"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }, 
+    "$schema": "http://json-schema.org/draft-03/schema#", 
+    "required": true, 
+    "type": "array", 
+    "id": "#"
+}

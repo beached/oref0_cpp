@@ -30,17 +30,29 @@ namespace ns {
 	struct human_t {
 		virtual ~human_t( );
 		virtual void add_carbohydrate( carb_t amount ) = 0;
-		virtual void add_insulin( insulin_t amount ) = 0;
+		virtual void bolus_insulin( insulin_t amount ) = 0;
+		virtual void set_basal_rate( insulin_rate_t amount ) = 0;
+		virtual insulin_rate_t get_basal_rate( ) const = 0;
 		virtual glucose_t get_glucose( ) const = 0;
 	};	// human_t
 
 	
-	struct simulator_human_t: public human_t {
-		glucose_t current_glucose;
-
+	class simulator_human_t: public human_t {
+		glucose_t m_current_glucose;
+		insulin_rate_t m_current_basal_rate;
+	public:
+		simulator_human_t( glucose_t current_glucose, insulin_rate_t current_basal_rate );
 		~simulator_human_t( );
+		simulator_human_t( ) = delete;
+		simulator_human_t( simulator_human_t const & ) = default;
+		simulator_human_t( simulator_human_t && ) = default;
+		simulator_human_t & operator=( simulator_human_t const & ) = default;
+		simulator_human_t & operator=( simulator_human_t && ) = default;
+
 		void add_carbohydrate( carb_t amount ) override; 
-		void add_insulin( insulin_t amount ) override;
+		void bolus_insulin( insulin_t amount ) override;
+		void set_basal_rate( insulin_rate_t amount ) override;
+		insulin_rate_t get_basal_rate( ) const override;
 		glucose_t get_glucose( ) const override;
 	};	// simulator_human_t
 }    // namespace ns

@@ -34,9 +34,9 @@
 #include <daw/json/value_t.h>
 
 namespace ns {
-//	using real_t = boost::multiprecision::cpp_dec_float_50;
-	using real_t = boost::multiprecision::number<boost::multiprecision::cpp_dec_float<10>>;
-//	using real_t = double;
+//	using real_t = boost::multiprecision::cpp_dec_float_50;		// ~1000 runs/second
+	using real_t = boost::multiprecision::number<boost::multiprecision::cpp_dec_float<10>>; // ~2000 runs/second
+//	using real_t = double;	// 10000 runs/second
 	using timestamp_t = std::chrono::time_point<std::chrono::system_clock>;
 	using duration_t = std::chrono::milliseconds;
 

@@ -1,0 +1,103 @@
+{
+    "items": {
+        "required": true, 
+        "type": "object", 
+        "id": "0", 
+        "properties": {
+            "created_at": {
+                "required": true, 
+                "type": "string", 
+                "id": "created_at"
+            }, 
+            "pump": {
+                "required": true, 
+                "type": "object", 
+                "id": "pump", 
+                "properties": {
+                    "battery": {
+                        "required": true, 
+                        "type": "object", 
+                        "id": "battery", 
+                        "properties": {
+                            "percent": {
+                                "required": true, 
+                                "type": "number", 
+                                "id": "percent"
+                            }
+                        }
+                    }, 
+                    "iob": {
+                        "required": true, 
+                        "type": "object", 
+                        "id": "iob", 
+                        "properties": {
+                            "timestamp": {
+                                "required": true, 
+                                "type": "string", 
+                                "id": "timestamp"
+                            }, 
+                            "bolusiob": {
+                                "required": true, 
+                                "type": "number", 
+                                "id": "bolusiob"
+                            }
+                        }
+                    }, 
+                    "reservoir": {
+                        "required": true, 
+                        "type": "number", 
+                        "id": "reservoir"
+                    }, 
+                    "clock": {
+                        "required": true, 
+                        "type": "string", 
+                        "id": "clock"
+                    }
+                }
+            }, 
+            "uploader": {
+                "required": true, 
+                "type": "object", 
+                "id": "uploader", 
+                "properties": {
+                    "battery": {
+                        "required": true, 
+                        "type": "number", 
+                        "id": "battery"
+                    }
+                }
+            }, 
+            "device": {
+                "required": true, 
+                "type": "string", 
+                "id": "device"
+            }, 
+            "_id": {
+                "required": true, 
+                "type": "string", 
+                "id": "_id"
+            }, 
+            "sensor": {
+                "required": true, 
+                "type": "object", 
+                "id": "sensor", 
+                "properties": {
+                    "sensorAge": {
+                        "required": true, 
+                        "type": "number", 
+                        "id": "sensorAge"
+                    }, 
+                    "sensorRemaining": {
+                        "required": true, 
+                        "type": "number", 
+                        "id": "sensorRemaining"
+                    }
+                }
+            }
+        }
+    }, 
+    "$schema": "http://json-schema.org/draft-03/schema#", 
+    "required": true, 
+    "type": "array", 
+    "id": "#"
+}

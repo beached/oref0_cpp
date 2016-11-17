@@ -26,16 +26,27 @@
 #include "human.h"
 
 namespace ns {
+	simulator_human_t::simulator_human_t( glucose_t current_glucose, insulin_rate_t current_basal_rate ):
+			m_current_glucose{ std::move( current_glucose ) },
+			m_current_basal_rate{ std::move( current_basal_rate ) } { }
+
 	human_t::~human_t( ) { }
 
 	simulator_human_t::~simulator_human_t( ) { }
 
 	void simulator_human_t::add_carbohydrate( carb_t amount ) { }
 
-	void simulator_human_t::add_insulin( insulin_t amount ) { }
+	void simulator_human_t::bolus_insulin( insulin_t amount ) { }
+
+	void simulator_human_t::set_basal_rate( insulin_rate_t amount ) { }
+
+	insulin_rate_t simulator_human_t::get_basal_rate( ) const {
+		return m_current_basal_rate;
+	}
 
 	glucose_t simulator_human_t::get_glucose( ) const {
-		return current_glucose;
+		return m_current_glucose;
 	}
+
 }    // namespace ns 
 
