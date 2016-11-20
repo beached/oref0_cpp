@@ -4,7 +4,7 @@ project( oref0_cpp_prj )
 
 include( ExternalProject )
 
-find_package( Boost 1.58.0 COMPONENTS system iostreams program_options filesystem regex unit_test_framework REQUIRED )
+find_package( Boost 1.58.0 COMPONENTS system date_time iostreams program_options filesystem regex unit_test_framework REQUIRED )
 
 enable_testing( )
 add_definitions( -DBOOST_TEST_DYN_LINK ) 
@@ -84,6 +84,7 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/iob_calc.h
 	${HEADER_FOLDER}/isf_unit.h
 	${HEADER_FOLDER}/lib_iob_calculate.h
+	${HEADER_FOLDER}/ns_entries.h
 	${HEADER_FOLDER}/requested_temp.h
 	${HEADER_FOLDER}/iob_calc.h
 	${HEADER_FOLDER}/units.h
@@ -103,6 +104,7 @@ set( SOURCE_FILES
 	${SOURCE_FOLDER}/iob_calc.cpp
 	${SOURCE_FOLDER}/isf_unit.cpp
 	${SOURCE_FOLDER}/lib_iob_calculate.cpp
+	${SOURCE_FOLDER}/ns_entries.cpp
 	${SOURCE_FOLDER}/units.cpp
 )
 
@@ -121,6 +123,9 @@ target_link_libraries( cob_calc_test_bin oref0 parse_json char_range ${Boost_LIB
 
 add_executable( glucose_unit_test_bin ${HEADER_FILES} ${TEST_FOLDER}/glucose_unit_test.cpp )
 target_link_libraries( glucose_unit_test_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+
+add_executable( ns_entries_test_bin ${HEADER_FILES} ${TEST_FOLDER}/ns_entries_test.cpp )
+target_link_libraries( ns_entries_test_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 install( TARGETS oref0 DESTINATION lib )
 install( DIRECTORY ${HEADER_FOLDER}/ DESTINATION include/daw/oref0 )
