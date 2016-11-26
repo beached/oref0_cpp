@@ -40,13 +40,13 @@ namespace ns {
 				value_t x = 0.0;
 				value_t y = 0.0;
 				value_t xy = 0.0;
-				value_t x² = 0.0;
+				value_t x2 = 0.0;
 			} init;
 			auto const sum = std::accumulate( std::begin( points ), std::end( points ), init, []( auto last, auto const & point ) {
 				last.x += point.x;
 				last.y += point.y;
 				last.xy += point.x * point.y;
-				last.x² += point.x * point.x;
+				last.x2 += point.x * point.x;
 				return last;
 			} );
 
@@ -55,8 +55,8 @@ namespace ns {
 				value_t intercept = 0.0;
 			} result;
 			auto const count = static_cast<value_t>(std::distance( std::begin( points ), std::end( points ) ));
-			result.slope = ((count * sum.xy) - (sum.x * sum.y))/((count * sum.x²) - (sum.x*sum.x));
-			result.intercept = (sum.y * sum.x² - (sum.x*sum.xy))/(count*sum.x² - (sum.x*sum.x));
+			result.slope = ((count * sum.xy) - (sum.x * sum.y))/((count * sum.x2) - (sum.x*sum.x));
+			result.intercept = (sum.y * sum.x2 - (sum.x*sum.xy))/(count*sum.x2 - (sum.x*sum.x));
 			return result;
 		}
 

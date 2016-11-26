@@ -1,87 +1,83 @@
-public class Rootobject {
-	public Class1[] Property1 { get; set; }
+class device_status_t {
+	std::string _id;
+	DateTime created_at;
+	Pump pump;
+	Sensor sensor;
+	std::string device;
+	Uploader uploader;
+	bool sensorNotActive;
+	Loop loop;
 }
 
-public class Class1 {
-	public string _id { get; set; }
-	public DateTime created_at { get; set; }
-	public Pump pump { get; set; }
-	public Sensor sensor { get; set; }
-	public string device { get; set; }
-	public Uploader uploader { get; set; }
-	public bool sensorNotActive { get; set; }
-	public Loop loop { get; set; }
+class Pump {
+	Battery battery;
+	double reservoir;
+	DateTime clock;
+	Iob iob;
+	std::string pumpID;
 }
 
-public class Pump {
-	public Battery battery { get; set; }
-	public float reservoir { get; set; }
-	public DateTime clock { get; set; }
-	public Iob iob { get; set; }
-	public string pumpID { get; set; }
+class Battery {
+	int percent;
+	std::string status;
+	double voltage;
 }
 
-public class Battery {
-	public int percent { get; set; }
-	public string status { get; set; }
-	public float voltage { get; set; }
+class Iob {
+	double bolusiob;
+	DateTime timestamp;
+	double iob;
 }
 
-public class Iob {
-	public float bolusiob { get; set; }
-	public DateTime timestamp { get; set; }
-	public float iob { get; set; }
+class Sensor {
+	int sensorRemaining;
+	int sensorAge;
 }
 
-public class Sensor {
-	public int sensorRemaining { get; set; }
-	public int sensorAge { get; set; }
+class Uploader {
+	int battery;
+	DateTime timestamp;
+	std::string name;
 }
 
-public class Uploader {
-	public int battery { get; set; }
-	public DateTime timestamp { get; set; }
-	public string name { get; set; }
+class Loop {
+	std::string version;
+	Recommendedtempbasal recommendedTempBasal;
+	double recommendedBolus;
+	DateTime timestamp;
+	Predicted predicted;
+	Iob1 iob;
+	std::string name;
+	std::string failureReason;
+	Enacted enacted;
+	Cob cob;
 }
 
-public class Loop {
-	public string version { get; set; }
-	public Recommendedtempbasal recommendedTempBasal { get; set; }
-	public float recommendedBolus { get; set; }
-	public DateTime timestamp { get; set; }
-	public Predicted predicted { get; set; }
-	public Iob1 iob { get; set; }
-	public string name { get; set; }
-	public string failureReason { get; set; }
-	public Enacted enacted { get; set; }
-	public Cob cob { get; set; }
+class Recommendedtempbasal {
+	DateTime timestamp;
+	double rate;
+	int duration;
 }
 
-public class Recommendedtempbasal {
-	public DateTime timestamp { get; set; }
-	public float rate { get; set; }
-	public int duration { get; set; }
+class Predicted {
+	DateTime startDate;
+	std::vector<int> values;
 }
 
-public class Predicted {
-	public DateTime startDate { get; set; }
-	public int[] values { get; set; }
+class Iob1 {
+	DateTime timestamp;
+	double iob;
 }
 
-public class Iob1 {
-	public DateTime timestamp { get; set; }
-	public float iob { get; set; }
+class Enacted {
+	DateTime timestamp;
+	double rate;
+	int duration;
+	bool received;
 }
 
-public class Enacted {
-	public DateTime timestamp { get; set; }
-	public float rate { get; set; }
-	public int duration { get; set; }
-	public bool received { get; set; }
-}
-
-public class Cob {
-	public DateTime timestamp { get; set; }
-	public float cob { get; set; }
+class Cob {
+	DateTime timestamp;
+	double cob;
 }
 

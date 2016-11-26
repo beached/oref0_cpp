@@ -23,9 +23,11 @@
 #pragma once
 
 #include <boost/optional.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <cstdint>
 #include <string>
+
+#include <date/date.h>
+#include <chrono>
 
 #include <daw/json/daw_json_link.h>
 
@@ -50,9 +52,9 @@ namespace ns {
 		std::string id;
 		nightscout_direction direction;
 		boost::optional<int16_t> previous_sgv;
-		boost::posix_time::ptime timestamp;
+		std::chrono::system_clock::time_point timestamp;
 		std::string device;
-		int64_t date;
+		std::chrono::system_clock::time_point date;
 		int16_t sgv;
 		std::string type;
 		boost::optional<bool> previous_sgv_not_active;
@@ -60,9 +62,12 @@ namespace ns {
 		nightscout_entries( );
 		~nightscout_entries( );
 		nightscout_entries( nightscout_entries const & other );
-		nightscout_entries & operator=( nightscout_entries const & rhs );
-		
-		nightscout_entries( nightscout_entries && ) = default;
+		nightscout_entries( nightscout_entries && other );
+
+		nightscout_entries & operator=( nightscout_entries const & ) = default;
 		nightscout_entries & operator=( nightscout_entries && ) = default;
+
+	private:
+		void link_values( );
 	};	// nightscout_entries
 }

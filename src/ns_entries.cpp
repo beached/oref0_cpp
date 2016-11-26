@@ -21,11 +21,13 @@
 // SOFTWARE.
 
 #include <boost/optional.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/utility/string_view.hpp>
 #include <cstdint>
 #include <string>
 #include <unordered_map>
+#include <date/date.h>
+#include <date/tz.h>
+#include <chrono>
 
 #include <daw/json/daw_json_link.h>
 
@@ -78,61 +80,66 @@ namespace ns {
 		return is;
 	}
 
-	nightscout_entries::nightscout_entries( ):
-			daw::json::JsonLink<nightscout_entries>{ },
-			id{ },
-			direction{ nightscout_direction::not_computable },
-			previous_sgv{ },
-			timestamp{ },
-			device{ },
-			date{ -1 },
-			sgv{ -1 },
-			type{ },
-			previous_sgv_not_active{ } {
+	void nightscout_entries::link_values( ) {
+		this->link_string( "_id", id );
+		this->link_streamable( "direction", direction );
+		this->link_integral( "previousSGV", previous_sgv );
+		this->link_iso8601_timestamp( "dateString", timestamp );
 
-		link_string( "_id", id );
-		link_streamable( "direction", direction );
-		link_integral( "previousSGV", previous_sgv );
-		//link_timestamp( "dateString", timestamp );
-		link_string( "device", device );
-		link_integral( "date", date );
-		link_integral( "sgv", sgv );
-		link_string( "type", type );
-		link_boolean( "previousSGVNotActive", previous_sgv_not_active );
+		this->link_string( "device", device );
+		this->link_epoch_milliseconds_timestamp( "date", date );
+		this->link_integral( "sgv", sgv );
+		this->link_string( "type", type );
+		this->link_boolean( "previousSGVNotActive", previous_sgv_not_active );
 	}
+
+	nightscout_entries::nightscout_entries( ):
+		daw::json::JsonLink<nightscout_entries>{ },
+		id{ },
+		direction{ nightscout_direction::not_computable },
+		previous_sgv{ },
+		timestamp{ },
+		device{ },
+		date{ },
+		sgv{ -1 },
+		type{ },
+		previous_sgv_not_active{ } {
+
+			link_values( );
+		}
 
 	nightscout_entries::~nightscout_entries( ) { }
 
+
 	nightscout_entries::nightscout_entries( nightscout_entries const & other ):
-			daw::json::JsonLink<nightscout_entries>{ },
-			id{ other.id },
-			direction{ other.direction },
-			previous_sgv{ other.previous_sgv },
-			timestamp{ other.timestamp },
-			device{ other.device },
-			date{ other.date },
-			sgv{ other.sgv },
-			type{ other.type },
-			previous_sgv_not_active{ other.previous_sgv_not_active } {
+		daw::json::JsonLink<nightscout_entries>{ },
+		id{ other.id },
+		direction{ other.direction },
+		previous_sgv{ other.previous_sgv },
+		timestamp{ other.timestamp },
+		device{ other.device },
+		date{ other.date },
+		sgv{ other.sgv },
+		type{ other.type },
+		previous_sgv_not_active{ other.previous_sgv_not_active } {
 
-		link_string( "_id", id );
-		link_streamable( "direction", direction );
-		link_integral( "previousSGV", previous_sgv );
-		//link_timestamp( "dateString", timestamp );
-		link_string( "device", device );
-		link_integral( "date", date );
-		link_integral( "sgv", sgv );
-		link_string( "type", type );
-		link_boolean( "previousSGVNotActive", previous_sgv_not_active );
-	}
-
-	nightscout_entries & nightscout_entries::operator=( nightscout_entries const & rhs ) {
-		if( this != &rhs ) {
-			nightscout_entries tmp{ rhs };
-			using std::swap;
-			swap( *this, tmp );
+			link_values( );
 		}
-		return *this;
-	}	
+
+	nightscout_entries::nightscout_entries( nightscout_entries && other ):
+		daw::json::JsonLink<nightscout_entries>{ },
+		id{ std::move( other.id ) },
+		direction{ std::move( other.direction ) },
+		previous_sgv{ std::move( other.previous_sgv ) },
+		timestamp{ std::move( other.timestamp ) },
+		device{ std::move( other.device ) },
+		date{ std::move( other.date ) },
+		sgv{ std::move( other.sgv ) },
+		type{ std::move( other.type ) },
+		previous_sgv_not_active{ std::move( other.previous_sgv_not_active ) } {
+
+			link_values( );
+		}
+
 }
 

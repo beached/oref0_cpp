@@ -45,13 +45,6 @@ namespace ns {
 		link_number( "percent", percent );
 	}
 				
-	device_status_pump_battery_item_t & device_status_pump_battery_item_t::operator=( device_status_pump_battery_item_t const & rhs ) {
-		if( this != &rhs ) {
-			percent = rhs.percent;
-		}
-		return *this;
-	}
-
 	device_status_pump_iob_item_t::device_status_pump_iob_item_t( ):
 			daw::json::JsonLink<device_status_pump_iob_item_t>{ },
 			timestamp{ },
@@ -68,14 +61,6 @@ namespace ns {
 	
 		link_timestamp( "timestamp", timestamp );
 		link_real( "bolusiob", bolus_iob );
-	}
-
-	device_status_pump_iob_item_t & device_status_pump_iob_item_t::operator=( device_status_pump_iob_item_t const & rhs ) {
-		if( this != rhs ) {
-			timestamp = rhs.timestamp;
-			bolus_iob = rhs.bolus_iob;
-		}
-		return *this;
 	}
 
 	struct device_status_pump_item_t: public daw::json::JsonLink<device_status_pump_item_t> {

@@ -28,8 +28,10 @@ int main( int argc, char **argv ) {
 	using namespace ns;
 
 	auto entries  = daw::json::array_from_file<nightscout_entries>( argv[1] );
-	for( auto const & entry: entries ) {
-		std::cout << entry.to_string( ) << '\n';
+	for( size_t n = 0; n<entries.size( ); ++n ) {
+		nightscout_entries const & entry = entries[n];
+		auto const str = entry.to_string( );
+		std::cout << str << '\n';
 	}
 
 	return EXIT_SUCCESS;
