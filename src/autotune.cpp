@@ -1,5 +1,6 @@
+// The MIT License (MIT)
 //
-// Copyright (c) 2016 Darrell Wright
+// Copyright (c) 2017 Darrell Wright
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files( the "Software" ), to deal
@@ -19,22 +20,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <cstdlib>
-#include <iostream>
+#include "autotune.h"
 
-#include <daw/daw_exception.h>
+namespace ns {
 
-#include "ns_entries.h"
+	ns_profile_data_t get_nightscout_profile_data( boost::string_view nightscout_base_url ) {
 
-int main( int argc, char **argv ) {
-	using namespace ns;
-	daw::exception::daw_throw_on_false( argc < 1, "Must supply a filename" );	
-	auto entries  = daw::json::array_from_file<nightscout_entries>( argv[1] );
-	for( size_t n = 0; n<entries.size( ); ++n ) {
-		nightscout_entries const & entry = entries[n];
-		auto const str = entry.to_string( );
-		std::cout << str << '\n';
+		return ns_profile_data_t { };
 	}
 
-	return EXIT_SUCCESS;
-}
+	ns_glucose_data_t get_nightscout_glucose_data( boost::string_view nightscout_base_url ) {
+
+		return ns_glucose_data_t { };
+	}
+
+	ns_treatment_data_t get_nightscout_treatment_data( boost::string_view nightscout_base_url ) {
+
+		return ns_treatment_data_t { };
+	}
+
+	ns_profile_data_t autotune_data( ns_profile_data_t const & profile_data, ns_glucose_data_t const & glucose_data, ns_treatment_data_t const & treatment_data ) {
+
+		return ns_profile_data_t { };
+	}
+}	// namespace ns
+
+

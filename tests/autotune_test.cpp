@@ -1,5 +1,6 @@
+// The MIT License (MIT)
 //
-// Copyright (c) 2016 Darrell Wright
+// Copyright (c) 2017 Darrell Wright
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files( the "Software" ), to deal
@@ -24,17 +25,21 @@
 
 #include <daw/daw_exception.h>
 
-#include "ns_entries.h"
+#include "autotune.h"
 
-int main( int argc, char **argv ) {
-	using namespace ns;
-	daw::exception::daw_throw_on_false( argc < 1, "Must supply a filename" );	
-	auto entries  = daw::json::array_from_file<nightscout_entries>( argv[1] );
-	for( size_t n = 0; n<entries.size( ); ++n ) {
-		nightscout_entries const & entry = entries[n];
-		auto const str = entry.to_string( );
-		std::cout << str << '\n';
-	}
+int main( int argc, char ** argv ) {
+	daw::exception::daw_throw_on_false( argc >= 1, "Must supply base nightscout url" );
 
+	std::string const nightscout_base_url = argv[1];
+
+	auto const profile_data = ns::get_nightscout_profile_data( nightscout_base_url );
+	auto const glucose_data = ns::get_nightscout_glucose_data( nightscout_base_url ); 
+	auto const treatment_data = ns::get_nightscout_treatment_data( nightscout_base_url );
+
+	auto const autotuned_data = ns::autotune_data( profile_data, glucose_data, treatment_data );
+
+	std::cout << autotuned_data << std::endl;
 	return EXIT_SUCCESS;
 }
+
+

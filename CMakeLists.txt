@@ -5,6 +5,7 @@ project( oref0_cpp_prj )
 include( ExternalProject )
 
 find_package( Boost 1.58.0 COMPONENTS system date_time iostreams program_options filesystem regex unit_test_framework REQUIRED )
+find_package( CURL REQUIRED )
 
 enable_testing( )
 add_definitions( -DBOOST_TEST_DYN_LINK ) 
@@ -12,7 +13,7 @@ add_definitions( -DBOOST_TEST_DYN_LINK )
 find_package( Threads REQUIRED )
 
 if( ${CMAKE_CXX_COMPILER_ID} STREQUAL 'MSVC' )
-	add_compile_options( -D_WIN32_WINNT=0x0601 ) 
+	add_compile_options( -D_WIN32_WINNT=0x0601 /std:c++latest ) 
 else( )
 	if( ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" )
 		add_compile_options(-std=c++14 -Weverything -pthread -Wno-c++98-compat -g -Wno-covered-switch-default -Wno-padded -Wno-exit-time-destructors -Wno-c++98-compat-pedantic -Wno-unused-parameter -Wno-missing-noreturn -Wno-missing-prototypes -Wno-disabled-macro-expansion -Wno-c99-compat)
@@ -64,6 +65,7 @@ set( TEST_FOLDER "tests" )
 include_directories( SYSTEM "${CMAKE_BINARY_DIR}/install/include" )
 include_directories( ${HEADER_FOLDER} )
 include_directories( SYSTEM ${OPENSSL_INCLUDE_DIR} )
+include_directories( SYSTEM ${CURL_INCLUDE_DIRS} )
 
 include_directories( SYSTEM ${Boost_INCLUDE_DIRS} )
 
@@ -71,6 +73,7 @@ link_directories( "${CMAKE_BINARY_DIR}/install/lib" )
 link_directories( ${Boost_LIBRARY_DIRS} )
 
 set( HEADER_FILES
+	${HEADER_FOLDER}/autotune.h
 	${HEADER_FOLDER}/carb_time_unit.h
 	${HEADER_FOLDER}/carb_unit.h
 	${HEADER_FOLDER}/data_types.h
@@ -91,6 +94,7 @@ set( HEADER_FILES
 )
 
 set( SOURCE_FILES
+	${SOURCE_FOLDER}/autotune.cpp
 	${SOURCE_FOLDER}/carb_time_unit.cpp
 	${SOURCE_FOLDER}/carb_unit.cpp
 	${SOURCE_FOLDER}/data_types.cpp
@@ -126,6 +130,9 @@ target_link_libraries( glucose_unit_test_bin oref0 parse_json char_range ${Boost
 
 add_executable( ns_entries_test_bin ${HEADER_FILES} ${TEST_FOLDER}/ns_entries_test.cpp )
 target_link_libraries( ns_entries_test_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+
+add_executable( autotune_tune_bin ${HEADER_FILES} ${TEST_FOLDER}/autotune_test.cpp )
+target_link_libraries( autotune_tune_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 install( TARGETS oref0 DESTINATION lib )
 install( DIRECTORY ${HEADER_FOLDER}/ DESTINATION include/daw/oref0 )
