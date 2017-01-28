@@ -20,11 +20,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <daw/curl_wrapper.h>
+
 #include "autotune.h"
 
 namespace ns {
 
 	ns_profile_data_t get_nightscout_profile_data( boost::string_view nightscout_base_url ) {
+		daw::curl_wrapper cw;	
+		auto const profile_data = cw.get_string( nightscout_base_url.to_string( ) + "/api/v1/profile.json" );
 
 		return ns_profile_data_t { };
 	}

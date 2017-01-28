@@ -41,6 +41,16 @@ externalproject_add(
 )
 
 externalproject_add(
+    curl_wrapper_prj
+    GIT_REPOSITORY "https://github.com/beached/curl_wrapper.git"
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/dependencies/curl_wrapper"
+    GIT_TAG "master"
+    INSTALL_DIR "${CMAKE_BINARY_DIR}/install"
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
+)
+
+
+externalproject_add(
     char_range_prj
     GIT_REPOSITORY "https://github.com/beached/char_range.git"
     SOURCE_DIR "${CMAKE_BINARY_DIR}/dependencies/char_range"
@@ -88,6 +98,7 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/isf_unit.h
 	${HEADER_FOLDER}/lib_iob_calculate.h
 	${HEADER_FOLDER}/ns_entries.h
+	${HEADER_FOLDER}/ns_profiles.h
 	${HEADER_FOLDER}/requested_temp.h
 	${HEADER_FOLDER}/iob_calc.h
 	${HEADER_FOLDER}/units.h
@@ -109,12 +120,13 @@ set( SOURCE_FILES
 	${SOURCE_FOLDER}/isf_unit.cpp
 	${SOURCE_FOLDER}/lib_iob_calculate.cpp
 	${SOURCE_FOLDER}/ns_entries.cpp
+	${SOURCE_FOLDER}/ns_profiles.cpp
 	${SOURCE_FOLDER}/units.cpp
 )
 
 add_library( oref0 ${HEADER_FILES} ${SOURCE_FILES} )
-add_dependencies( oref0 header_libraries_prj parse_json_prj char_range_prj date_prj )
-target_link_libraries( oref0 parse_json tz char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+add_dependencies( oref0 header_libraries_prj parse_json_prj curl_wrapper_prj char_range_prj date_prj )
+target_link_libraries( oref0 parse_json tz char_range curl_wrapper ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 add_executable( simulator_bin ${HEADER_FILES} ${SOURCE_FOLDER}/simulator.cpp )
 target_link_libraries( simulator_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
@@ -132,7 +144,7 @@ add_executable( ns_entries_test_bin ${HEADER_FILES} ${TEST_FOLDER}/ns_entries_te
 target_link_libraries( ns_entries_test_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 add_executable( autotune_tune_bin ${HEADER_FILES} ${TEST_FOLDER}/autotune_test.cpp )
-target_link_libraries( autotune_tune_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+target_link_libraries( autotune_tune_bin oref0 parse_json curl_wrapper char_range ${Boost_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 install( TARGETS oref0 DESTINATION lib )
 install( DIRECTORY ${HEADER_FOLDER}/ DESTINATION include/daw/oref0 )
