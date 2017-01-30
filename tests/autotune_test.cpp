@@ -20,6 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <boost/program_options.hpp>
+#include <chrono>
+#include <date/date.h>
 #include <cstdlib>
 #include <iostream>
 
@@ -31,15 +34,11 @@ int main( int argc, char ** argv ) {
 	daw::exception::daw_throw_on_false( argc >= 1, "Must supply base nightscout url" );
 
 	std::string const nightscout_base_url = argv[1];
+	auto const tp_start = std::chrono::system_clock::now( ) - date::days{ 7 };
+	auto const tp_end = std::chrono::system_clock::now( );
 
-	auto const profile_data = ns::get_nightscout_profile_data( nightscout_base_url );
-	auto const glucose_data = ns::get_nightscout_glucose_data( nightscout_base_url ); 
-	auto const treatment_data = ns::get_nightscout_treatment_data( nightscout_base_url );
-
-	auto const autotuned_data = ns::autotune_data( profile_data, glucose_data, treatment_data );
-
+	auto const autotuned_data = ns::autotune_data( nightscout_base_url, tp_start, tp_end );
 	std::cout << autotuned_data << std::endl;
 	return EXIT_SUCCESS;
 }
-
 

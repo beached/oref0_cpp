@@ -35,6 +35,7 @@ namespace ns {
 		real_t value;
 
 		explicit glucose_t( real_t d ) noexcept;
+		glucose_t( real_t d, glucose_unit unit ) noexcept;
 		~glucose_t( );
 
 		operator real_t( ) noexcept;

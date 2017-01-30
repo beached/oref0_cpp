@@ -21,32 +21,45 @@
 // SOFTWARE.
 
 #include <daw/curl_wrapper.h>
+#include <chrono>
+#include <date/date.h>
 
 #include "autotune.h"
 
 namespace ns {
+	namespace impl {
+		namespace {
+			void sort_data( ns_profile_data_t & profile_data, ns_glucose_data_t & glucose_data, ns_treatments_data_t & treatments_data ) {
+				std::sort( std::begin( profile_data ), std::end( profile_data ), []( auto const & lhs, auto const & rhs ) {
+					return lhs.start_date < rhs.start_date;
+				} );
+				std::sort( std::begin( glucose_data ), std::end( glucose_data ), []( auto const & lhs, auto const & rhs ) {
+					return lhs.timestamp < rhs.timestamp;
+				} );
+				std::sort( std::begin( treatments_data ), std::end( treatments_data ), []( auto const & lhs, auto const & rhs ) {
+					return lhs.timestamp < rhs.timestamp;
+				} );
+			}
 
-	ns_profile_data_t get_nightscout_profile_data( boost::string_view nightscout_base_url ) {
-		daw::curl_wrapper cw;	
-		auto const profile_data = cw.get_string( nightscout_base_url.to_string( ) + "/api/v1/profile.json" );
+			auto autotune_data( ns_profile_data_t profile_data, ns_glucose_data_t glucose_data, ns_treatments_data_t treatments_data ) {
+				sort_data( profile_data, glucose_data, treatments_data );
+				auto current_profile = profile_data.begin( );
+				for( ; current_profile != profile_data.end( ); ++current_profile ) {
+					auto next_profile = std::next( current_profile );
+					if( next_profile != profile_data.end( ) ) {
+						if( next_profile.start_date > )
+					}
+				}
+				return ns::data::profiles::ns_profiles_t{ };
+			}
+		}    // namespace anonymous
+	}	// namespace impl
 
-		return ns_profile_data_t { };
-	}
-
-	ns_glucose_data_t get_nightscout_glucose_data( boost::string_view nightscout_base_url ) {
-
-		return ns_glucose_data_t { };
-	}
-
-	ns_treatment_data_t get_nightscout_treatment_data( boost::string_view nightscout_base_url ) {
-
-		return ns_treatment_data_t { };
-	}
-
-	ns_profile_data_t autotune_data( ns_profile_data_t const & profile_data, ns_glucose_data_t const & glucose_data, ns_treatment_data_t const & treatment_data ) {
-
-		return ns_profile_data_t { };
+	ns::data::profiles::ns_profiles_t autotune_data( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point const tp_start, std::chrono::system_clock::time_point const tp_end ) {
+		auto profile_data = ns::get_nightscout_profile_data( nightscout_base_url );
+		auto glucose_data = ns::get_nightscout_glucose_data( nightscout_base_url, tp_start, tp_end );
+		auto treatments_data = ns::get_nightscout_treatments_data( nightscout_base_url, tp_start, tp_end );
+		return impl::autotune_data( std::move( profile_data ), std::move( glucose_data ), std::move( treatments_data) );
 	}
 }	// namespace ns
-
 

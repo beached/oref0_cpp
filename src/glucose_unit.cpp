@@ -54,6 +54,9 @@ namespace ns {
 	glucose_t::glucose_t( real_t d ) noexcept:
 			value{ std::move( d ) } { }
 
+	glucose_t::glucose_t( real_t d, glucose_unit unit ) noexcept:
+			value{ unit == glucose_unit::mg_dL ? d : to_mg_dL( d ) } {	}
+
 	glucose_t::~glucose_t( ) { }
 
 	glucose_t::operator real_t( ) noexcept {

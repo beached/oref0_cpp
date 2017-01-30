@@ -97,8 +97,10 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/iob_calc.h
 	${HEADER_FOLDER}/isf_unit.h
 	${HEADER_FOLDER}/lib_iob_calculate.h
+	${HEADER_FOLDER}/nightscout.h
 	${HEADER_FOLDER}/ns_entries.h
 	${HEADER_FOLDER}/ns_profiles.h
+	${HEADER_FOLDER}/ns_treatments.h
 	${HEADER_FOLDER}/requested_temp.h
 	${HEADER_FOLDER}/iob_calc.h
 	${HEADER_FOLDER}/units.h
@@ -119,8 +121,10 @@ set( SOURCE_FILES
 	${SOURCE_FOLDER}/iob_calc.cpp
 	${SOURCE_FOLDER}/isf_unit.cpp
 	${SOURCE_FOLDER}/lib_iob_calculate.cpp
+	${SOURCE_FOLDER}/nightscout.cpp
 	${SOURCE_FOLDER}/ns_entries.cpp
 	${SOURCE_FOLDER}/ns_profiles.cpp
+	${SOURCE_FOLDER}/ns_treatments.cpp
 	${SOURCE_FOLDER}/units.cpp
 )
 

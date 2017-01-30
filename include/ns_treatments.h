@@ -22,13 +22,39 @@
 
 #pragma once
 
-#include <boost/utility/string_view.hpp>
-#include <iostream>
+#include <boost/optional.hpp>
+#include <cstdint>
+#include <string>
 #include <vector>
+#include <daw/json/daw_json_link.h>
 
-#include "nightscout.h"
 
 namespace ns {
-	ns::data::profiles::ns_profiles_t autotune_data( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point const tp_start, std::chrono::system_clock::time_point const tp_end );
-}    // namespace ns
+	namespace data {
+		namespace treatments {
+			struct ns_treatments_t: public daw::json::JsonLink<ns_treatments_t> {
+				std::string created_at;
+				boost::optional<std::string> temp;
+				boost::optional<double> insulin;
+				std::string eventType;
+				boost::optional<uint16_t> carbs;
+				std::string _id;
+				std::string timestamp;
+				boost::optional<int16_t> duration;
+				std::string enteredBy;
+				boost::optional<double> absolute;
+				boost::optional<double> rate;
 
+				ns_treatments_t( );
+				ns_treatments_t( ns_treatments_t const & other );
+				ns_treatments_t( ns_treatments_t && other );
+				~ns_treatments_t( );
+
+				ns_treatments_t & operator=( ns_treatments_t const & ) = default;
+				ns_treatments_t & operator=( ns_treatments_t && ) = default;
+				private:
+				void set_links( );
+			};	// ns_treatments_t
+		}	// namespace treatmetns
+	}	// namespace data
+}	// namespace ns

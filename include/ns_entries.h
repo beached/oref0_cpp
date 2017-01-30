@@ -32,42 +32,52 @@
 #include <daw/json/daw_json_link.h>
 
 namespace ns {
-	enum class nightscout_direction: uint8_t { 
-			none = 0, 
-			double_up = 1, 
-			single_up = 2, 
-			forty_five_up = 3, 
-			flat = 4, 
-			forty_five_down = 5, 
-			single_down = 6, 
-			double_down = 7, 
-			not_computable = 8, 
-			rate_out_of_range = 9
-	};
+	namespace data {
+		namespace entries {
+			enum class nightscout_direction: uint8_t {
+				none = 0,
+				double_up = 1,
+				single_up = 2,
+				forty_five_up = 3,
+				flat = 4,
+				forty_five_down = 5,
+				single_down = 6,
+				double_down = 7,
+				not_computable = 8,
+				rate_out_of_range = 9
+			};
 
-	std::ostream & operator<<( std::ostream & os, nightscout_direction dir );
-	std::istream & operator>>( std::istream & is, nightscout_direction & dir );
+			std::ostream & operator<<( std::ostream & os, nightscout_direction dir );
 
-	struct nightscout_entries: public daw::json::JsonLink<nightscout_entries> {
-		std::string id;
-		nightscout_direction direction;
-		boost::optional<int16_t> previous_sgv;
-		std::chrono::system_clock::time_point timestamp;
-		std::string device;
-		std::chrono::system_clock::time_point date;
-		int16_t sgv;
-		std::string type;
-		boost::optional<bool> previous_sgv_not_active;
+			std::istream & operator>>( std::istream & is, nightscout_direction & dir );
 
-		nightscout_entries( );
-		~nightscout_entries( );
-		nightscout_entries( nightscout_entries const & other );
-		nightscout_entries( nightscout_entries && other );
+			struct ns_entries_t: public daw::json::JsonLink<ns_entries_t> {
+				std::string id;
+				nightscout_direction direction;
+				boost::optional<int16_t> previous_sgv;
+				std::chrono::system_clock::time_point timestamp;
+				std::string device;
+				std::chrono::system_clock::time_point date;
+				int16_t sgv;
+				std::string type;
+				boost::optional<bool> previous_sgv_not_active;
 
-		nightscout_entries & operator=( nightscout_entries const & ) = default;
-		nightscout_entries & operator=( nightscout_entries && ) = default;
+				ns_entries_t( );
 
-	private:
-		void link_values( );
-	};	// nightscout_entries
-}
+				~ns_entries_t( );
+
+				ns_entries_t( ns_entries_t const & other );
+
+				ns_entries_t( ns_entries_t && other );
+
+				ns_entries_t & operator=( ns_entries_t const & ) = default;
+
+				ns_entries_t & operator=( ns_entries_t && ) = default;
+
+			private:
+				void link_values( );
+			};    // nightscout_entries
+		}	// namespace entries
+	} 	// namespace data
+}	// namespace ns
+

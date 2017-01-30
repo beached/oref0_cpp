@@ -26,9 +26,23 @@
 #include <iostream>
 #include <vector>
 
-#include "nightscout.h"
+#include <daw/json/daw_json_link.h>
+
+#include "ns_entries.h"
+#include "ns_profiles.h"
+#include "ns_treatments.h"
 
 namespace ns {
-	ns::data::profiles::ns_profiles_t autotune_data( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point const tp_start, std::chrono::system_clock::time_point const tp_end );
-}    // namespace ns
+	using ns_profile_data_t = std::vector<ns::data::profiles::ns_profiles_t>;
+	using ns_glucose_data_t = std::vector<ns::data::entries::ns_entries_t>;
+	using ns_treatments_data_t = std::vector<ns::data::treatments::ns_treatments_t>;
+
+	ns_profile_data_t get_nightscout_profile_data( boost::string_view nightscout_base_url );
+	ns_glucose_data_t get_nightscout_glucose_data( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point tp_start, std::chrono::system_clock::time_point tp_end );
+	ns_treatments_data_t get_nightscout_treatments_data( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point tp_start, std::chrono::system_clock::time_point tp_end );
+}    // namespace ns 
+
+std::ostream & operator<<( std::ostream & os, ns::ns_profile_data_t const & profiles );
+std::ostream & operator<<( std::ostream & os, ns::ns_glucose_data_t const & profiles );
+std::ostream & operator<<( std::ostream & os, ns::ns_treatments_data_t const & profiles );
 
