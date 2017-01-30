@@ -28,6 +28,7 @@
 #include "ns_entries.h"
 
 int main( int argc, char **argv ) {
+	using nightscout_entries = ns::data::entries::ns_entries_t;
 	using namespace ns;
 	daw::exception::daw_throw_on_false( argc < 1, "Must supply a filename" );	
 	auto entries  = daw::json::array_from_file<nightscout_entries>( argv[1] );

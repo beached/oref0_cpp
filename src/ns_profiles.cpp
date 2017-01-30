@@ -268,7 +268,7 @@ namespace ns {
 				link_string( "timezone", timezone );
 				link_json_string_to_real( "dia", dia );
 				link_array( "sens", sens );
-				link_iso8601_timestamp( "start_date", start_date );
+				link_iso8601_timestamp( "startDate", start_date );
 			}
 
 			store_t::store_t( ):

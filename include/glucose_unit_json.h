@@ -22,27 +22,37 @@
 
 #pragma once
 
-#include <boost/utility/string_view.hpp>
-#include <iostream>
-#include <vector>
-
 #include <daw/json/daw_json_link.h>
 
-#include "ns_entries.h"
-#include "ns_profiles.h"
-#include "ns_treatments.h"
+#include "glucose_unit.h"
 
 namespace ns {
-	using ns_profile_data_t = std::vector<ns::data::profiles::ns_profiles_t>;
-	using ns_entries_data_t = std::vector<ns::data::entries::ns_entries_t>;
-	using ns_treatments_data_t = std::vector<ns::data::treatments::ns_treatments_t>;
+	template<typename ObjectPtr, typename Member>
+	void json_link_glucose_t( boost::string_view json_name, ObjectPtr entries, Member & member ) {
+		using json_int_t = daw::json::impl::value_t::integral_t;
+		static auto const to_glucose = []( auto const & json_int ) {
+			return ns::glucose_t{ static_cast<ns::real_t>( json_int ) };
+		};
+		static auto const from_glucose = []( auto const & g ) {
+			return static_cast<json_int_t>( g.as_mg_dL( ) );
+		};
+		entries->link_jsonintegral( json_name, member, from_glucose, to_glucose );
+	}
 
-	ns_profile_data_t ns_get_profiles( boost::string_view nightscout_base_url );
-	ns_entries_data_t ns_get_entries( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point tp_start, std::chrono::system_clock::time_point tp_end );
-	ns_treatments_data_t ns_get_treatments( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point tp_start, std::chrono::system_clock::time_point tp_end );
-}    // namespace ns 
+	template<typename ObjectPtr, typename Member>
+	void json_link_glucose_t( boost::string_view json_name, ObjectPtr entries, boost::optional<Member> & member ) {
+		using json_int_t = daw::json::impl::value_t::integral_t;
+		static auto const to_glucose = []( auto const & json_int ) {
+			return ns::glucose_t{ static_cast<double>( json_int ) };
+		};
+		static auto const from_glucose = []( auto const & g ) -> boost::optional<json_int_t> {
+			if( !g ) {
+				return boost::none;
+			}
+			return static_cast<json_int_t>( g->as_mg_dL( ) );
+		};
+		entries->link_jsonintegral( json_name, member, from_glucose, to_glucose );
+	}
+}	// namespace ns
 
-std::ostream & operator<<( std::ostream & os, ns::ns_profile_data_t const & profiles );
-std::ostream & operator<<( std::ostream & os, ns::ns_entries_data_t const & profiles );
-std::ostream & operator<<( std::ostream & os, ns::ns_treatments_data_t const & profiles );
 

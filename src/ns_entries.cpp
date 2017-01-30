@@ -32,6 +32,7 @@
 #include <daw/json/daw_json_link.h>
 
 #include "ns_entries.h"
+#include "glucose_unit_json.h"
 
 namespace ns {
 	namespace data {
@@ -85,12 +86,12 @@ namespace ns {
 			void ns_entries_t::link_values( ) {
 				this->link_string( "_id", id );
 				this->link_streamable( "direction", direction );
-				this->link_integral( "previousSGV", previous_sgv );
+				ns::json_link_glucose_t( "previousSGV", this, previous_sgv );
 				this->link_iso8601_timestamp( "dateString", timestamp );
 
 				this->link_string( "device", device );
 				this->link_epoch_milliseconds_timestamp( "date", date );
-				this->link_integral( "sgv", sgv );
+				ns::json_link_glucose_t( "sgv", this, sgv );
 				this->link_string( "type", type );
 				this->link_boolean( "previousSGVNotActive", previous_sgv_not_active );
 			}

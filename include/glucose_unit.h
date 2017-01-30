@@ -77,6 +77,33 @@ namespace ns {
 	bool operator>=( glucose_t const & lhs, glucose_t const & rhs ) noexcept;
 
 	std::ostream & operator<<( std::ostream & os, glucose_t const & glucose );	
+
+	template<typename Object, typename Member>
+	void json_link_glucose_t( boost::string_view json_name, Object * entries, Member & member ) {
+		using json_int_t = daw::json::impl::value_t::integral_t;
+		static auto const to_glucose = []( auto const & json_int ) {
+			return ns::glucose_t{ static_cast<ns::real_t>( json_int ) };
+		};
+		static auto const from_glucose = []( auto const & g ) {
+			return static_cast<json_int_t>( g.as_mg_dL( ) );
+		};
+		entries->link_jsonintegral( json_name, member, from_glucose, to_glucose );
+	}
+
+	template<typename Object, typename Member>
+	void json_link_glucose_t( boost::string_view json_name, Object * entries, boost::optional<Member> & member ) {
+		using json_int_t = daw::json::impl::value_t::integral_t;
+		static auto const to_glucose = []( auto const & json_int ) {
+			return ns::glucose_t{ static_cast<double>( json_int ) };
+		};
+		static auto const from_glucose = []( auto const & g ) -> boost::optional<json_int_t> {
+			if( !g ) {
+				return boost::none;
+			}
+			return static_cast<json_int_t>( g->as_mg_dL( ) );
+		};
+		entries->link_jsonintegral( json_name, member, from_glucose, to_glucose );
+	}
 }	// namespace ns
 
 ns::glucose_t operator"" _mmol_L( long double d ) noexcept;

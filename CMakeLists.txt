@@ -90,10 +90,12 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/diabetic_calcs.h
 	${HEADER_FOLDER}/dbl_error.h
 	${HEADER_FOLDER}/glucose_unit.h
+	${HEADER_FOLDER}/glucose_unit_json.h
 	${HEADER_FOLDER}/human.h
 	${HEADER_FOLDER}/icr_unit.h
 	${HEADER_FOLDER}/insulin_time_unit.h
 	${HEADER_FOLDER}/insulin_unit.h
+	${HEADER_FOLDER}/insulin_unit_json.h
 	${HEADER_FOLDER}/iob_calc.h
 	${HEADER_FOLDER}/isf_unit.h
 	${HEADER_FOLDER}/lib_iob_calculate.h

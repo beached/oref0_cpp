@@ -31,6 +31,8 @@
 
 #include <daw/json/daw_json_link.h>
 
+#include "glucose_unit.h"
+
 namespace ns {
 	namespace data {
 		namespace entries {
@@ -54,11 +56,11 @@ namespace ns {
 			struct ns_entries_t: public daw::json::JsonLink<ns_entries_t> {
 				std::string id;
 				nightscout_direction direction;
-				boost::optional<int16_t> previous_sgv;
+				boost::optional<ns::glucose_t> previous_sgv;
 				std::chrono::system_clock::time_point timestamp;
 				std::string device;
 				std::chrono::system_clock::time_point date;
-				int16_t sgv;
+				ns::glucose_t sgv;
 				std::string type;
 				boost::optional<bool> previous_sgv_not_active;
 

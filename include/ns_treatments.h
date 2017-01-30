@@ -23,24 +23,33 @@
 #pragma once
 
 #include <boost/optional.hpp>
+#include <chrono>
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <iostream>
 #include <daw/json/daw_json_link.h>
 
+#include "insulin_unit.h"
 
 namespace ns {
 	namespace data {
 		namespace treatments {
+			enum class temp_basal_t: uint8_t { absolute, percentage };
+			std::ostream & operator<<( std::ostream & os, temp_basal_t const & tb );
+			std::istream & operator>>( std::istream & is, temp_basal_t & tb );
+			enum class event_type_t: uint8_t { temp_basal, bg_check, correction_bolus, meal_bolus };
+			std::ostream & operator<<( std::ostream & os, event_type_t const & tb );
+			std::istream & operator>>( std::istream & is, event_type_t & tb );
 			struct ns_treatments_t: public daw::json::JsonLink<ns_treatments_t> {
 				std::string created_at;
-				boost::optional<std::string> temp;
-				boost::optional<double> insulin;
-				std::string eventType;
+				boost::optional<temp_basal_t> temp;
+				boost::optional<ns::insulin_t> insulin;
+				event_type_t eventType;
 				boost::optional<uint16_t> carbs;
 				std::string _id;
 				std::string timestamp;
-				boost::optional<int16_t> duration;
+				boost::optional<std::chrono::minutes> duration;
 				std::string enteredBy;
 				boost::optional<double> absolute;
 				boost::optional<double> rate;
@@ -58,3 +67,5 @@ namespace ns {
 		}	// namespace treatmetns
 	}	// namespace data
 }	// namespace ns
+
+

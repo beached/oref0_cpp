@@ -27,10 +27,41 @@
 #include <daw/json/daw_json_link.h>
 
 #include "ns_treatments.h"
+#include "insulin_unit_json.h"
 
 namespace ns {
 	namespace data {
 		namespace treatments {
+			namespace impl {
+				namespace {
+					template<typename Object, typename Member>
+					void link_duration( boost::string_view json_name, Object obj, boost::optional<Member> & member) {
+						using json_int_t = typename daw::json::impl::value_t::integral_t;
+						static auto const to_duration = []( json_int_t const & i ) -> Member {
+							return Member{ i };
+						};
+						static auto const from_duration = []( boost::optional<Member> const & t ) -> boost::optional<json_int_t> {
+							if( !t ) {
+								return boost::none;
+							}
+							return t->count( );
+						};
+						obj->link_jsonintegral( json_name, member, from_duration, to_duration );
+					}
+					template<typename Object, typename Member>
+					void link_duration( boost::string_view json_name, Object obj, Member & member) {
+						using json_int_t = typename daw::json::impl::value_t::integral_t;
+						static auto const to_duration = []( json_int_t const & i ) -> Member {
+							return Member{ i };
+						};
+						static auto const from_duration = []( Member const & t ) -> json_int_t {
+							return t.count( );
+						};
+						obj->link_jsonintegral( json_name, member, to_duration, from_duration );
+					}
+				} // namespace anonymous
+			}	// namespace impl
+
 			ns_treatments_t::ns_treatments_t( ):
 					daw::json::JsonLink<ns_treatments_t>{ },
 					created_at{ },
@@ -86,17 +117,69 @@ namespace ns {
 
 			void ns_treatments_t::set_links( ) {
 				link_string( "created_at", created_at );
-				link_string( "temp", temp );
-				link_real( "insulin", insulin );
-				link_string( "eventType", eventType );
+				link_streamable( "temp", temp );
+				ns::json_link_insulin_t( "insulin", this, insulin );
+				link_streamable( "eventType", eventType );
 				link_integral( "carbs", carbs );
 				link_string( "_id", _id );
 				link_string( "timestamp", timestamp );
-				link_integral( "duration", duration );
+				impl::link_duration( "duration", this, duration );
 				link_string( "enteredBy", enteredBy );
 				link_real( "absolute", absolute );
 				link_real( "rate", rate );
 			}
-		}	// namespace treatmetns
+
+			std::ostream & operator<<( std::ostream & os, temp_basal_t const & tb ) {
+				using namespace ns::data::treatments;
+				using namespace std::string_literals;
+				static std::unordered_map<temp_basal_t, std::string> const temp_basals {
+					{ temp_basal_t::absolute, "absolute"s },
+					{ temp_basal_t::percentage, "percentage"s }
+				};
+				os << (temp_basals.find( tb )->second);
+				return os;
+			}
+
+			std::istream & operator>>( std::istream & is, temp_basal_t & tb ) {
+				using namespace ns::data::treatments;
+				using namespace std::string_literals;
+				static std::unordered_map<std::string, temp_basal_t> const temp_basals {
+					{ "absolute"s, temp_basal_t::absolute },
+					{ "percentage"s, temp_basal_t::percentage }
+				};
+				std::string const tmp{ std::istreambuf_iterator<char>{ is }, std::istreambuf_iterator<char>{ } };
+				tb = temp_basals.find( tmp )->second;
+				return is;
+			}
+
+			std::ostream & operator<<( std::ostream & os, event_type_t const & tb ) {
+				using namespace ns::data::treatments;
+				using namespace std::string_literals;
+				static std::unordered_map<event_type_t, std::string> const event_types {
+					{ event_type_t::temp_basal, "Temp Basal"s },
+					{ event_type_t::bg_check, "BG Check"s },
+					{ event_type_t::correction_bolus, "Correction Bolus"s },
+					{ event_type_t::meal_bolus, "Meal Bolus"s }
+				};
+				os << (event_types.find( tb )->second);
+				return os;
+			}
+
+			std::istream & operator>>( std::istream & is, event_type_t & tb ) {
+				using namespace ns::data::treatments;
+				using namespace std::string_literals;
+				static std::unordered_map<std::string, event_type_t> const event_types {
+					{ "Temp Basal"s, event_type_t::temp_basal },
+					{ "BG Check"s, event_type_t::bg_check },
+					{ "Correction Bolus"s, event_type_t::correction_bolus },
+					{ "Meal Bolus"s, event_type_t::meal_bolus }
+				};
+				std::string const tmp{ std::istreambuf_iterator<char>{ is }, std::istreambuf_iterator<char>{ } };
+				tb = event_types.find( tmp )->second;
+				return is;
+			}
+		}	// namespace treatments
 	}	// namespace data
 }	// namespace ns
+
+

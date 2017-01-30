@@ -60,18 +60,18 @@ namespace ns {
 		}
 	}
 
-	ns_profile_data_t get_nightscout_profile_data( boost::string_view nightscout_base_url ) {
+	ns_profile_data_t ns_get_profiles( boost::string_view nightscout_base_url ) {
 		daw::curl_wrapper cw;
 		auto const profile_string_data = cw.get_string( nightscout_base_url.to_string( ) + "/api/v1/profile.json" );
 		return daw::json::array_from_string<ns::data::profiles::ns_profiles_t>( profile_string_data, true );
 	}
 
-	ns_glucose_data_t get_nightscout_glucose_data( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point tp_start, std::chrono::system_clock::time_point tp_end ) {
+	ns_entries_data_t ns_get_entries( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point tp_start, std::chrono::system_clock::time_point tp_end ) {
 		std::string const url = nightscout_base_url.to_string( ) + "/api/v1/entries.json";
-		return get_nightscout_data_for_range<ns_glucose_data_t>( url, "dateString", tp_start, tp_end );
+		return get_nightscout_data_for_range<ns_entries_data_t>( url, "dateString", tp_start, tp_end );
 	}
 
-	ns_treatments_data_t get_nightscout_treatments_data( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point tp_start, std::chrono::system_clock::time_point tp_end ) {
+	ns_treatments_data_t ns_get_treatments( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point tp_start, std::chrono::system_clock::time_point tp_end ) {
 		std::string const url = nightscout_base_url.to_string( ) + "/api/v1/treatments.json";
 		return get_nightscout_data_for_range<ns_treatments_data_t>( url, "timestamp", tp_start, tp_end );
 	}
@@ -92,31 +92,31 @@ std::ostream & operator<<( std::ostream & os, ns::ns_profile_data_t const & prof
 	return os;
 }
 
-std::ostream & operator<<( std::ostream & os, ns::ns_glucose_data_t const & glucoses ) {
+std::ostream & operator<<( std::ostream & os, ns::ns_entries_data_t const & entries ) {
 	os << "[ ";
 	bool is_first = true;
-	for( auto const & glucose: glucoses ) {
+	for( auto const & entry: entries ) {
 		if( !is_first ) {
 			os << ", ";
 		} else {
 			is_first = true;
 		}
-		os << glucose;
+		os << entry;
 	}
 	os << " ]";
 	return os;
 }
 
-std::ostream & operator<<( std::ostream & os, ns::ns_treatments_data_t const & treatmentss ) {
+std::ostream & operator<<( std::ostream & os, ns::ns_treatments_data_t const & treatments ) {
 	os << "[ ";
 	bool is_first = true;
-	for( auto const & treatments: treatmentss ) {
+	for( auto const & treatment: treatments ) {
 		if( !is_first ) {
 			os << ", ";
 		} else {
 			is_first = true;
 		}
-		os << treatments;
+		os << treatment;
 	}
 	os << " ]";
 	return os;
