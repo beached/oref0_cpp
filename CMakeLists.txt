@@ -86,6 +86,7 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/autotune.h
 	${HEADER_FOLDER}/carb_time_unit.h
 	${HEADER_FOLDER}/carb_unit.h
+	${HEADER_FOLDER}/carb_unit_json.h
 	${HEADER_FOLDER}/data_types.h
 	${HEADER_FOLDER}/diabetic_calcs.h
 	${HEADER_FOLDER}/dbl_error.h
@@ -94,10 +95,12 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/human.h
 	${HEADER_FOLDER}/icr_unit.h
 	${HEADER_FOLDER}/insulin_time_unit.h
+	${HEADER_FOLDER}/insulin_time_unit_json.h
 	${HEADER_FOLDER}/insulin_unit.h
 	${HEADER_FOLDER}/insulin_unit_json.h
 	${HEADER_FOLDER}/iob_calc.h
 	${HEADER_FOLDER}/isf_unit.h
+	${HEADER_FOLDER}/time_json.h
 	${HEADER_FOLDER}/lib_iob_calculate.h
 	${HEADER_FOLDER}/nightscout.h
 	${HEADER_FOLDER}/ns_entries.h
@@ -105,6 +108,7 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/ns_treatments.h
 	${HEADER_FOLDER}/requested_temp.h
 	${HEADER_FOLDER}/iob_calc.h
+	${HEADER_FOLDER}/time_json.h
 	${HEADER_FOLDER}/units.h
 )
 

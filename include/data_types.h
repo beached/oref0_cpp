@@ -39,6 +39,7 @@ namespace ns {
 	using real_t = double;	// 10000 runs/second
 	using timestamp_t = std::chrono::time_point<std::chrono::system_clock>;
 	using duration_t = std::chrono::milliseconds;
+	using duration_hours_t = std::chrono::duration<double, std::ratio<3600l>>;
 
 	struct glucose_status_t {
 		real_t glucose;

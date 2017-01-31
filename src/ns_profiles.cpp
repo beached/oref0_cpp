@@ -25,6 +25,7 @@
 #include <daw/json/daw_json_link.h>
 
 #include "ns_profiles.h"
+#include "time_json.h"
 
 namespace ns {
 	namespace data {
@@ -266,7 +267,7 @@ namespace ns {
 				link_json_string_to_real( "carbs_hr", carbs_hr );
 				link_array( "carbratio", carbratio );
 				link_string( "timezone", timezone );
-				link_json_string_to_real( "dia", dia );
+				ns::impl::link_real_duration( "dia", this, dia );
 				link_array( "sens", sens );
 				link_iso8601_timestamp( "startDate", start_date );
 			}

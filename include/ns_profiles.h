@@ -28,6 +28,8 @@
 
 #include <daw/json/daw_json_link.h>
 
+#include "data_types.h"
+
 namespace ns {
 	namespace data {
 		namespace profiles {
@@ -120,7 +122,7 @@ namespace ns {
 				double carbs_hr;
 				std::vector<carbratio_element_t> carbratio;
 				std::string timezone;
-				double dia;
+				ns::duration_hours_t dia;
 				std::vector<sens_element_t> sens;
 				std::chrono::system_clock::time_point start_date;
 

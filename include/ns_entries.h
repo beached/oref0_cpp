@@ -53,15 +53,19 @@ namespace ns {
 
 			std::istream & operator>>( std::istream & is, nightscout_direction & dir );
 
+			enum class entry_type_t: uint8_t { sgv, normal };
+			std::ostream & operator<<( std::ostream & os, entry_type_t const & tb );
+			std::istream & operator>>( std::istream & is, entry_type_t & tb );
+
 			struct ns_entries_t: public daw::json::JsonLink<ns_entries_t> {
 				std::string id;
-				nightscout_direction direction;
+				boost::optional<nightscout_direction> direction;
 				boost::optional<ns::glucose_t> previous_sgv;
 				std::chrono::system_clock::time_point timestamp;
 				std::string device;
 				std::chrono::system_clock::time_point date;
 				ns::glucose_t sgv;
-				std::string type;
+				entry_type_t type;
 				boost::optional<bool> previous_sgv_not_active;
 
 				ns_entries_t( );

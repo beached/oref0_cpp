@@ -70,6 +70,9 @@ namespace ns {
 		auto profile_data = ns::ns_get_profiles( nightscout_base_url );
 		auto glucose_data = ns::ns_get_entries( nightscout_base_url, tp_start, tp_end );
 		auto treatments_data = ns::ns_get_treatments( nightscout_base_url, tp_start, tp_end );
+		for( auto const & t: treatments_data ) {
+			std::cout << t << '\n';
+		}
 		return impl::autotune_data( profile_data, glucose_data, treatments_data );
 	}
 }	// namespace ns

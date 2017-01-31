@@ -30,7 +30,9 @@
 #include <iostream>
 #include <daw/json/daw_json_link.h>
 
+#include "carb_unit.h"
 #include "insulin_unit.h"
+#include "insulin_time_unit.h"
 
 namespace ns {
 	namespace data {
@@ -41,18 +43,22 @@ namespace ns {
 			enum class event_type_t: uint8_t { temp_basal, bg_check, correction_bolus, meal_bolus };
 			std::ostream & operator<<( std::ostream & os, event_type_t const & tb );
 			std::istream & operator>>( std::istream & is, event_type_t & tb );
+
 			struct ns_treatments_t: public daw::json::JsonLink<ns_treatments_t> {
-				std::string created_at;
+				std::chrono::system_clock::time_point created_at;
 				boost::optional<temp_basal_t> temp;
 				boost::optional<ns::insulin_t> insulin;
+				boost::optional<std::string> glucose_type;
 				event_type_t eventType;
-				boost::optional<uint16_t> carbs;
+				boost::optional<ns::carb_t> carbs;
 				std::string _id;
-				std::string timestamp;
+				std::chrono::system_clock::time_point timestamp;
 				boost::optional<std::chrono::minutes> duration;
 				std::string enteredBy;
-				boost::optional<double> absolute;
+				boost::optional<ns::insulin_rate_t> absolute;
 				boost::optional<double> rate;
+				boost::optional<double> glucose;
+				boost::optional<std::string> units;
 
 				ns_treatments_t( );
 				ns_treatments_t( ns_treatments_t const & other );

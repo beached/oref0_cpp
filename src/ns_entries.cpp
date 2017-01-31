@@ -92,7 +92,7 @@ namespace ns {
 				this->link_string( "device", device );
 				this->link_epoch_milliseconds_timestamp( "date", date );
 				ns::json_link_glucose_t( "sgv", this, sgv );
-				this->link_string( "type", type );
+				this->link_streamable( "type", type );
 				this->link_boolean( "previousSGVNotActive", previous_sgv_not_active );
 			}
 
@@ -142,6 +142,27 @@ namespace ns {
 					previous_sgv_not_active{ std::move( other.previous_sgv_not_active ) } {
 
 				link_values( );
+			}
+
+			std::ostream & operator<<( std::ostream & os, entry_type_t const & tb ) {
+				using namespace std::string_literals;
+				static std::unordered_map<entry_type_t, std::string> const entry_types {
+					{ entry_type_t::sgv, "sgv"s },
+					{ entry_type_t::normal, "normal"s }
+				};
+				os << (entry_types.find( tb )->second);
+				return os;
+			}
+
+			std::istream & operator>>( std::istream & is, entry_type_t & tb ) {
+				using namespace std::string_literals;
+				static std::unordered_map<std::string, entry_type_t> const entry_types {
+					{ "sgv"s, entry_type_t::sgv },
+					{ "normal"s, entry_type_t::normal }
+				};
+				std::string const tmp{ std::istreambuf_iterator<char>{ is }, std::istreambuf_iterator<char>{ } };
+				tb = entry_types.find( tmp )->second;
+				return is;
 			}
 		}	// namespace entries
 	} 	// namespace data

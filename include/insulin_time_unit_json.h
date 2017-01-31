@@ -24,34 +24,34 @@
 
 #include <daw/json/daw_json_link.h>
 
-#include "glucose_unit.h"
+#include "insulin_time_unit.h"
 
 namespace ns {
 	template<typename ObjectPtr, typename Member>
-	void json_link_glucose_t( boost::string_view json_name, ObjectPtr entries, Member & member ) {
+	void json_link_insulin_rate_t( boost::string_view json_name, ObjectPtr entries, Member & member ) {
 		using json_real_t = daw::json::impl::value_t::real_t;
-		static auto const to_glucose = []( auto const & json_real ) {
-			return ns::glucose_t{ static_cast<ns::real_t>( json_real ) };
+		static auto const to_insulin_rate = []( auto const & json_real ) {
+			return ns::insulin_rate_t{ static_cast<ns::real_t>( json_real ) };
 		};
-		static auto const from_glucose = []( auto const & g ) {
+		static auto const from_insulin_rate = []( auto const & g ) {
 			return static_cast<json_real_t>( g.value );
 		};
-		entries->link_jsonreal( json_name, member, from_glucose, to_glucose );
+		entries->link_jsonreal( json_name, member, from_insulin_rate, to_insulin_rate );
 	}
 
 	template<typename ObjectPtr, typename Member>
-	void json_link_glucose_t( boost::string_view json_name, ObjectPtr entries, boost::optional<Member> & member ) {
+	void json_link_insulin_rate_t( boost::string_view json_name, ObjectPtr entries, boost::optional<Member> & member ) {
 		using json_real_t = daw::json::impl::value_t::real_t;
-		static auto const to_glucose = []( auto const & json_real ) {
-			return ns::glucose_t{ static_cast<double>( json_real ) };
+		static auto const to_insulin_rate = []( auto const & json_real ) -> ns::insulin_rate_t {
+			return ns::insulin_t{ static_cast<double>( json_real ) }/std::chrono::hours{ 1 };
 		};
-		static auto const from_glucose = []( auto const & g ) -> boost::optional<json_real_t> {
+		static auto const from_insulin_rate = []( auto const & g ) -> boost::optional<json_real_t> {
 			if( !g ) {
 				return boost::none;
 			}
-			return static_cast<json_real_t>( g->value );
+			return static_cast<json_real_t>( g->value.value );
 		};
-		entries->link_jsonreal( json_name, member, from_glucose, to_glucose );
+		entries->link_jsonreal( json_name, member, from_insulin_rate, to_insulin_rate );
 	}
 }	// namespace ns
 

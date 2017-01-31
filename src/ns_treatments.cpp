@@ -27,46 +27,20 @@
 #include <daw/json/daw_json_link.h>
 
 #include "ns_treatments.h"
+#include "carb_unit_json.h"
 #include "insulin_unit_json.h"
+#include "insulin_time_unit_json.h"
+#include "time_json.h"
 
 namespace ns {
 	namespace data {
 		namespace treatments {
-			namespace impl {
-				namespace {
-					template<typename Object, typename Member>
-					void link_duration( boost::string_view json_name, Object obj, boost::optional<Member> & member) {
-						using json_int_t = typename daw::json::impl::value_t::integral_t;
-						static auto const to_duration = []( json_int_t const & i ) -> Member {
-							return Member{ i };
-						};
-						static auto const from_duration = []( boost::optional<Member> const & t ) -> boost::optional<json_int_t> {
-							if( !t ) {
-								return boost::none;
-							}
-							return t->count( );
-						};
-						obj->link_jsonintegral( json_name, member, from_duration, to_duration );
-					}
-					template<typename Object, typename Member>
-					void link_duration( boost::string_view json_name, Object obj, Member & member) {
-						using json_int_t = typename daw::json::impl::value_t::integral_t;
-						static auto const to_duration = []( json_int_t const & i ) -> Member {
-							return Member{ i };
-						};
-						static auto const from_duration = []( Member const & t ) -> json_int_t {
-							return t.count( );
-						};
-						obj->link_jsonintegral( json_name, member, to_duration, from_duration );
-					}
-				} // namespace anonymous
-			}	// namespace impl
-
 			ns_treatments_t::ns_treatments_t( ):
 					daw::json::JsonLink<ns_treatments_t>{ },
 					created_at{ },
 					temp{ },
 					insulin{ },
+					glucose_type{ },
 					eventType{ },
 					carbs{ },
 					_id{ },
@@ -74,7 +48,9 @@ namespace ns {
 					duration{ },
 					enteredBy{ },
 					absolute{ },
-					rate{ } {
+					rate{ },
+					glucose{ },
+					units{ } {
 
 				set_links( );
 			}
@@ -84,6 +60,7 @@ namespace ns {
 					created_at{ other.created_at },
 					temp{ other.temp },
 					insulin{ other.insulin },
+					glucose_type{ other.glucose_type },
 					eventType{ other.eventType },
 					carbs{ other.carbs },
 					_id{ other._id },
@@ -91,7 +68,9 @@ namespace ns {
 					duration{ other.duration },
 					enteredBy{ other.enteredBy },
 					absolute{ other.absolute },
-					rate{ other.rate } {
+					rate{ other.rate },
+					glucose{ other.glucose },
+					units{ other.units } {
 
 				set_links( );
 			}
@@ -101,6 +80,7 @@ namespace ns {
 					created_at{ std::move( other.created_at ) },
 					temp{ std::move( other.temp ) },
 					insulin{ std::move( other.insulin ) },
+					glucose_type{ std::move( other.glucose_type ) },
 					eventType{ std::move( other.eventType ) },
 					carbs{ std::move( other.carbs ) },
 					_id{ std::move( other._id ) },
@@ -108,7 +88,9 @@ namespace ns {
 					duration{ std::move( other.duration ) },
 					enteredBy{ std::move( other.enteredBy ) },
 					absolute{ std::move( other.absolute ) },
-					rate{ std::move( other.rate ) } {
+					rate{ std::move( other.rate ) },
+					glucose{ std::move( other.glucose ) },
+					units{ std::move( other.units ) } {
 
 				set_links( );
 			}
@@ -116,17 +98,20 @@ namespace ns {
 			ns_treatments_t::~ns_treatments_t( ) { }
 
 			void ns_treatments_t::set_links( ) {
-				link_string( "created_at", created_at );
+				link_iso8601_timestamp( "created_at", created_at );
 				link_streamable( "temp", temp );
 				ns::json_link_insulin_t( "insulin", this, insulin );
+				link_string( "glucoseType", glucose_type );
 				link_streamable( "eventType", eventType );
-				link_integral( "carbs", carbs );
+				ns::json_link_carb_t( "carbs", this, carbs );
 				link_string( "_id", _id );
-				link_string( "timestamp", timestamp );
-				impl::link_duration( "duration", this, duration );
+				link_iso8601_timestamp( "timestamp", timestamp );
+				ns::impl::link_int_duration( "duration", this, duration );
 				link_string( "enteredBy", enteredBy );
-				link_real( "absolute", absolute );
+				ns::json_link_insulin_rate_t( "absolute", this, absolute );
 				link_real( "rate", rate );
+				link_real( "glucose", glucose );
+				link_string( "units", units );
 			}
 
 			std::ostream & operator<<( std::ostream & os, temp_basal_t const & tb ) {

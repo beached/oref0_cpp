@@ -23,6 +23,7 @@
 #include <daw/curl_wrapper.h>
 #include <chrono>
 #include <date/date.h>
+#include <string>
 
 #include "nightscout.h"
 
@@ -34,31 +35,13 @@ namespace ns {
 
 		auto build_nightscout_date_range( boost::string_view field, std::chrono::system_clock::time_point const tp_start, std::chrono::system_clock::time_point const tp_end ) {
 			std::stringstream ss;
-			ss << "find\\[" << field.data( ) << "\\]\\[$gte\\]=";
+			ss << "find[" << field.data( ) << "][$gte]=";
 			ss << tp_to_iso_date_string( tp_start );
-			ss << "&find\\[" << field.data( ) << "\\]\\[$lte\\]=";
+			ss << "&find[" << field.data( ) << "][$lte]=";
 			ss << tp_to_iso_date_string( tp_end );
 			return ss.str( );
 		}
-
-		template<typename ResultType>
-		ResultType get_nightscout_data_for_range( boost::string_view url, boost::string_view field, std::chrono::system_clock::time_point const tp_start, std::chrono::system_clock::time_point const tp_end ) {
-			daw::curl_wrapper cw;
-			ResultType result;
-			std::chrono::system_clock::time_point next_tp;
-
-			for( auto tp = tp_start; tp <= tp_end; ) {
-				next_tp = tp + date::days{ 1 };
-				auto const dte_rng = build_nightscout_date_range( field, tp, next_tp );
-				std::string const url_full = url.to_string( ) + "?count=10000&" + dte_rng;
-				auto glucose_string_data = cw.get_string( url_full );
-				auto tmp = daw::json::array_from_string<typename ResultType::value_type>( glucose_string_data, true );
-				result.insert( std::end( result ), std::begin( tmp ), std::end( tmp ) );
-				tp = next_tp;
-			}
-			return result;
-		}
-	}
+	}	// namespace anonymous
 
 	ns_profile_data_t ns_get_profiles( boost::string_view nightscout_base_url ) {
 		daw::curl_wrapper cw;
@@ -67,13 +50,26 @@ namespace ns {
 	}
 
 	ns_entries_data_t ns_get_entries( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point tp_start, std::chrono::system_clock::time_point tp_end ) {
-		std::string const url = nightscout_base_url.to_string( ) + "/api/v1/entries.json";
-		return get_nightscout_data_for_range<ns_entries_data_t>( url, "dateString", tp_start, tp_end );
+
+		auto const ymd1 = date::year_month_day{ date::floor<date::days>( tp_start ) };
+		auto const ymd2 = date::year_month_day{ date::floor<date::days>( tp_end ) };
+		auto const y_1 = std::to_string( static_cast<int>(ymd1.year( )) );
+		auto const y_2 = std::to_string( static_cast<int>(ymd2.year( )) );
+
+		auto const dte_rng = build_nightscout_date_range( "dateString", tp_start, tp_end );
+		std::string const url = nightscout_base_url.to_string( ) + "/api/v1/times/{" + y_1 + ".." + y_2 + "}-{1..12}.json?count=1000000&" + dte_rng;
+
+		daw::curl_wrapper cw;
+		auto const profile_string_data = cw.get_string( url );
+		return daw::json::array_from_string<ns::data::entries::ns_entries_t>( profile_string_data, true );
 	}
 
 	ns_treatments_data_t ns_get_treatments( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point tp_start, std::chrono::system_clock::time_point tp_end ) {
-		std::string const url = nightscout_base_url.to_string( ) + "/api/v1/treatments.json";
-		return get_nightscout_data_for_range<ns_treatments_data_t>( url, "timestamp", tp_start, tp_end );
+		auto const dte_rng = build_nightscout_date_range( "created_at", tp_start, tp_end );
+		std::string const url = nightscout_base_url.to_string( ) + "/api/v1/treatments.json?count=1000000&" + dte_rng;
+		daw::curl_wrapper cw;
+		auto const profile_string_data = cw.get_string( url );
+		return daw::json::array_from_string<ns::data::treatments::ns_treatments_t>( profile_string_data, true );
 	}
 }	// namespace ns
 
