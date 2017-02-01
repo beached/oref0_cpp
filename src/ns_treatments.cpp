@@ -50,7 +50,11 @@ namespace ns {
 					absolute{ },
 					rate{ },
 					glucose{ },
-					units{ } {
+					units{ },
+					absorption_time{ },
+					programmed{ },
+					ratio{ },
+					unabsorbed{ } {
 
 				set_links( );
 			}
@@ -70,7 +74,11 @@ namespace ns {
 					absolute{ other.absolute },
 					rate{ other.rate },
 					glucose{ other.glucose },
-					units{ other.units } {
+					units{ other.units },
+					absorption_time{ other.absorption_time },
+					programmed{ other.programmed },
+					ratio{ other.ratio },
+					unabsorbed{ other.unabsorbed } {
 
 				set_links( );
 			}
@@ -90,7 +98,11 @@ namespace ns {
 					absolute{ std::move( other.absolute ) },
 					rate{ std::move( other.rate ) },
 					glucose{ std::move( other.glucose ) },
-					units{ std::move( other.units ) } {
+					units{ std::move( other.units ) },
+					absorption_time{ std::move( other.absorption_time ) },
+					programmed{ std::move( other.programmed ) },
+					ratio{ std::move( other.ratio ) },
+					unabsorbed{ std::move( other.unabsorbed ) } {
 
 				set_links( );
 			}
@@ -112,6 +124,10 @@ namespace ns {
 				link_real( "rate", rate );
 				link_real( "glucose", glucose );
 				link_string( "units", units );
+				ns::impl::link_int_duration( "absorptionTime", this, absorption_time );
+				link_real( "programmed", programmed );
+				link_real( "ratio", ratio );
+				link_real( "unabsorbed", unabsorbed );
 			}
 
 			std::ostream & operator<<( std::ostream & os, temp_basal_t const & tb ) {

@@ -35,11 +35,11 @@
 #include "data_types.h"
 
 using namespace date;
-using namespace std::chrono_literals;
+using namespace ns::chrono_literals;
 namespace ns {
 	namespace {
-		size_t insulin_duration_to_idx( std::chrono::minutes const duration ) noexcept {	
-			switch( duration.count( ) ) {
+		size_t insulin_duration_to_idx( ns::duration_minutes_t const duration ) noexcept {	
+			switch( static_cast<uint16_t>(duration.count( )) ) {
 				case 180: return 0;
 				case 210: return 1;
 				case 240: return 2;
@@ -51,12 +51,12 @@ namespace ns {
 
 		constexpr auto insulin_duration_to_min( insulin_duration_t const duration ) {	
 			switch( duration ) {
-				case insulin_duration_t::t180: return 180min;
-				case insulin_duration_t::t210: return 210min;
-				case insulin_duration_t::t240: return 240min;
-				case insulin_duration_t::t300: return 300min;
-				case insulin_duration_t::t360: return 360min;
-				default: return std::chrono::minutes{ std::numeric_limits<size_t>::max( ) };	// should never happen but may as well go for the stars
+				case insulin_duration_t::t180: return 180_mins;
+				case insulin_duration_t::t210: return 210_mins;
+				case insulin_duration_t::t240: return 240_mins;
+				case insulin_duration_t::t300: return 300_mins;
+				case insulin_duration_t::t360: return 360_mins;
+				default: return ns::duration_minutes_t{ std::numeric_limits<double>::max( ) };	// should never happen but may as well go for the stars
 			}
 		}
 
@@ -72,7 +72,7 @@ namespace ns {
 			}
 	}
 
-	real_t insulin_on_board_pct( std::chrono::minutes const time_from_bolus_min, std::chrono::minutes const insulin_duration ) noexcept {
+	real_t insulin_on_board_pct( ns::duration_minutes_t const time_from_bolus_min, ns::duration_minutes_t const insulin_duration ) noexcept {
 		real_t const params[5][5] = {
 			{  99.951000000,  0.092550000, -0.01759000,  0.000135400, -0.00000032030 },	// t=180
 			{  99.924242424,  0.282046657, -0.01489899,  0.000087168, -0.00000015900 },	// t=210 
@@ -81,7 +81,7 @@ namespace ns {
 			{  99.700000000,  0.063650000, -0.00409500,  0.000014130, -0.00000001493 }	// t=360
 		};
 
-		if( time_from_bolus_min <= 0min ) {
+		if( time_from_bolus_min <= 0_mins ) {
 			return 1.0;
 		} else if( time_from_bolus_min >= insulin_duration ) {
 			return 0.0;

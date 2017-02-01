@@ -1,2 +1,3 @@
 # oref0 cpp
+# Does nothing useful to most yet.  Here be dragons....
 A port of [OpenAPS's oref0](https://github.com/openaps/oref0) to C++.

@@ -59,6 +59,11 @@ namespace ns {
 				boost::optional<double> rate;
 				boost::optional<double> glucose;
 				boost::optional<std::string> units;
+				boost::optional<std::chrono::minutes> absorption_time;
+				boost::optional<double> programmed;
+				boost::optional<double> ratio;
+				boost::optional<double> unabsorbed;
+
 
 				ns_treatments_t( );
 				ns_treatments_t( ns_treatments_t const & other );

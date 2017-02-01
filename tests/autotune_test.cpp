@@ -34,7 +34,7 @@ int main( int argc, char ** argv ) {
 	daw::exception::daw_throw_on_false( argc >= 1, "Must supply base nightscout url" );
 
 	std::string const nightscout_base_url = argv[1];
-	auto const tp_start = std::chrono::system_clock::now( ) - date::years{ 2 };
+	auto const tp_start = std::chrono::system_clock::now( ) - date::days{ 2 };
 	auto const tp_end = std::chrono::system_clock::now( );
 
 	auto const autotuned_data = ns::autotune_data( nightscout_base_url, tp_start, tp_end );

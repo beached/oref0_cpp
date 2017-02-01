@@ -36,4 +36,19 @@ namespace ns {
 
 	iob_data_t::~iob_data_t( ) { }
 
+	namespace chrono_literals {
+		duration_hours_t operator"" _hours( long double d ) noexcept {
+			return duration_hours_t{ static_cast<double>(d) };
+		}
+		duration_hours_t operator"" _hours( unsigned long long i ) noexcept {
+			return duration_hours_t{ static_cast<double>(i) };
+		}
+		duration_minutes_t operator"" _mins( long double d ) noexcept {
+			return duration_minutes_t{ static_cast<double>(d) };
+		}
+		duration_minutes_t operator"" _mins( unsigned long long i ) noexcept {
+			return duration_minutes_t{ static_cast<double>(i) };
+		}
+	}	// namespace chrono_literals
+
 }    // namespace ns 

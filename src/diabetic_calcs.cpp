@@ -46,7 +46,7 @@ namespace ns {
 			}
 		}	// namespace anonymous
 
-		carb_t calc_cob( carb_t const initial_dose, std::chrono::minutes const carb_activity_time, std::chrono::minutes const time_since_dose ) {
+		carb_t calc_cob( carb_t const initial_dose, ns::duration_minutes_t const & carb_activity_time, ns::duration_minutes_t const time_since_dose ) {
 			daw::exception::daw_throw_on_false( time_since_dose >= 0min );
 			daw::exception::daw_throw_on_false( carb_activity_time >= 0min );
 			auto const t = static_cast<real_t>(time_since_dose.count( ));

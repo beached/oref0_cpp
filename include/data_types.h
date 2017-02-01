@@ -40,6 +40,7 @@ namespace ns {
 	using timestamp_t = std::chrono::time_point<std::chrono::system_clock>;
 	using duration_t = std::chrono::milliseconds;
 	using duration_hours_t = std::chrono::duration<double, std::ratio<3600l>>;
+	using duration_minutes_t = std::chrono::duration<double, std::ratio<60l>>;
 
 	struct glucose_status_t {
 		real_t glucose;
@@ -89,5 +90,12 @@ namespace ns {
 		determine_basal_exception( Args&&... args ):
 				std::runtime_error( std::forward<Args>( args )... ) { }
 	};	// determine_basal_exception
+
+	namespace chrono_literals {
+		duration_hours_t operator"" _hours( long double d ) noexcept;
+		duration_hours_t operator"" _hours( unsigned long long i ) noexcept;
+		duration_minutes_t operator"" _mins( long double d ) noexcept;
+		duration_minutes_t operator"" _mins( unsigned long long i ) noexcept;
+	}	// namespace chrono_literals
 }    // namespace ns 
 
