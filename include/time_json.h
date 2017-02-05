@@ -60,7 +60,7 @@ namespace ns {
 		void link_int_duration( boost::string_view json_name, Object obj, boost::optional<Member> & member) {
 			using json_int_t = typename daw::json::impl::value_t::integral_t;
 			static auto const to_duration = []( json_int_t const & i ) -> Member {
-				return Member{ i };
+				return Member{ static_cast<long int>( i ) };
 			};
 			static auto const from_duration = []( boost::optional<Member> const & t ) -> boost::optional<json_int_t> {
 				if( !t ) {

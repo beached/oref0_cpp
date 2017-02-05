@@ -34,7 +34,7 @@ namespace ns {
 		insulin_t value;
 
 		explicit insulin_rate_t( insulin_t insulin ) noexcept;
-		insulin_t insulin_per( std::chrono::minutes const & time_period ) const;
+		insulin_t insulin_per( ns::duration_minutes_t const & time_period ) const;
 		~insulin_rate_t( );
 
 		insulin_rate_t( ) = default;

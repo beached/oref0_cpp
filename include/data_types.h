@@ -37,10 +37,10 @@ namespace ns {
 //	using real_t = boost::multiprecision::cpp_dec_float_50;		// ~1000 runs/second
 //	using real_t = boost::multiprecision::number<boost::multiprecision::cpp_dec_float<10>>; // ~2000 runs/second
 	using real_t = double;	// 10000 runs/second
-	using timestamp_t = std::chrono::time_point<std::chrono::system_clock>;
 	using duration_t = std::chrono::milliseconds;
-	using duration_hours_t = std::chrono::duration<double, std::ratio<3600l>>;
-	using duration_minutes_t = std::chrono::duration<double, std::ratio<60l>>;
+	using duration_hours_t = std::chrono::hours;
+	using duration_minutes_t = std::chrono::minutes;
+	using timestamp_t = std::chrono::time_point<std::chrono::system_clock>;
 
 	struct glucose_status_t {
 		real_t glucose;

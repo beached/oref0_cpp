@@ -56,7 +56,7 @@ namespace ns {
 				case insulin_duration_t::t240: return 240_mins;
 				case insulin_duration_t::t300: return 300_mins;
 				case insulin_duration_t::t360: return 360_mins;
-				default: return ns::duration_minutes_t{ std::numeric_limits<double>::max( ) };	// should never happen but may as well go for the stars
+				default: return ns::duration_minutes_t{ ns::duration_minutes_t::max( ) };	// should never happen but may as well go for the stars
 			}
 		}
 

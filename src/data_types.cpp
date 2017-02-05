@@ -38,16 +38,16 @@ namespace ns {
 
 	namespace chrono_literals {
 		duration_hours_t operator"" _hours( long double d ) noexcept {
-			return duration_hours_t{ static_cast<double>(d) };
+			return duration_hours_t{ static_cast<long int>(d) };
 		}
 		duration_hours_t operator"" _hours( unsigned long long i ) noexcept {
-			return duration_hours_t{ static_cast<double>(i) };
+			return duration_hours_t{ static_cast<long int>(i) };
 		}
 		duration_minutes_t operator"" _mins( long double d ) noexcept {
-			return duration_minutes_t{ static_cast<double>(d) };
+			return duration_minutes_t{ static_cast<long int>(d) };
 		}
 		duration_minutes_t operator"" _mins( unsigned long long i ) noexcept {
-			return duration_minutes_t{ static_cast<double>(i) };
+			return duration_minutes_t{ static_cast<long int>(i) };
 		}
 	}	// namespace chrono_literals
 

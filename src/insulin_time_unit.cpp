@@ -28,7 +28,7 @@ namespace ns {
 
 	insulin_rate_t::~insulin_rate_t( ) { }
 
-	insulin_t insulin_rate_t::insulin_per( std::chrono::minutes const & time_period ) const {
+	insulin_t insulin_rate_t::insulin_per( ns::duration_minutes_t const & time_period ) const {
 		real_t const factor = static_cast<real_t>(time_period.count( ))/60.0;
 		auto result = value.scale( factor );
 		return result;

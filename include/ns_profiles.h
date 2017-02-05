@@ -124,7 +124,7 @@ namespace ns {
 				std::string timezone;
 				ns::duration_hours_t dia;
 				std::vector<sens_element_t> sens;
-				std::chrono::system_clock::time_point start_date;
+				ns::timestamp_t start_date;
 
 				Default_t( );
 				Default_t( Default_t const & other );
@@ -152,12 +152,12 @@ namespace ns {
 			};	// store_t
 
 			struct ns_profiles_t: public daw::json::JsonLink<ns_profiles_t> {
-				std::chrono::system_clock::time_point created_at;
+				ns::timestamp_t created_at;
 				boost::optional<uint64_t> mills;
 				std::string _id;
 				boost::optional<std::string> defaultProfile;
 				boost::optional<store_t> store;
-				std::chrono::system_clock::time_point start_date;
+				ns::timestamp_t start_date;
 
 				ns_profiles_t( );
 				ns_profiles_t( ns_profiles_t const & other );

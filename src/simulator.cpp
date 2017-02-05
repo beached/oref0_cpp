@@ -46,15 +46,15 @@ class profile_t {
 public:
 	profile_t( isf_t ISF, icr_t ICR ): isf{ std::move( ISF ) }, icr{ std::move( ICR ) } { }
 
-	isf_t get_isf( time_point<system_clock> const & ) const {
+	isf_t get_isf( ns::timestamp const & ) const {
 		return isf;
 	}
 
-	icr_t get_icr( time_point<system_clock> const & ) const {
+	icr_t get_icr( ns::timestamp_t const & ) const {
 		return icr;
 	}
 
-	insulin_rate_t get_basal_rate( time_point<system_clock> const & ) const {
+	insulin_rate_t get_basal_rate( ns::timestamp_t const & ) const {
 		return 1.2_U_hr;
 	}
 };	// profile_t
@@ -114,7 +114,7 @@ size_t random_generator(size_t min, size_t max) {
 	return dist( rng );
 }
 
-constexpr std::chrono::minutes calc_duration( time_point<system_clock> const & lhs, time_point<system_clock> const & rhs ) {
+constexpr std::chrono::minutes calc_duration( ns::timestamp_t const & lhs, ns::timestamp_t const & rhs ) {
 	return duration_cast<minutes>( rhs - lhs);
 }
 
@@ -127,7 +127,7 @@ constexpr T sqr( T value ) {
 struct carb_dose_t {
 	carb_t amount;
 	carb_rate_t absorption_rate;
-	time_point<system_clock> dose_time;
+	ns::timestamp_t dose_time;
 
 	carb_dose_t( ) = delete;
 	~carb_dose_t( ) = default;
@@ -136,19 +136,19 @@ struct carb_dose_t {
 	carb_dose_t( carb_dose_t && ) = default;
 	carb_dose_t & operator=( carb_dose_t && ) = default;
 
-	carb_dose_t( time_point<system_clock> doseTime, carb_t Amount, carb_rate_t absorptionRate ):
+	carb_dose_t( ns::timestamp_t doseTime, carb_t Amount, carb_rate_t absorptionRate ):
 			amount{ Amount < 0_g_CHO ? 0_g_CHO : Amount },
 			absorption_rate{ absorptionRate < 0_g_CHO_hr ? 0_g_CHO_hr : absorptionRate },
 			dose_time{ doseTime } { }
 
-	carb_t tick( time_point<system_clock> const & current_ts ) const {
+	carb_t tick( ns::timestamp_t const & current_ts ) const {
 		auto const carb_duration = amount/absorption_rate;
 		std::cout << "carb_duration=" << carb_duration << " absorption_rate=" << absorption_rate << '\n';
 		return calculations::calc_cob( amount, carb_duration, calc_duration( dose_time, current_ts ) );
 	}
 };	// carb_dose_t
 
-void clean_up( time_point<system_clock> const & ts_now, std::vector<insulin_dose> & insulin_doses, std::vector<carb_dose_t> & carb_doses ) {
+void clean_up( ns::timestamp_t const & ts_now, std::vector<insulin_dose> & insulin_doses, std::vector<carb_dose_t> & carb_doses ) {
 	insulin_doses.erase( std::remove_if( insulin_doses.begin( ), insulin_doses.end( ), [&]( auto const & item ) {
 		auto const duration = calc_duration( item.dose_time, ts_now );
 		return duration >= item.dose_dia;
@@ -159,7 +159,7 @@ void clean_up( time_point<system_clock> const & ts_now, std::vector<insulin_dose
 	} ), carb_doses.end( ) );
 }
 
-insulin_t calc_iob( time_point<system_clock> const & ts_now, insulin_dose item ) {
+insulin_t calc_iob( ns::timestamp_t const & ts_now, insulin_dose item ) {
 	if( ts_now < item.dose_time ) {	// Ignore future insulin
 		return item.amount;
 	}
@@ -172,7 +172,7 @@ insulin_t calc_iob( time_point<system_clock> const & ts_now, insulin_dose item )
 	return item.amount.scale( pc );
 }
 
-insulin_t calculate_bolus( time_point<system_clock> const & when, std::chrono::minutes const & dia, profile_t const & profile, carb_t const & carb_dose, carb_rate_t const & carb_absorption_rate ) {
+insulin_t calculate_bolus( ns::timestamp_t const & when, std::chrono::minutes const & dia, profile_t const & profile, carb_t const & carb_dose, carb_rate_t const & carb_absorption_rate ) {
 	auto const carb_activity_time = carb_dose / carb_absorption_rate;
 	auto const normal_bolus = carb_dose / profile.get_icr( when );
 	// Peak carb is currently at carb_activity_time/2.  This may change with a different calc_cob.  Put a find max in if that changes
@@ -220,13 +220,13 @@ int main( int, char ** ) {
 	std::cout << "Based on ICR=" << profile.get_icr( ts_now ) << " ISF=" << profile.get_isf( ts_now ) << " basal_rate=" << profile.get_basal_rate( ts_now );
 	std::cout << " it is estimated that the liver outputs " << est_liver_carb_rate << " of glucose or " << est_liver_carb_rate.carbs_per( 1min ) << "/min\n";
 	
-	auto const add_insulin_dose = [&last_iob, &insulin_doses]( time_point<system_clock> const & when, insulin_t amount, insulin_duration_t dia = insulin_duration_t::t240 ) {
+	auto const add_insulin_dose = [&last_iob, &insulin_doses]( ns::timestamp_t const & when, insulin_t amount, insulin_duration_t dia = insulin_duration_t::t240 ) {
 		std::cout << "~~insulin_dose: " << amount << '\n';
 		last_iob += amount;
 		insulin_doses.emplace_back( amount, dia, when );
 	};
 
-	auto const add_carb_dose = [&last_cob, &carb_doses]( time_point<system_clock> const & when, carb_t amount, carb_rate_t absorption_rate = 0.3_g_CHO_min ) {
+	auto const add_carb_dose = [&last_cob, &carb_doses]( ns::timestamp_t const & when, carb_t amount, carb_rate_t absorption_rate = 0.3_g_CHO_min ) {
 		std::cout << "~~carb_dose: " << amount << " abs_rate=" << absorption_rate << '\n';
 		last_cob += amount;
 		carb_doses.emplace_back( when, amount, absorption_rate );

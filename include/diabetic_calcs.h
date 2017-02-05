@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <numeric>
 
+#include "diabetic_calcs.h"
 #include "units.h"
 
 namespace ns {

@@ -29,11 +29,11 @@
 
 namespace ns {
 	namespace {
-		auto tp_to_iso_date_string( std::chrono::system_clock::time_point const tp ) {
+		auto tp_to_iso_date_string( ns::timestamp_t const tp ) {
 			return date::format( "%FT%TZ", tp );
 		}
 
-		auto build_nightscout_date_range( boost::string_view field, std::chrono::system_clock::time_point const tp_start, std::chrono::system_clock::time_point const tp_end ) {
+		auto build_nightscout_date_range( boost::string_view field, ns::timestamp_t const tp_start, ns::timestamp_t const tp_end ) {
 			std::stringstream ss;
 			ss << "find[" << field.data( ) << "][$gte]=";
 			ss << tp_to_iso_date_string( tp_start );
@@ -49,7 +49,7 @@ namespace ns {
 		return daw::json::array_from_string<ns::data::profiles::ns_profiles_t>( profile_string_data, true );
 	}
 
-	ns_entries_data_t ns_get_entries( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point tp_start, std::chrono::system_clock::time_point tp_end ) {
+	ns_entries_data_t ns_get_entries( boost::string_view nightscout_base_url, ns::timestamp_t tp_start, ns::timestamp_t tp_end ) {
 
 		auto const ymd1 = date::year_month_day{ date::floor<date::days>( tp_start ) };
 		auto const ymd2 = date::year_month_day{ date::floor<date::days>( tp_end ) };
@@ -64,7 +64,7 @@ namespace ns {
 		return daw::json::array_from_string<ns::data::entries::ns_entries_t>( profile_string_data, true );
 	}
 
-	ns_treatments_data_t ns_get_treatments( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point tp_start, std::chrono::system_clock::time_point tp_end ) {
+	ns_treatments_data_t ns_get_treatments( boost::string_view nightscout_base_url, ns::timestamp_t tp_start, ns::timestamp_t tp_end ) {
 		auto const dte_rng = build_nightscout_date_range( "created_at", tp_start, tp_end );
 		std::string const url = nightscout_base_url.to_string( ) + "/api/v1/treatments.json?count=1000000&" + dte_rng;
 		daw::curl_wrapper cw;

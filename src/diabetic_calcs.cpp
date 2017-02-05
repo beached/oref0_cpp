@@ -26,9 +26,10 @@
 #include <chrono>
 
 #include "units.h"
+#include "diabetic_calcs.h"
 
 using namespace std::chrono;
-using namespace std::chrono_literals;
+using namespace ns::chrono_literals;
 using namespace date;
 
 namespace ns {
@@ -47,8 +48,8 @@ namespace ns {
 		}	// namespace anonymous
 
 		carb_t calc_cob( carb_t const initial_dose, ns::duration_minutes_t const & carb_activity_time, ns::duration_minutes_t const time_since_dose ) {
-			daw::exception::daw_throw_on_false( time_since_dose >= 0min );
-			daw::exception::daw_throw_on_false( carb_activity_time >= 0min );
+			daw::exception::daw_throw_on_false( time_since_dose >= 0_mins );
+			daw::exception::daw_throw_on_false( carb_activity_time >= 0_mins );
 			auto const t = static_cast<real_t>(time_since_dose.count( ));
 			auto const AT = static_cast<real_t>(carb_activity_time.count( ));
 			auto const D = static_cast<real_t>(initial_dose.value);

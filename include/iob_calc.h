@@ -39,7 +39,6 @@ namespace ns {
 	real_t insulin_on_board_pct( ns::duration_minutes_t const time_from_bolus_min, ns::duration_minutes_t const insulin_duration ) noexcept;
 
 	struct insulin_dose {
-		using timestamp_t = std::chrono::system_clock::time_point;
 		insulin_t amount;	// Amount of insulin
 		timestamp_t dose_time;
 		ns::duration_minutes_t dose_dia;	// DIA in minutes, must be > 0

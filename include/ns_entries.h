@@ -31,6 +31,7 @@
 
 #include <daw/json/daw_json_link.h>
 
+#include "data_types.h"
 #include "glucose_unit.h"
 
 namespace ns {
@@ -61,9 +62,9 @@ namespace ns {
 				std::string id;
 				boost::optional<nightscout_direction> direction;
 				boost::optional<ns::glucose_t> previous_sgv;
-				std::chrono::system_clock::time_point timestamp;
+				ns::timestamp_t timestamp;
 				std::string device;
-				std::chrono::system_clock::time_point date;
+				ns::timestamp_t date;
 				ns::glucose_t sgv;
 				entry_type_t type;
 				boost::optional<bool> previous_sgv_not_active;

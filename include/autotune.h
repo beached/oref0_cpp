@@ -26,9 +26,10 @@
 #include <iostream>
 #include <vector>
 
+#include "data_types.h"
 #include "nightscout.h"
 
 namespace ns {
-	ns::data::profiles::ns_profiles_t autotune_data( boost::string_view nightscout_base_url, std::chrono::system_clock::time_point const tp_start, std::chrono::system_clock::time_point const tp_end );
+	ns::data::profiles::ns_profiles_t autotune_data( boost::string_view nightscout_base_url, ns::timestamp_t const tp_start, ns::timestamp_t const tp_end );
 }    // namespace ns
 

@@ -45,14 +45,14 @@ namespace ns {
 			std::istream & operator>>( std::istream & is, event_type_t & tb );
 
 			struct ns_treatments_t: public daw::json::JsonLink<ns_treatments_t> {
-				std::chrono::system_clock::time_point created_at;
+				ns::timestamp_t created_at;
 				boost::optional<temp_basal_t> temp;
 				boost::optional<ns::insulin_t> insulin;
 				boost::optional<std::string> glucose_type;
 				event_type_t eventType;
 				boost::optional<ns::carb_t> carbs;
 				std::string _id;
-				std::chrono::system_clock::time_point timestamp;
+				ns::timestamp_t timestamp;
 				boost::optional<std::chrono::minutes> duration;
 				std::string enteredBy;
 				boost::optional<ns::insulin_rate_t> absolute;
