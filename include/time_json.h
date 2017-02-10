@@ -48,7 +48,7 @@ namespace ns {
 		void link_real_duration( boost::string_view json_name, Object obj, Duration & value) {
 			using json_real_t = typename daw::json::impl::value_t::real_t;
 			static auto const to_duration = []( json_real_t const & i ) -> Duration {
-				return Duration{ i };
+				return Duration{ static_cast<long int>(i) };
 			};
 			static auto const from_duration = []( Duration const & t ) -> json_real_t {
 				return t.count( );
