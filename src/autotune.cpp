@@ -318,7 +318,7 @@ namespace ns {
 				return year_month_day{ daypoint };
 			}
 
-			auto build_bgi( ns_profile_data_t const & profile_data, ns_entries_data_t const & glucose_data, ns_treatments_data_t const & treatments_data, ns::timestamp_t tp_start ) {
+			auto calculate_bgi( ns_profile_data_t const & profile_data, ns_treatments_data_t const & treatments_data, ns::timestamp_t tp_start ) {
 				using namespace ns::chrono_literals;
 				using namespace date;
 				using namespace std::chrono;
@@ -410,6 +410,7 @@ namespace ns {
 							return result;
 						};
 						auto & current_result_day = result[current_ymd];
+						current_result_day.datestamp = current_ymd;
 						auto const current_isf = get_current_isf( profile_data, current_ts );
 						{
 							auto & current_basal_tod = current_result_day.bgi_basal[current_tod];
@@ -444,7 +445,43 @@ namespace ns {
 				std::transform( result.begin( ), result.end( ), std::back_inserter( vresult ), []( auto const & item ) {
 					return item.second;
 				});
+				std::sort( vresult.begin( ), vresult.end( ), []( auto const & lhs, auto const & rhs ) {
+					return lhs.datestamp < rhs.datestamp;
+				});
 				return vresult;
+			}
+
+			auto calculate_actual_total_bgi( ns_profile_data_t const & profile_data, ns_entries_data_t const & glucose_data ) {
+				using namespace date;
+				using namespace std::chrono;
+				using namespace ns::chrono_literals;
+				struct glucose_day {
+					std::array<ns::glucose_t, 288> actual_total_bgi;
+					year_month_day datestamp;
+				};
+				std::unordered_map<year_month_day, glucose_day> glucose_changes;
+				daw::exception::daw_throw_on_false( glucose_data.size( ) > 1, "Cannot calculate data with less than 2 values" );
+				auto glucose_data_it = std::next( glucose_data.begin( ) );
+				auto glucose_data_last_it = glucose_data.begin( );
+				while( glucose_data_it != glucose_data.end( ) ) {
+					if( glucose_data_it->sgv > 2.22_mmol_L && glucose_data_last_it->sgv > 2.22_mmol_L ) {
+						auto const ymd = ts_to_ymd( glucose_data_it->timestamp );
+						auto const tod = ts_to_tod( glucose_data_it->timestamp );
+						auto & glucose_day = glucose_changes[ymd];
+						glucose_day.datestamp = ymd;
+						glucose_day.actual_total_bgi[tod] = glucose_data_it->sgv - glucose_data_last_it->sgv;
+					}
+					glucose_data_last_it = glucose_data_it;
+					++glucose_data_it;
+				}
+				std::vector<glucose_day> result;
+				std::transform( glucose_changes.begin( ), glucose_changes.end( ), std::back_inserter( result ), []( auto const & item ) {
+					return item.second;
+				});
+				std::sort( result.begin( ), result.end( ), []( auto const & lhs, auto const & rhs ) {
+					return lhs.datestamp < rhs.datestamp;
+				});
+				return result;
 			}
 
 			auto autotune_data( ns_profile_data_t & profile_data, ns_entries_data_t & glucose_data, ns_treatments_data_t & treatments_data, ns::timestamp_t tp_start ) {
@@ -452,7 +489,8 @@ namespace ns {
 				sort_data( profile_data, glucose_data, treatments_data );
 				// Build up current state over
 				using treatment_t = typename ns_treatments_data_t::value_type;
-				auto bgi_data = build_bgi( profile_data, glucose_data, treatments_data, tp_start );
+				auto bgi_data = calculate_bgi( profile_data, treatments_data, tp_start );
+				auto actual_bgi = calculate_actual_total_bgi( profile_data, glucose_data );
 				return ns::data::profiles::ns_profiles_t{ };
 			}
 		}    // namespace anonymous
