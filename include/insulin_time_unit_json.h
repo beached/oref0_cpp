@@ -31,7 +31,7 @@ namespace ns {
 	void json_link_insulin_rate_t( boost::string_view json_name, ObjectPtr entries, Member & member ) {
 		using json_real_t = daw::json::impl::value_t::real_t;
 		static auto const to_insulin_rate = []( auto const & json_real ) {
-			return ns::insulin_rate_t{ static_cast<ns::real_t>( json_real ) };
+			return ns::insulin_rate_t{ ns::insulin_t{ static_cast<ns::real_t>( json_real ) } };
 		};
 		static auto const from_insulin_rate = []( auto const & g ) {
 			return static_cast<json_real_t>( g.value );

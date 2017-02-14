@@ -22,15 +22,26 @@
 
 #pragma once
 
-#include <boost/utility/string_view.hpp>
-#include <iostream>
-#include <vector>
+#include <boost/optional.hpp>
+#include <string>
 
-#include "autotune_config.h"
-#include "data_types.h"
-#include "nightscout.h"
+#include <daw/json/daw_json_link.h>
 
 namespace ns {
-	ns::data::profiles::ns_profiles_t autotune_data( ns::autotune_config_t const & config, ns::timestamp_t const tp_start, ns::timestamp_t const tp_end );
-}    // namespace ns
+	struct autotune_config_t: public daw::json::JsonLink<autotune_config_t> {
+		boost::optional<std::string> api_key;
+		std::string nightscout_base_url;
+
+		autotune_config_t( );
+		~autotune_config_t( );
+		autotune_config_t( autotune_config_t && other );
+		autotune_config_t( autotune_config_t const & other );
+
+		autotune_config_t & operator=( autotune_config_t const & ) = default;
+		autotune_config_t & operator=( autotune_config_t && ) = default;
+	private:
+		void link_json( );
+	};	// autotune_config_t
+}    // namespace ns 
+
 

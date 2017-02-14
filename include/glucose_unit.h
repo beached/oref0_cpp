@@ -26,6 +26,9 @@
 #include "data_types.h"
 
 namespace ns {
+	real_t to_mg_dL( real_t const & glucose ) noexcept;
+	real_t to_mmol_L( real_t const & glucose ) noexcept;
+		
 	enum class glucose_unit { mmol_L, mg_dL };
 
 	glucose_unit get_default_glucose_display_unit( );

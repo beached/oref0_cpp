@@ -31,7 +31,7 @@
 namespace ns {
 	namespace calculations {
 		carb_rate_t	liver_glucose_output( insulin_rate_t const & b, icr_t const & icr );
-		carb_t calc_cob( carb_t const initial_dose, ns::duration_minutes_t const & carb_activity_time, ns::duration_minutes_t const & time_since_dose );
+		carb_t calc_cob( carb_t const initial_dose, ns::duration_minutes_t const & carb_activity_time, ns::duration_minutes_t const time_since_dose );
 
 		template<typename Collection>
 		auto linear_regression( Collection const & points ) {

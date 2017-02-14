@@ -46,7 +46,7 @@ class profile_t {
 public:
 	profile_t( isf_t ISF, icr_t ICR ): isf{ std::move( ISF ) }, icr{ std::move( ICR ) } { }
 
-	isf_t get_isf( ns::timestamp const & ) const {
+	isf_t get_isf( ns::timestamp_t const & ) const {
 		return isf;
 	}
 

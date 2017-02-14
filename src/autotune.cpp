@@ -31,10 +31,24 @@
 
 #include "autotune.h"
 #include "diabetic_calcs.h"
+#include "glucose_unit.h"
+#include "glucose_time_unit.h"
 #include "iob_calc.h"
+#include "isf_unit.h"
+#include "icr_unit.h"
 
 using namespace ns::chrono_literals;
-
+namespace std {
+	template<>
+	struct hash<date::year_month_day> {
+		size_t operator()( date::year_month_day const & value ) const {
+			using namespace date;
+			using namespace std::chrono;
+			auto const days_since_epoch = static_cast<sys_days>(value).time_since_epoch( ).count( );
+			return hash<int>{ }( days_since_epoch );
+		}
+	};
+}
 namespace ns {
 	namespace impl {
 		namespace {
@@ -143,25 +157,80 @@ namespace ns {
 				}
 			};	// insulin_dose_t
 
-			ns::duration_minutes_t get_current_dia( ns_profile_data_t const & profile_data, ns::timestamp_t timestamp ) {
+			auto const & get_current_profile( ns_profile_data_t const & profile_data, ns::timestamp_t timestamp ) {
 				// Assumes profile_data is sorted in order past to present
 				for( auto const & profile: profile_data ) {
 					if( profile.start_date <= timestamp ) {
 						daw::exception::daw_throw_on_false( profile.store, "Invalid profile data detected" );
-						return ns::duration_minutes_t{ static_cast<long int>((*profile.store).Default.dia.count( )*60) };
+						return profile.store->Default;
 					}
 				}
 				throw std::runtime_error( "No current profile found" );
 			}
 
-			decltype(auto) ts_to_tod( ns::timestamp_t timestamp ) noexcept {
+			ns::duration_minutes_t get_current_dia( ns_profile_data_t const & profile_data, ns::timestamp_t timestamp ) {
+				return ns::duration_minutes_t{ get_current_profile( profile_data, timestamp ).dia.count( )*60 };
+			}
+
+			uint16_t to_tod( boost::string_view tod_str ) {
+				daw::exception::daw_throw_on_false( tod_str.size( ) == 5, "Time must be of format hh::mm" );
+				auto const hours = static_cast<uint16_t>((tod_str[0] - '0')*10 + (tod_str[1] - '0'));
+				auto const minutes = static_cast<uint16_t>( (tod_str[3] - '0'*10) + (tod_str[4] - '0') );
+				return ((hours*60)+minutes)/5;
+			}
+
+			uint16_t ts_to_tod( ns::timestamp_t timestamp ) {
+				using namespace std::chrono;
+				using namespace date;
+				auto const daypoint = floor<days>( timestamp );
+				auto const tod = make_time( timestamp - daypoint );
+				return (tod.hours( ).count( )*60 + tod.minutes( ).count( ))/5;
+			}
+
+			auto ts_to_time( ns::timestamp_t timestamp ) noexcept {
 				auto const ts_tmp = date::floor<std::chrono::minutes>( timestamp );
 				auto const ts_midnight = date::floor<date::days>( ts_tmp );
 				return date::make_time( ts_tmp - ts_midnight );
 			}
 
+			auto get_current_basal( ns_profile_data_t const & profile_data, ns::timestamp_t timestamp ) {
+				auto const basals = get_current_profile( profile_data, timestamp ).basal;
+				daw::exception::daw_throw_on_true( basals.empty( ), "Must have at least one basal rate" );
+				auto it_basal = basals.begin( );
+				auto last_it_basal = basals.begin( );
+				auto const current_tod = ts_to_tod( timestamp );
+				while( it_basal != basals.end( ) && to_tod( it_basal->time ) < current_tod ) {
+					last_it_basal = it_basal++;
+				}
+				return ns::insulin_t{ last_it_basal->value };
+			}
+
+			auto get_current_isf( ns_profile_data_t const & profile_data, ns::timestamp_t timestamp ) {
+				auto const isfs = get_current_profile( profile_data, timestamp ).sens;
+				daw::exception::daw_throw_on_true( isfs.empty( ), "Must have at least one isf value" );
+				auto it_isf = isfs.begin( );
+				auto last_it_isf = isfs.begin( );
+				auto const current_tod = ts_to_tod( timestamp );
+				while( it_isf != isfs.end( ) && to_tod( it_isf->time ) < current_tod ) {
+					last_it_isf = it_isf++;
+				}
+				return ns::isf_t{ ns::glucose_t{ last_it_isf->value } };
+			}
+
+			auto get_current_icr( ns_profile_data_t const & profile_data, ns::timestamp_t timestamp ) {
+				auto const icrs = get_current_profile( profile_data, timestamp ).carbratio;
+				daw::exception::daw_throw_on_true( icrs.empty( ), "Must have at least one icr value" );
+				auto it_icr = icrs.begin( );
+				auto last_it_icr = icrs.begin( );
+				auto const current_tod = ts_to_tod( timestamp );
+				while( it_icr != icrs.end( ) && to_tod( it_icr->time ) < current_tod ) {
+					last_it_icr = it_icr++;
+				}
+				return ns::icr_t{ ns::carb_t{ last_it_icr->value } };
+			}
+
 			size_t ts_to_5min_bin( ns::timestamp_t timestamp ) noexcept {
-				auto const ts = ts_to_tod( timestamp );
+				auto const ts = ts_to_time( timestamp );
 				size_t const pos = (ts.hours( ).count( )*60 + ts.minutes( ).count( ))/5;
 				return pos;
 			}
@@ -205,7 +274,7 @@ namespace ns {
 				return result;
 			}
 
-			auto build_dose_tables( ns_profile_data_t const profile_data, ns_entries_data_t const glucose_data, ns_treatments_data_t const treatments_data ) {
+			auto build_dose_tables( ns_profile_data_t const & profile_data, ns_entries_data_t const & glucose_data, ns_treatments_data_t const & treatments_data ) {
 				struct result_t {
 					std::vector<carb_dose_t> carb_doses;
 					std::vector<insulin_dose_t> insulin_doses;
@@ -228,23 +297,169 @@ namespace ns {
 
 				return result;
 			}
-			auto autotune_data( ns_profile_data_t profile_data, ns_entries_data_t glucose_data, ns_treatments_data_t treatments_data ) {
+
+			auto ts_to_date_tod( ns::timestamp_t ts ) {
+				using namespace date;
+				using namespace std::chrono;
+				struct result_t {
+					year_month_day ymd;
+					uint16_t tod;
+				};
+				auto const daypoint = floor<days>( ts );
+				auto const tod = make_time( ts - daypoint );
+				result_t result{ year_month_day{ daypoint }, static_cast<uint16_t>( (tod.hours( ).count( )*60 + tod.minutes( ).count( ) )/5 ) };
+				return result;
+			}
+
+			auto ts_to_ymd( ns::timestamp_t ts ) {
+				using namespace date;
+				using namespace std::chrono;
+				auto const daypoint = floor<days>( ts );
+				return year_month_day{ daypoint };
+			}
+
+			auto build_bgi( ns_profile_data_t const & profile_data, ns_entries_data_t const & glucose_data, ns_treatments_data_t const & treatments_data, ns::timestamp_t tp_start ) {
+				struct bgi_day {
+					std::array<ns::glucose_t, 288> bgi_carb;
+					std::array<ns::glucose_t, 288> bgi_bolus;
+					std::array<ns::glucose_t, 288> bgi_basal;
+					date::year_month_day datestamp;
+				};
+				std::unordered_map<date::year_month_day, bgi_day> result;
+				struct insulin_dose_t {
+					ns::timestamp_t timestamp;
+					ns::insulin_t dose;
+					ns::duration_minutes_t duration;
+
+					insulin_dose_t( ns::timestamp_t ts, ns::insulin_t insulin_dose, ns::duration_minutes_t dur ):
+							timestamp{ std::move( ts ) },
+							dose{ std::move( insulin_dose ) },
+							duration{ std::move( dur ) } { }
+				};
+
+				struct carb_dose_t {
+					ns::timestamp_t timestamp;
+					ns::carb_t dose;
+					ns::duration_minutes_t duration;
+
+					carb_dose_t( ns::timestamp_t ts, ns::carb_t carb_dose, ns::duration_minutes_t dur ):
+							timestamp{ std::move( ts ) },
+							dose{ std::move( carb_dose ) },
+							duration{ std::move( dur ) } { }
+
+				};
+
+				auto const clean_queue = []( auto & queue, auto const ts_now ) {
+					auto const should_remove = [&]( auto const & item ) {
+						return item.timestamp + item.duration >= ts_now;
+					};
+					auto const pos = std::remove_if( std::begin( queue ), std::end( queue ), should_remove );
+					queue.erase( pos, std::end( queue ) );
+				};
+
+				std::vector<insulin_dose_t> basal_queue;
+				std::vector<insulin_dose_t> bolus_queue;
+				std::vector<carb_dose_t> carb_queue;
+				boost::optional<insulin_dose_t> temp_basal;
+
+
+				for( auto const & cur_treatment: treatments_data ) {
+					auto const current_ts = cur_treatment.timestamp;
+					auto const current_dia = get_current_dia( profile_data, current_ts );
+					if( cur_treatment.carbs ) {
+						auto const abs_time = cur_treatment.absorption_time ? *cur_treatment.absorption_time : ns::duration_minutes_t{ 3 };
+						carb_queue.emplace_back( current_ts, *cur_treatment.carbs, abs_time );
+					}
+					if( cur_treatment.insulin ) {
+						bolus_queue.emplace_back( current_ts, *cur_treatment.insulin, current_dia );
+					}
+					if( cur_treatment.absolute ) {
+						daw::exception::daw_throw_on_false( cur_treatment.duration, "Temp basal's must have a duration" );
+						temp_basal = insulin_dose_t{ cur_treatment.timestamp, cur_treatment.absolute->value, *cur_treatment.duration };
+					}
+					if( temp_basal && ((temp_basal->timestamp + temp_basal->duration) <= current_ts) ) {
+						temp_basal = boost::none;
+					}
+					if( temp_basal ) {
+						auto dose = temp_basal->dose;
+						dose.scale( 1.0/12.0 );
+						basal_queue.emplace_back( current_ts, dose, current_dia );
+					} else {
+						auto dose = get_current_basal( profile_data, current_ts );
+						dose.scale( 1.0/12.0 );
+						basal_queue.emplace_back( current_ts, dose, current_dia );
+					}
+
+					clean_queue( carb_queue, current_ts );
+					clean_queue( basal_queue, current_ts );
+					clean_queue( bolus_queue, current_ts );
+					if( cur_treatment.timestamp >= tp_start ) {
+						auto const current_tod = ts_to_tod( current_ts );
+						auto const current_ymd = ts_to_ymd( current_ts );
+
+						auto const calc_insulin_bgi = []( ns::timestamp_t ts, insulin_dose_t dose, isf_t const & isf ) {
+							using namespace date;
+							using namespace std::chrono;
+							auto const pc_left = ns::insulin_on_board_pct( floor<ns::duration_minutes_t>( ts - dose.timestamp ), dose.duration );
+							auto insulin_dose = dose.dose;
+							insulin_dose.scale( pc_left );
+							auto result = isf * insulin_dose;
+							return result;
+						};
+						auto & current_result_day = result[current_ymd];
+						auto const current_isf = get_current_isf( profile_data, current_ts );
+						{
+							auto & current_basal_tod = current_result_day.bgi_basal[current_tod];
+							for( auto const & basal_item: basal_queue ) {
+								auto const bgi = calc_insulin_bgi( current_ts, basal_item, current_isf );
+								current_basal_tod += bgi;
+							}
+						}
+						{
+							auto & current_bolus_tod = current_result_day.bgi_bolus[current_tod];
+							for( auto const & bolus_item: bolus_queue ) {
+								auto const bgi = calc_insulin_bgi( current_ts, bolus_item, current_isf );
+								current_bolus_tod += bgi;
+							}
+						}
+						{
+							auto & current_carb_tod = current_result_day.bgi_carb[current_tod];
+							auto const current_icr = get_current_icr( profile_data, current_ts );
+							for( auto const & carb_item: carb_queue ) {
+								auto const bgi = (carb_item.dose / current_icr) * current_isf;
+								current_carb_tod += bgi;
+							}
+						}
+					}
+				}
+				std::vector<bgi_day> vresult;
+				std::transform( result.begin( ), result.end( ), std::back_inserter( vresult ), []( auto const & item ) {
+					return item.second;
+				});
+				return vresult;
+			}
+
+			auto autotune_data( ns_profile_data_t & profile_data, ns_entries_data_t & glucose_data, ns_treatments_data_t & treatments_data, ns::timestamp_t tp_start ) {
 				// Ensure data is ordered from past to present
 				sort_data( profile_data, glucose_data, treatments_data );
 				// Build up current state over
 				using treatment_t = typename ns_treatments_data_t::value_type;
-
+				auto bgi_data = build_bgi( profile_data, glucose_data, treatments_data, tp_start );
 				return ns::data::profiles::ns_profiles_t{ };
 			}
 		}    // namespace anonymous
 	}	// namespace impl
 
-	ns::data::profiles::ns_profiles_t autotune_data( boost::string_view nightscout_base_url, ns::timestamp_t const tp_start, ns::timestamp_t const tp_end ) {
+	ns::data::profiles::ns_profiles_t autotune_data( ns::autotune_config_t const & config, ns::timestamp_t const tp_start, ns::timestamp_t const tp_end ) {
 		auto const launch_policy = std::launch::async;
-		auto profile_data = std::async( launch_policy, ns::ns_get_profiles, nightscout_base_url );
-		auto glucose_data = std::async( launch_policy, ns::ns_get_entries, nightscout_base_url, tp_start, tp_end );
-		auto treatments_data = std::async( launch_policy, ns::ns_get_treatments, nightscout_base_url, tp_start, tp_end );
-		return impl::autotune_data( profile_data.get( ), glucose_data.get( ), treatments_data.get( ) );
+		auto profile_data_fut = std::async( launch_policy, ns::ns_get_profiles, config );
+		auto glucose_data_fut = std::async( launch_policy, ns::ns_get_entries, config, tp_start, tp_end );
+		auto treatments_data_fut = std::async( launch_policy, ns::ns_get_treatments, config, tp_start, tp_end );
+
+		auto profile_data = profile_data_fut.get( );
+		auto glucose_data = glucose_data_fut.get( );
+		auto treatments_data = treatments_data_fut.get( );
+		return impl::autotune_data( profile_data, glucose_data, treatments_data, tp_start );
 	}
 }	// namespace ns
 

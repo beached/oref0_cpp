@@ -1,6 +1,6 @@
-// The MIT License (MIT)
+// The MIT License ( MIT )
 //
-// Copyright (c) 2017 Darrell Wright
+// Copyright ( c ) 2017 Darrell Wright
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files( the "Software" ), to deal
@@ -20,17 +20,45 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
-
+#include <array>
 #include <boost/utility/string_view.hpp>
-#include <iostream>
-#include <vector>
+#include <boost/uuid/sha1.hpp>
+#include <cstdint>
+#include <iomanip>
+#include <sstream>
 
-#include "autotune_config.h"
-#include "data_types.h"
-#include "nightscout.h"
+#include "sha1.h"
 
-namespace ns {
-	ns::data::profiles::ns_profiles_t autotune_data( ns::autotune_config_t const & config, ns::timestamp_t const tp_start, ns::timestamp_t const tp_end );
-}    // namespace ns
+namespace daw {
+	namespace {
+		class sha1_t {
+			boost::uuids::detail::sha1 m_sha1;
+		public:
+			sha1_t( boost::string_view msg ): m_sha1{ } {
+				process( msg );
+			}
+
+			sha1_t & process( boost::string_view msg ) {
+				m_sha1.process_bytes( msg.data( ), msg.size( ) );
+				return *this;
+			}
+			
+			std::string to_string( ) {
+				unsigned int digest[5];
+				m_sha1.get_digest( digest );
+
+				std::ostringstream buf;
+				for( auto const & item: digest ) {
+					buf << std::hex << std::setfill( '0' ) << std::setw( 8 ) << item;
+				}
+				auto result = buf.str( );
+				return result;
+			}
+		};	// sha1
+	}	// namespace anonymous
+
+	std::string sha1( boost::string_view message ) {
+		return sha1_t{ message }.to_string( );
+	}
+}	// namespace daw
 

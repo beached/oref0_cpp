@@ -23,14 +23,8 @@
 #pragma once
 
 #include <boost/utility/string_view.hpp>
-#include <iostream>
-#include <vector>
 
-#include "autotune_config.h"
-#include "data_types.h"
-#include "nightscout.h"
-
-namespace ns {
-	ns::data::profiles::ns_profiles_t autotune_data( ns::autotune_config_t const & config, ns::timestamp_t const tp_start, ns::timestamp_t const tp_end );
-}    // namespace ns
+namespace daw {
+	std::string sha1( boost::string_view message );
+}	// namespace daw
 

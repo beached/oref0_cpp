@@ -9,7 +9,7 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
+// The above copyright notice and this permission notice daw::shall be included in all
 // copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -26,6 +26,7 @@
 #include <string>
 
 #include "nightscout.h"
+#include "sha1.h"
 
 namespace ns {
 	namespace {
@@ -41,15 +42,23 @@ namespace ns {
 			ss << tp_to_iso_date_string( tp_end );
 			return ss.str( );
 		}
+
+		std::string ns_download( boost::string_view url, ns::autotune_config_t const & config ) {
+			daw::curl_wrapper cw;
+			if( config.api_key ) {
+				cw.add_header( "api-secret", daw::sha1( *config.api_key ) );
+			}
+			auto result = cw.get_string( url );
+			return result;
+		}
 	}	// namespace anonymous
 
-	ns_profile_data_t ns_get_profiles( boost::string_view nightscout_base_url ) {
-		daw::curl_wrapper cw;
-		auto const profile_string_data = cw.get_string( nightscout_base_url.to_string( ) + "/api/v1/profile.json" );
+	ns_profile_data_t ns_get_profiles( ns::autotune_config_t const & config ) {
+		auto const profile_string_data = ns_download( config.nightscout_base_url + "/api/v1/profile.json", config );
 		return daw::json::array_from_string<ns::data::profiles::ns_profiles_t>( profile_string_data, true );
 	}
 
-	ns_entries_data_t ns_get_entries( boost::string_view nightscout_base_url, ns::timestamp_t tp_start, ns::timestamp_t tp_end ) {
+	ns_entries_data_t ns_get_entries( ns::autotune_config_t const & config, ns::timestamp_t tp_start, ns::timestamp_t tp_end ) {
 
 		auto const ymd1 = date::year_month_day{ date::floor<date::days>( tp_start ) };
 		auto const ymd2 = date::year_month_day{ date::floor<date::days>( tp_end ) };
@@ -57,18 +66,17 @@ namespace ns {
 		auto const y_2 = std::to_string( static_cast<int>(ymd2.year( )) );
 
 		auto const dte_rng = build_nightscout_date_range( "dateString", tp_start, tp_end );
-		std::string const url = nightscout_base_url.to_string( ) + "/api/v1/times/{" + y_1 + ".." + y_2 + "}-{1..12}.json?count=1000000&" + dte_rng;
+		std::string const url = config.nightscout_base_url + "/api/v1/times/{" + y_1 + ".." + y_2 + "}-{1..12}.json?count=1000000&" + dte_rng;
+		auto const profile_string_data = ns_download( url, config );
 
-		daw::curl_wrapper cw;
-		auto const profile_string_data = cw.get_string( url );
 		return daw::json::array_from_string<ns::data::entries::ns_entries_t>( profile_string_data, true );
 	}
 
-	ns_treatments_data_t ns_get_treatments( boost::string_view nightscout_base_url, ns::timestamp_t tp_start, ns::timestamp_t tp_end ) {
+	ns_treatments_data_t ns_get_treatments( ns::autotune_config_t const & config, ns::timestamp_t tp_start, ns::timestamp_t tp_end ) {
 		auto const dte_rng = build_nightscout_date_range( "created_at", tp_start, tp_end );
-		std::string const url = nightscout_base_url.to_string( ) + "/api/v1/treatments.json?count=1000000&" + dte_rng;
-		daw::curl_wrapper cw;
-		auto const profile_string_data = cw.get_string( url );
+		std::string const url = config.nightscout_base_url + "/api/v1/treatments.json?count=1000000&" + dte_rng;
+		auto const profile_string_data = ns_download( url, config );
+
 		return daw::json::array_from_string<ns::data::treatments::ns_treatments_t>( profile_string_data, true );
 	}
 }	// namespace ns

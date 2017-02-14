@@ -28,6 +28,7 @@
 
 #include <daw/json/daw_json_link.h>
 
+#include "autotune_config.h"
 #include "data_types.h"
 #include "ns_entries.h"
 #include "ns_profiles.h"
@@ -38,10 +39,10 @@ namespace ns {
 	using ns_entries_data_t = std::vector<ns::data::entries::ns_entries_t>;
 	using ns_treatments_data_t = std::vector<ns::data::treatments::ns_treatments_t>;
 
-	ns_profile_data_t ns_get_profiles( boost::string_view nightscout_base_url );
-	ns_entries_data_t ns_get_entries( boost::string_view nightscout_base_url, ns::timestamp_t tp_start, ns::timestamp_t tp_end );
-	ns_treatments_data_t ns_get_treatments( boost::string_view nightscout_base_url, ns::timestamp_t tp_start, ns::timestamp_t tp_end );
-}    // namespace ns 
+	ns_profile_data_t ns_get_profiles( ns::autotune_config_t const & config );
+	ns_entries_data_t ns_get_entries( ns::autotune_config_t const & config, ns::timestamp_t tp_start, ns::timestamp_t tp_end );
+	ns_treatments_data_t ns_get_treatments( ns::autotune_config_t const & config, ns::timestamp_t tp_start, ns::timestamp_t tp_end );
+}    // namespace ns
 
 std::ostream & operator<<( std::ostream & os, ns::ns_profile_data_t const & profiles );
 std::ostream & operator<<( std::ostream & os, ns::ns_entries_data_t const & profiles );

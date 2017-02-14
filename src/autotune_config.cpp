@@ -20,17 +20,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
-
-#include <boost/utility/string_view.hpp>
-#include <iostream>
-#include <vector>
-
 #include "autotune_config.h"
-#include "data_types.h"
-#include "nightscout.h"
 
 namespace ns {
-	ns::data::profiles::ns_profiles_t autotune_data( ns::autotune_config_t const & config, ns::timestamp_t const tp_start, ns::timestamp_t const tp_end );
-}    // namespace ns
+	autotune_config_t::~autotune_config_t( ) { }
+
+	autotune_config_t::autotune_config_t( ):
+			daw::json::JsonLink<autotune_config_t>{ },
+			api_key{ },
+			nightscout_base_url{ } {
+
+		link_json( );
+	}
+
+	autotune_config_t::autotune_config_t( autotune_config_t const & other ):
+			daw::json::JsonLink<autotune_config_t>{ },
+			api_key{ other.api_key },
+			nightscout_base_url{ other.nightscout_base_url } {
+
+		link_json( );
+	}
+
+	autotune_config_t::autotune_config_t( autotune_config_t && other ):
+			daw::json::JsonLink<autotune_config_t>{ },
+			api_key{ std::move( other ).api_key },
+			nightscout_base_url{ std::move( other ).nightscout_base_url } {
+
+		link_json( );
+	}
+
+	void autotune_config_t::link_json( ) {
+		link_string( "api_key", api_key );
+		link_string( "nightscout_base_url", nightscout_base_url );
+	}
+}
 

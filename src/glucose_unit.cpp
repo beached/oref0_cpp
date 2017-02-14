@@ -27,15 +27,15 @@
 #include "glucose_unit.h"
 
 namespace ns {
+	real_t to_mg_dL( real_t const & glucose ) noexcept {
+		return glucose / 0.0555;
+	}
+
+	real_t to_mmol_L( real_t const & glucose ) noexcept {
+		return glucose * 0.0555;
+	}
+
 	namespace {
-		real_t to_mg_dL( real_t const & glucose ) noexcept {
-			return glucose / 0.0555;
-		}
-
-		real_t to_mmol_L( real_t const & glucose ) noexcept {
-			return glucose * 0.0555;
-		}
-
 		glucose_unit & get_static_glucose_unit( ) {
 			static glucose_unit result = glucose_unit::mmol_L;
 			return result;

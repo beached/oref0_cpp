@@ -16,9 +16,9 @@ if( ${CMAKE_CXX_COMPILER_ID} STREQUAL 'MSVC' )
 	add_compile_options( -D_WIN32_WINNT=0x0601 /std:c++latest ) 
 else( )
 	if( ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" )
-		add_compile_options(-std=c++14 -Weverything -pthread -Wno-c++98-compat -g -Wno-covered-switch-default -Wno-padded -Wno-exit-time-destructors -Wno-c++98-compat-pedantic -Wno-unused-parameter -Wno-missing-noreturn -Wno-missing-prototypes -Wno-disabled-macro-expansion -Wno-c99-compat)
+		add_compile_options(-std=c++14 -O3 -Weverything -pthread -Wno-c++98-compat -g -Wno-covered-switch-default -Wno-padded -Wno-exit-time-destructors -Wno-c++98-compat-pedantic -Wno-unused-parameter -Wno-missing-noreturn -Wno-missing-prototypes -Wno-disabled-macro-expansion -Wno-c99-compat)
 	elseif( ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" )
-		add_compile_options(-std=c++14 -ggdb -Wall -pthread -Wno-deprecated-declarations -march=native )
+		add_compile_options(-std=c++14 -ggdb -O3 -Wall -pthread -Wno-deprecated-declarations -march=native )
 	endif( )
 endif( )
 
@@ -68,6 +68,15 @@ externalproject_add(
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
 )
 
+externalproject_add(
+    sqlite_helper_prj
+    GIT_REPOSITORY "git@github.com:beached/sqlite_helper.git"
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/dependencies/sqlite_helper"
+    GIT_TAG "master"
+    INSTALL_DIR "${CMAKE_BINARY_DIR}/install"
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
+)
+
 set( HEADER_FOLDER "include" )
 set( SOURCE_FOLDER "src" )
 set( TEST_FOLDER "tests" )
@@ -84,6 +93,7 @@ link_directories( ${Boost_LIBRARY_DIRS} )
 
 set( HEADER_FILES
 	${HEADER_FOLDER}/autotune.h
+	${HEADER_FOLDER}/autotune_config.h
 	${HEADER_FOLDER}/carb_time_unit.h
 	${HEADER_FOLDER}/carb_unit.h
 	${HEADER_FOLDER}/carb_unit_json.h
@@ -91,6 +101,7 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/diabetic_calcs.h
 	${HEADER_FOLDER}/dbl_error.h
 	${HEADER_FOLDER}/glucose_unit.h
+	${HEADER_FOLDER}/glucose_time_unit.h
 	${HEADER_FOLDER}/glucose_unit_json.h
 	${HEADER_FOLDER}/human.h
 	${HEADER_FOLDER}/icr_unit.h
@@ -108,18 +119,21 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/ns_treatments.h
 	${HEADER_FOLDER}/requested_temp.h
 	${HEADER_FOLDER}/iob_calc.h
+	${HEADER_FOLDER}/sha1.h
 	${HEADER_FOLDER}/time_json.h
 	${HEADER_FOLDER}/units.h
 )
 
 set( SOURCE_FILES
 	${SOURCE_FOLDER}/autotune.cpp
+	${SOURCE_FOLDER}/autotune_config.cpp
 	${SOURCE_FOLDER}/carb_time_unit.cpp
 	${SOURCE_FOLDER}/carb_unit.cpp
 	${SOURCE_FOLDER}/data_types.cpp
 	${SOURCE_FOLDER}/diabetic_calcs.cpp
 	${SOURCE_FOLDER}/dbl_error.cpp
 	${SOURCE_FOLDER}/glucose_unit.cpp
+	${SOURCE_FOLDER}/glucose_time_unit.cpp
 	${SOURCE_FOLDER}/human.cpp
 	${SOURCE_FOLDER}/icr_unit.cpp
 	${SOURCE_FOLDER}/insulin_time_unit.cpp
@@ -131,6 +145,7 @@ set( SOURCE_FILES
 	${SOURCE_FOLDER}/ns_entries.cpp
 	${SOURCE_FOLDER}/ns_profiles.cpp
 	${SOURCE_FOLDER}/ns_treatments.cpp
+	${SOURCE_FOLDER}/sha1.cpp
 	${SOURCE_FOLDER}/units.cpp
 )
 
@@ -155,6 +170,9 @@ target_link_libraries( ns_entries_test_bin oref0 parse_json char_range ${Boost_L
 
 add_executable( autotune_tune_bin ${HEADER_FILES} ${TEST_FOLDER}/autotune_test.cpp )
 target_link_libraries( autotune_tune_bin oref0 parse_json curl_wrapper char_range ${Boost_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+
+#add_executable( sha1_test_bin ${HEADER_FOLDER}/sha1.h ${SOURCE_FOLDER}/sha1.cpp ${TEST_FOLDER}/sha1_test.cpp )
+#target_link_libraries( sha1_test_bin ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 install( TARGETS oref0 DESTINATION lib )
 install( DIRECTORY ${HEADER_FOLDER}/ DESTINATION include/daw/oref0 )
