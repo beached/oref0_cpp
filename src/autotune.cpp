@@ -319,6 +319,9 @@ namespace ns {
 			}
 
 			auto build_bgi( ns_profile_data_t const & profile_data, ns_entries_data_t const & glucose_data, ns_treatments_data_t const & treatments_data, ns::timestamp_t tp_start ) {
+				using namespace ns::chrono_literals;
+				using namespace date;
+				using namespace std::chrono;
 				struct bgi_day {
 					std::array<ns::glucose_t, 288> bgi_carb;
 					std::array<ns::glucose_t, 288> bgi_bolus;
@@ -362,7 +365,6 @@ namespace ns {
 				std::vector<carb_dose_t> carb_queue;
 				boost::optional<insulin_dose_t> temp_basal;
 
-
 				for( auto const & cur_treatment: treatments_data ) {
 					auto const current_ts = cur_treatment.timestamp;
 					auto const current_dia = get_current_dia( profile_data, current_ts );
@@ -396,11 +398,12 @@ namespace ns {
 					if( cur_treatment.timestamp >= tp_start ) {
 						auto const current_tod = ts_to_tod( current_ts );
 						auto const current_ymd = ts_to_ymd( current_ts );
-
 						auto const calc_insulin_bgi = []( ns::timestamp_t ts, insulin_dose_t dose, isf_t const & isf ) {
-							using namespace date;
-							using namespace std::chrono;
-							auto const pc_left = ns::insulin_on_board_pct( floor<ns::duration_minutes_t>( ts - dose.timestamp ), dose.duration );
+							auto const age = floor<ns::duration_minutes_t>( ts - dose.timestamp );
+							if( age > 5_mins ) {
+								return 0_mmol_L;
+							}
+							auto const pc_left = ns::insulin_on_board_pct( age - 5_mins, dose.duration ) - ns::insulin_on_board_pct( age, dose.duration );
 							auto insulin_dose = dose.dose;
 							insulin_dose.scale( pc_left );
 							auto result = isf * insulin_dose;
@@ -426,7 +429,12 @@ namespace ns {
 							auto & current_carb_tod = current_result_day.bgi_carb[current_tod];
 							auto const current_icr = get_current_icr( profile_data, current_ts );
 							for( auto const & carb_item: carb_queue ) {
-								auto const bgi = (carb_item.dose / current_icr) * current_isf;
+								auto const age = floor<ns::duration_minutes_t>( current_ts - carb_item.timestamp );
+								if( age < 5_mins ) {
+									continue;
+								}
+								auto carb_dose = ns::calculations::calc_cob( carb_item.dose, carb_item.duration, age - 5_mins ) - ns::calculations::calc_cob( carb_item.dose, carb_item.duration, age );
+								auto const bgi = (carb_dose / current_icr) * current_isf;
 								current_carb_tod += bgi;
 							}
 						}
