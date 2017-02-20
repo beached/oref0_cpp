@@ -30,44 +30,44 @@
 namespace ns {
 	namespace data {
 		namespace profiles {
-			carbratio_element_t::carbratio_element_t( ):
-				daw::json::JsonLink<carbratio_element_t>{ },
-				timeAsSeconds{ },
+			carb_ratio_element_t::carb_ratio_element_t( ):
+				daw::json::JsonLink<carb_ratio_element_t>{ },
+				time_as_seconds{ },
 				value{ },
 				time{ } {
 
 					set_links( );
 				}
 
-			carbratio_element_t::carbratio_element_t( carbratio_element_t const & other ):
-				daw::json::JsonLink<carbratio_element_t>{ },
-				timeAsSeconds{ other.timeAsSeconds },
+			carb_ratio_element_t::carb_ratio_element_t(carb_ratio_element_t const & other ):
+				daw::json::JsonLink<carb_ratio_element_t>{ },
+				time_as_seconds{ other.time_as_seconds },
 				value{ other.value },
 				time{ other.time } {
 
 					set_links( );
 				}
 
-			carbratio_element_t::carbratio_element_t( carbratio_element_t && other ):
-				daw::json::JsonLink<carbratio_element_t>{ },
-				timeAsSeconds{ std::move( other.timeAsSeconds ) },
+			carb_ratio_element_t::carb_ratio_element_t(carb_ratio_element_t && other ):
+				daw::json::JsonLink<carb_ratio_element_t>{ },
+				time_as_seconds{ std::move( other.time_as_seconds ) },
 				value{ std::move( other.value ) },
 				time{ std::move( other.time ) } {
 
 					set_links( );
 				}
 
-			carbratio_element_t::~carbratio_element_t( ) { }
+			carb_ratio_element_t::~carb_ratio_element_t( ) { }
 
-			void carbratio_element_t::set_links( ) {
-				link_json_string_to_integral( "timeAsSeconds", timeAsSeconds );
+			void carb_ratio_element_t::set_links( ) {
+				link_json_string_to_integral( "timeAsSeconds", time_as_seconds );
 				link_json_string_to_real( "value", value );
 				link_string( "time", time );
 			}
 
 			sens_element_t::sens_element_t( ):
 				daw::json::JsonLink<sens_element_t>{ },
-				timeAsSeconds{ },
+				time_as_seconds{ },
 				value{ },
 				time{ } {
 
@@ -76,7 +76,7 @@ namespace ns {
 
 			sens_element_t::sens_element_t( sens_element_t const & other ):
 				daw::json::JsonLink<sens_element_t>{ },
-				timeAsSeconds{ other.timeAsSeconds },
+				time_as_seconds{ other.time_as_seconds },
 				value{ other.value },
 				time{ other.time } {
 
@@ -85,7 +85,7 @@ namespace ns {
 
 			sens_element_t::sens_element_t( sens_element_t && other ):
 				daw::json::JsonLink<sens_element_t>{ },
-				timeAsSeconds{ std::move( other.timeAsSeconds ) },
+				time_as_seconds{ std::move( other.time_as_seconds ) },
 				value{ std::move( other.value ) },
 				time{ std::move( other.time ) } {
 
@@ -95,14 +95,14 @@ namespace ns {
 			sens_element_t::~sens_element_t( ) { }
 
 			void sens_element_t::set_links( ) {
-				link_json_string_to_integral( "timeAsSeconds", timeAsSeconds );
+				link_json_string_to_integral( "timeAsSeconds", time_as_seconds );
 				link_json_string_to_real( "value", value );
 				link_string( "time", time );
 			}
 
 			basal_element_t::basal_element_t( ):
 				daw::json::JsonLink<basal_element_t>{ },
-				timeAsSeconds{ },
+				time_as_seconds{ },
 				value{ },
 				time{ } {
 
@@ -111,7 +111,7 @@ namespace ns {
 
 			basal_element_t::basal_element_t( basal_element_t const & other ):
 				daw::json::JsonLink<basal_element_t>{ },
-				timeAsSeconds{ other.timeAsSeconds },
+				time_as_seconds{ other.time_as_seconds },
 				value{ other.value },
 				time{ other.time } {
 
@@ -120,7 +120,7 @@ namespace ns {
 
 			basal_element_t::basal_element_t( basal_element_t && other ):
 				daw::json::JsonLink<basal_element_t>{ },
-				timeAsSeconds{ std::move( other.timeAsSeconds ) },
+				time_as_seconds{ std::move( other.time_as_seconds ) },
 				value{ std::move( other.value ) },
 				time{ std::move( other.time ) } {
 
@@ -130,14 +130,14 @@ namespace ns {
 			basal_element_t::~basal_element_t( ) { }
 
 			void basal_element_t::set_links( ) {
-				link_json_string_to_integral( "timeAsSeconds", timeAsSeconds );
+				link_json_string_to_integral( "timeAsSeconds", time_as_seconds );
 				link_json_string_to_real( "value", value );
 				link_string( "time", time );
 			}
 
 			target_low_element_t::target_low_element_t( ):
 				daw::json::JsonLink<target_low_element_t>{ },
-				timeAsSeconds{ },
+				time_as_seconds{ },
 				value{ },
 				time{ } {
 
@@ -146,7 +146,7 @@ namespace ns {
 
 			target_low_element_t::target_low_element_t( target_low_element_t const & other ):
 				daw::json::JsonLink<target_low_element_t>{ },
-				timeAsSeconds{ other.timeAsSeconds },
+				time_as_seconds{ other.time_as_seconds },
 				value{ other.value },
 				time{ other.time } {
 
@@ -155,7 +155,7 @@ namespace ns {
 
 			target_low_element_t::target_low_element_t( target_low_element_t && other ):
 				daw::json::JsonLink<target_low_element_t>{ },
-				timeAsSeconds{ std::move( other.timeAsSeconds ) },
+				time_as_seconds{ std::move( other.time_as_seconds ) },
 				value{ std::move( other.value ) },
 				time{ std::move( other.time ) } {
 
@@ -165,14 +165,14 @@ namespace ns {
 			target_low_element_t::~target_low_element_t( ) { }
 
 			void target_low_element_t::set_links( ) {
-				link_json_string_to_integral( "timeAsSeconds", timeAsSeconds );
+				link_json_string_to_integral( "timeAsSeconds", time_as_seconds );
 				link_json_string_to_real( "value", value );
 				link_string( "time", time );
 			}
 
 			target_high_element_t::target_high_element_t( ):
 				daw::json::JsonLink<target_high_element_t>{ },
-				timeAsSeconds{ },
+				time_as_seconds{ },
 				value{ },
 				time{ } {
 
@@ -181,7 +181,7 @@ namespace ns {
 
 			target_high_element_t::target_high_element_t( target_high_element_t const & other ):
 				daw::json::JsonLink<target_high_element_t>{ },
-				timeAsSeconds{ other.timeAsSeconds },
+				time_as_seconds{ other.time_as_seconds },
 				value{ other.value },
 				time{ other.time } {
 
@@ -190,7 +190,7 @@ namespace ns {
 
 			target_high_element_t::target_high_element_t( target_high_element_t && other ):
 				daw::json::JsonLink<target_high_element_t>{ },
-				timeAsSeconds{ std::move( other.timeAsSeconds ) },
+				time_as_seconds{ std::move( other.time_as_seconds ) },
 				value{ std::move( other.value ) },
 				time{ std::move( other.time ) } {
 
@@ -200,7 +200,7 @@ namespace ns {
 			target_high_element_t::~target_high_element_t( ) { }
 
 			void target_high_element_t::set_links( ) {
-				link_json_string_to_integral( "timeAsSeconds", timeAsSeconds );
+				link_json_string_to_integral( "timeAsSeconds", time_as_seconds );
 				link_json_string_to_real( "value", value );
 				link_string( "time", time );
 			}
@@ -213,7 +213,7 @@ namespace ns {
 				target_low{ },
 				target_high{ },
 				carbs_hr{ },
-				carbratio{ },
+				carb_ratio{ },
 				timezone{ },
 				dia{ },
 				sens{ },
@@ -230,7 +230,7 @@ namespace ns {
 				target_low{ other.target_low },
 				target_high{ other.target_high },
 				carbs_hr{ other.carbs_hr },
-				carbratio{ other.carbratio },
+				carb_ratio{ other.carb_ratio },
 				timezone{ other.timezone },
 				dia{ other.dia },
 				sens{ other.sens },
@@ -247,7 +247,7 @@ namespace ns {
 				target_low{ std::move( other.target_low ) },
 				target_high{ std::move( other.target_high ) },
 				carbs_hr{ std::move( other.carbs_hr ) },
-				carbratio{ std::move( other.carbratio ) },
+				carb_ratio{ std::move( other.carb_ratio ) },
 				timezone{ std::move( other.timezone ) },
 				dia{ std::move( other.dia ) },
 				sens{ std::move( other.sens ) },
@@ -265,7 +265,7 @@ namespace ns {
 				link_array( "target_low", target_low );
 				link_array( "target_high", target_high );
 				link_json_string_to_real( "carbs_hr", carbs_hr );
-				link_array( "carbratio", carbratio );
+				link_array( "carbratio", carb_ratio );
 				link_string( "timezone", timezone );
 				ns::impl::link_real_duration( "dia", this, dia );
 				link_array( "sens", sens );
@@ -304,7 +304,7 @@ namespace ns {
 				created_at{ },
 				mills{ },
 				_id{ },
-				defaultProfile{ },
+				default_profile{ },
 				store{ },
 				start_date{ } {
 
@@ -316,7 +316,7 @@ namespace ns {
 				created_at{ other.created_at },
 				mills{ other.mills },
 				_id{ other._id },
-				defaultProfile{ other.defaultProfile },
+				default_profile{ other.default_profile },
 				store{ other.store },
 				start_date{ other.start_date } {
 
@@ -328,7 +328,7 @@ namespace ns {
 				created_at{ std::move( other.created_at ) },
 				mills{ std::move( other.mills ) },
 				_id{ std::move( other._id ) },
-				defaultProfile{ std::move( other.defaultProfile ) },
+				default_profile{ std::move( other.default_profile ) },
 				store{ std::move( other.store ) },
 				start_date{ std::move( other.start_date ) } {
 
@@ -341,7 +341,7 @@ namespace ns {
 				link_iso8601_timestamp( "created_at", created_at );
 				link_json_string_to_integral( "mills", mills );
 				link_string( "_id", _id );
-				link_string( "defaultProfile", defaultProfile );
+				link_string( "defaultProfile", default_profile );
 				link_object( "store", store );
 				link_iso8601_timestamp( "startDate", start_date );
 			}

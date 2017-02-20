@@ -55,29 +55,45 @@ namespace ns {
 
 	ns_profile_data_t ns_get_profiles( ns::autotune_config_t const & config ) {
 		auto const profile_string_data = ns_download( config.nightscout_base_url + "/api/v1/profile.json", config );
-		return daw::json::array_from_string<ns::data::profiles::ns_profiles_t>( profile_string_data, true );
+		auto result = daw::json::array_from_string<ns::data::profiles::ns_profiles_t>( profile_string_data, true );
+		std::sort( result.begin( ), result.end( ), []( auto const & lhs, auto const & rhs ) {
+			return lhs.start_date < rhs.start_date;
+		});
+		return result;
 	}
 
 	ns_entries_data_t ns_get_entries( ns::autotune_config_t const & config, ns::timestamp_t tp_start, ns::timestamp_t tp_end ) {
-
+		using namespace ns::chrono_literals;
+		using namespace std::chrono;
+		using namespace date;
 		auto const ymd1 = date::year_month_day{ date::floor<date::days>( tp_start ) };
 		auto const ymd2 = date::year_month_day{ date::floor<date::days>( tp_end ) };
 		auto const y_1 = std::to_string( static_cast<int>(ymd1.year( )) );
 		auto const y_2 = std::to_string( static_cast<int>(ymd2.year( )) );
 
-		auto const dte_rng = build_nightscout_date_range( "dateString", tp_start, tp_end );
+		auto const dte_rng = build_nightscout_date_range( "dateString", floor<date::days>(tp_start - 24_hours), tp_end );
 		std::string const url = config.nightscout_base_url + "/api/v1/times/{" + y_1 + ".." + y_2 + "}-{1..12}.json?count=1000000&" + dte_rng;
 		auto const profile_string_data = ns_download( url, config );
-
-		return daw::json::array_from_string<ns::data::entries::ns_entries_t>( profile_string_data, true );
+		auto result = daw::json::array_from_string<ns::data::entries::ns_entries_t>( profile_string_data, true );
+		std::sort( result.begin( ), result.end( ), []( auto const & lhs, auto const & rhs ) {
+			return lhs.timestamp < rhs.timestamp;
+		});
+		return result;
 	}
 
 	ns_treatments_data_t ns_get_treatments( ns::autotune_config_t const & config, ns::timestamp_t tp_start, ns::timestamp_t tp_end ) {
-		auto const dte_rng = build_nightscout_date_range( "created_at", tp_start, tp_end );
+		using namespace ns::chrono_literals;
+		using namespace std::chrono;
+		using namespace date;
+		auto const dte_rng = build_nightscout_date_range( "created_at", floor<date::days>(tp_start - 24_hours), tp_end );
 		std::string const url = config.nightscout_base_url + "/api/v1/treatments.json?count=1000000&" + dte_rng;
 		auto const profile_string_data = ns_download( url, config );
 
-		return daw::json::array_from_string<ns::data::treatments::ns_treatments_t>( profile_string_data, true );
+		auto result = daw::json::array_from_string<ns::data::treatments::ns_treatments_t>( profile_string_data, true );
+		std::sort( result.begin( ), result.end( ), []( auto const & lhs, auto const & rhs ) {
+			return lhs.timestamp < rhs.timestamp;
+		} );
+		return result;
 	}
 }	// namespace ns
 

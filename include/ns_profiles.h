@@ -33,24 +33,24 @@
 namespace ns {
 	namespace data {
 		namespace profiles {
-			struct carbratio_element_t: public daw::json::JsonLink<carbratio_element_t> {
-				boost::optional<uint32_t> timeAsSeconds;
+			struct carb_ratio_element_t: public daw::json::JsonLink<carb_ratio_element_t> {
+				boost::optional<uint32_t> time_as_seconds;
 				double value;
 				std::string time;
 
-				carbratio_element_t( );
-				carbratio_element_t( carbratio_element_t const & other );
-				carbratio_element_t( carbratio_element_t && other );
-				~carbratio_element_t( );
+				carb_ratio_element_t( );
+				carb_ratio_element_t( carb_ratio_element_t const & other );
+				carb_ratio_element_t( carb_ratio_element_t && other );
+				~carb_ratio_element_t( );
 
-				carbratio_element_t & operator=( carbratio_element_t const & ) = default;
-				carbratio_element_t & operator=( carbratio_element_t && ) = default;
+				carb_ratio_element_t & operator=( carb_ratio_element_t const & ) = default;
+				carb_ratio_element_t & operator=( carb_ratio_element_t && ) = default;
 			private:
 				void set_links( );
-			};	// carbratio_element_t
+			};	// carb_ratio_element_t
 
 			struct sens_element_t: public daw::json::JsonLink<sens_element_t> {
-				boost::optional<uint32_t> timeAsSeconds;
+				boost::optional<uint32_t> time_as_seconds;
 				double value;
 				std::string time;
 
@@ -66,7 +66,7 @@ namespace ns {
 			};	// sens_element_t
 
 			struct basal_element_t: public daw::json::JsonLink<basal_element_t> {
-				boost::optional<uint32_t> timeAsSeconds;
+				boost::optional<uint32_t> time_as_seconds;
 				double value;
 				std::string time;
 
@@ -82,7 +82,7 @@ namespace ns {
 			};	// basal_element_t
 
 			struct target_low_element_t: public daw::json::JsonLink<target_low_element_t> {
-				boost::optional<uint32_t> timeAsSeconds;
+				boost::optional<uint32_t> time_as_seconds;
 				double value;
 				std::string time;
 
@@ -98,7 +98,7 @@ namespace ns {
 			};	// target_low_element_t
 
 			struct target_high_element_t: public daw::json::JsonLink<target_high_element_t> {
-				boost::optional<uint32_t> timeAsSeconds;
+				boost::optional<uint32_t> time_as_seconds;
 				double value;
 				std::string time;
 
@@ -120,7 +120,7 @@ namespace ns {
 				std::vector<target_low_element_t> target_low;
 				std::vector<target_high_element_t> target_high;
 				double carbs_hr;
-				std::vector<carbratio_element_t> carbratio;
+				std::vector<carb_ratio_element_t> carb_ratio;
 				std::string timezone;
 				ns::duration_hours_t dia;
 				std::vector<sens_element_t> sens;
@@ -155,7 +155,7 @@ namespace ns {
 				ns::timestamp_t created_at;
 				boost::optional<uint64_t> mills;
 				std::string _id;
-				boost::optional<std::string> defaultProfile;
+				boost::optional<std::string> default_profile;
 				boost::optional<store_t> store;
 				ns::timestamp_t start_date;
 

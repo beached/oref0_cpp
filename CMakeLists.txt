@@ -32,6 +32,15 @@ externalproject_add(
 )
 
 externalproject_add(
+    function_stream_prj
+    GIT_REPOSITORY "https://github.com/beached/function_stream.git"
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/dependencies/function_stream"
+    GIT_TAG "master"
+    INSTALL_DIR "${CMAKE_BINARY_DIR}/install"
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
+)
+
+externalproject_add(
     parse_json_prj
     GIT_REPOSITORY "https://github.com/beached/parse_json.git"
     SOURCE_DIR "${CMAKE_BINARY_DIR}/dependencies/parse_json"
@@ -150,7 +159,7 @@ set( SOURCE_FILES
 )
 
 add_library( oref0 ${HEADER_FILES} ${SOURCE_FILES} )
-add_dependencies( oref0 header_libraries_prj parse_json_prj curl_wrapper_prj char_range_prj date_prj )
+add_dependencies( oref0 function_stream_prj header_libraries_prj parse_json_prj curl_wrapper_prj char_range_prj date_prj )
 target_link_libraries( oref0 parse_json tz char_range curl_wrapper ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 add_executable( simulator_bin ${HEADER_FILES} ${SOURCE_FOLDER}/simulator.cpp )

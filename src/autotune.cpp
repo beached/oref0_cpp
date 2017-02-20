@@ -52,20 +52,6 @@ namespace std {
 namespace ns {
 	namespace impl {
 		namespace {
-			void sort_data( ns_profile_data_t & profile_data, ns_entries_data_t & glucose_data, ns_treatments_data_t & treatments_data ) {
-				std::sort( std::begin( profile_data ), std::end( profile_data ), []( auto const & lhs, auto const & rhs ) {
-					return lhs.start_date < rhs.start_date;
-				} );
-				std::sort( std::begin( glucose_data ), std::end( glucose_data ), []( auto const & lhs, auto const & rhs ) {
-					return lhs.timestamp < rhs.timestamp;
-				} );
-				std::sort( std::begin( treatments_data ), std::end( treatments_data ), []( auto const & lhs, auto const & rhs ) {
-					return lhs.timestamp < rhs.timestamp;
-				} );
-			}
-
-
-
 			struct glucose_reading_t {
 				ns::glucose_t value;
 				ns::timestamp_t timestamp;
@@ -218,7 +204,7 @@ namespace ns {
 			}
 
 			auto get_current_icr( ns_profile_data_t const & profile_data, ns::timestamp_t timestamp ) {
-				auto const icrs = get_current_profile( profile_data, timestamp ).carbratio;
+				auto const icrs = get_current_profile( profile_data, timestamp ).carb_ratio;
 				daw::exception::daw_throw_on_true( icrs.empty( ), "Must have at least one icr value" );
 				auto it_icr = icrs.begin( );
 				auto last_it_icr = icrs.begin( );
@@ -451,7 +437,7 @@ namespace ns {
 				return vresult;
 			}
 
-			auto calculate_actual_total_bgi( ns_profile_data_t const & profile_data, ns_entries_data_t const & glucose_data ) {
+			auto calculate_actual_total_bgi( ns_profile_data_t const & profile_data, ns_entries_data_t const & glucose_data, ns::timestamp_t tp_start  ) {
 				using namespace date;
 				using namespace std::chrono;
 				using namespace ns::chrono_literals;
@@ -464,7 +450,7 @@ namespace ns {
 				auto glucose_data_it = std::next( glucose_data.begin( ) );
 				auto glucose_data_last_it = glucose_data.begin( );
 				while( glucose_data_it != glucose_data.end( ) ) {
-					if( glucose_data_it->sgv > 2.22_mmol_L && glucose_data_last_it->sgv > 2.22_mmol_L ) {
+					if( glucose_data_it->timestamp >= tp_start && glucose_data_it->sgv > 2.22_mmol_L && glucose_data_last_it->sgv > 2.22_mmol_L ) {
 						auto const ymd = ts_to_ymd( glucose_data_it->timestamp );
 						auto const tod = ts_to_tod( glucose_data_it->timestamp );
 						auto & glucose_day = glucose_changes[ymd];
@@ -484,13 +470,37 @@ namespace ns {
 				return result;
 			}
 
-			auto autotune_data( ns_profile_data_t & profile_data, ns_entries_data_t & glucose_data, ns_treatments_data_t & treatments_data, ns::timestamp_t tp_start ) {
-				// Ensure data is ordered from past to present
-				sort_data( profile_data, glucose_data, treatments_data );
+			namespace bgi {
+				enum tags: uint8_t {
+					basal = 1,
+					bolus = 2,
+					carbohydrate = 4
+				};
+			}
+
+			struct dose_values {
+				uint16_t tod;
+				insulin_rate_t basal;
+				boost::optional<ns::isf_t> isf;
+				boost::optional<ns::icr_t> icr;
+			};
+
+			void process_bgi( dose_values & results, auto const & bgi_data, ns_entries_data_t const & glucose_data, ns::timestamp_t tp_start ) {
+
+			}
+
+			auto autotune_data( ns_profile_data_t const & profile_data, ns_entries_data_t const & glucose_data, ns_treatments_data_t const & treatments_data, ns::timestamp_t tp_start ) {
+				// Assumes data is sorted by timestamps
 				// Build up current state over
 				using treatment_t = typename ns_treatments_data_t::value_type;
-				auto bgi_data = calculate_bgi( profile_data, treatments_data, tp_start );
-				auto actual_bgi = calculate_actual_total_bgi( profile_data, glucose_data );
+				auto const bgi_data = calculate_bgi( profile_data, treatments_data, tp_start );
+				std::array<dose_values, 288> new_doses;
+				for( size_t n=0; n<new_doses.size( ); ++n ) {
+					new_doses.tod = n;
+				}
+
+				auto const bgi_tagged_data = process_bgi( 0, bgi_data, glucose_data, tp_start );
+				auto actual_bgi = calculate_actual_total_bgi( profile_data, glucose_data, tp_start );
 				return ns::data::profiles::ns_profiles_t{ };
 			}
 		}    // namespace anonymous
@@ -502,9 +512,9 @@ namespace ns {
 		auto glucose_data_fut = std::async( launch_policy, ns::ns_get_entries, config, tp_start, tp_end );
 		auto treatments_data_fut = std::async( launch_policy, ns::ns_get_treatments, config, tp_start, tp_end );
 
-		auto profile_data = profile_data_fut.get( );
-		auto glucose_data = glucose_data_fut.get( );
-		auto treatments_data = treatments_data_fut.get( );
+		auto const profile_data = profile_data_fut.get( );
+		auto const glucose_data = glucose_data_fut.get( );
+		auto const treatments_data = treatments_data_fut.get( );
 		return impl::autotune_data( profile_data, glucose_data, treatments_data, tp_start );
 	}
 }	// namespace ns
