@@ -35,99 +35,25 @@
 namespace ns {
 	namespace data {
 		namespace treatments {
-			ns_treatments_t::ns_treatments_t( ):
-					daw::json::JsonLink<ns_treatments_t>{ },
-					created_at{ },
-					temp{ },
-					insulin{ },
-					glucose_type{ },
-					eventType{ },
-					carbs{ },
-					_id{ },
-					timestamp{ },
-					duration{ },
-					enteredBy{ },
-					absolute{ },
-					rate{ },
-					glucose{ },
-					units{ },
-					absorption_time{ },
-					programmed{ },
-					ratio{ },
-					unabsorbed{ } {
-
-				set_links( );
-			}
-
-			ns_treatments_t::ns_treatments_t( ns_treatments_t const & other ):
-					daw::json::JsonLink<ns_treatments_t>{ },
-					created_at{ other.created_at },
-					temp{ other.temp },
-					insulin{ other.insulin },
-					glucose_type{ other.glucose_type },
-					eventType{ other.eventType },
-					carbs{ other.carbs },
-					_id{ other._id },
-					timestamp{ other.timestamp },
-					duration{ other.duration },
-					enteredBy{ other.enteredBy },
-					absolute{ other.absolute },
-					rate{ other.rate },
-					glucose{ other.glucose },
-					units{ other.units },
-					absorption_time{ other.absorption_time },
-					programmed{ other.programmed },
-					ratio{ other.ratio },
-					unabsorbed{ other.unabsorbed } {
-
-				set_links( );
-			}
-
-			ns_treatments_t::ns_treatments_t( ns_treatments_t && other ):
-					daw::json::JsonLink<ns_treatments_t>{ },
-					created_at{ std::move( other.created_at ) },
-					temp{ std::move( other.temp ) },
-					insulin{ std::move( other.insulin ) },
-					glucose_type{ std::move( other.glucose_type ) },
-					eventType{ std::move( other.eventType ) },
-					carbs{ std::move( other.carbs ) },
-					_id{ std::move( other._id ) },
-					timestamp{ std::move( other.timestamp ) },
-					duration{ std::move( other.duration ) },
-					enteredBy{ std::move( other.enteredBy ) },
-					absolute{ std::move( other.absolute ) },
-					rate{ std::move( other.rate ) },
-					glucose{ std::move( other.glucose ) },
-					units{ std::move( other.units ) },
-					absorption_time{ std::move( other.absorption_time ) },
-					programmed{ std::move( other.programmed ) },
-					ratio{ std::move( other.ratio ) },
-					unabsorbed{ std::move( other.unabsorbed ) } {
-
-				set_links( );
-			}
-
-			ns_treatments_t::~ns_treatments_t( ) { }
-
-			void ns_treatments_t::set_links( ) {
+			void ns_treatments_t::json_link_map( ) {
 				link_iso8601_timestamp( "created_at", created_at );
 				link_streamable( "temp", temp );
 				ns::json_link_insulin_t( "insulin", this, insulin );
-				link_string( "glucoseType", glucose_type );
+				link_json_string( "glucoseType", glucose_type );
 				link_streamable( "eventType", eventType );
 				ns::json_link_carb_t( "carbs", this, carbs );
-				link_string( "_id", _id );
+				link_json_string( "_id", _id );
 				link_iso8601_timestamp( "timestamp", timestamp );
 				ns::impl::link_int_duration( "duration", this, duration );
-				link_string( "enteredBy", enteredBy );
+				link_json_string( "enteredBy", enteredBy );
 				ns::json_link_insulin_rate_t( "absolute", this, absolute );
-				link_real( "rate", rate );
-				link_real( "glucose", glucose );
-				link_string( "units", units );
+				link_json_real( "rate", rate );
+				link_json_real( "glucose", glucose );
+				link_json_string( "units", units );
 				ns::impl::link_int_duration( "absorptionTime", this, absorption_time );
-				link_real( "programmed", programmed );
-				link_real( "ratio", ratio );
-				link_real( "unabsorbed", unabsorbed );
+				link_json_real( "programmed", programmed );
+				link_json_real( "ratio", ratio );
+				link_json_real( "unabsorbed", unabsorbed );
 			}
 
 			std::ostream & operator<<( std::ostream & os, temp_basal_t const & tb ) {

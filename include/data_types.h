@@ -31,8 +31,6 @@
 #include <string>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
-#include <daw/json/value_t.h>
-
 namespace ns {
 //	using real_t = boost::multiprecision::cpp_dec_float_50;		// ~1000 runs/second
 //	using real_t = boost::multiprecision::number<boost::multiprecision::cpp_dec_float<10>>; // ~2000 runs/second

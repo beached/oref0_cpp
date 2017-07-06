@@ -496,7 +496,7 @@ namespace ns {
 				auto const bgi_data = calculate_bgi( profile_data, treatments_data, tp_start );
 				std::array<dose_values, 288> new_doses;
 				for( size_t n=0; n<new_doses.size( ); ++n ) {
-					new_doses.tod = n;
+					new_doses[n].tod = n;
 				}
 
 				auto const bgi_tagged_data = process_bgi( 0, bgi_data, glucose_data, tp_start );

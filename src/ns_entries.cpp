@@ -83,68 +83,31 @@ namespace ns {
 				return is;
 			}
 
-			void ns_entries_t::link_values( ) {
-				this->link_string( "_id", id );
-				this->link_streamable( "direction", direction );
+			void ns_entries_t::json_link_map( ) {
+				link_json_string( "_id", id );
+				link_json_streamable( "direction", direction );
 				ns::json_link_glucose_t( "previousSGV", this, previous_sgv );
-				this->link_iso8601_timestamp( "dateString", timestamp );
+				link_iso8601_timestamp( "dateString", timestamp );
 
-				this->link_string( "device", device );
-				this->link_epoch_milliseconds_timestamp( "date", date );
+				link_json_string( "device", device );
+				link_epoch_milliseconds_timestamp( "date", date );
 				ns::json_link_glucose_t( "sgv", this, sgv );
-				this->link_streamable( "type", type );
-				this->link_boolean( "previousSGVNotActive", previous_sgv_not_active );
+				link_json_streamable( "type", type );
+				link_json_boolean( "previousSGVNotActive", previous_sgv_not_active );
 			}
 
-			ns_entries_t::ns_entries_t( ):
-					daw::json::JsonLink<ns_entries_t>{ },
-					id{ },
-					direction{ nightscout_direction::not_computable },
-					previous_sgv{ },
-					timestamp{ },
-					device{ },
-					date{ },
-					sgv{ -1 },
-					type{ },
-					previous_sgv_not_active{ } {
+			ns_entries_t::ns_entries_t( )
+			    : id{}
+			    , direction{nightscout_direction::not_computable}
+			    , previous_sgv{}
+			    , timestamp{}
+			    , device{}
+			    , date{}
+			    , sgv{-1}
+			    , type{}
+			    , previous_sgv_not_active{} {}
 
-				link_values( );
-			}
-
-			ns_entries_t::~ns_entries_t( ) { }
-
-
-			ns_entries_t::ns_entries_t( ns_entries_t const & other ):
-					daw::json::JsonLink<ns_entries_t>{ },
-					id{ other.id },
-					direction{ other.direction },
-					previous_sgv{ other.previous_sgv },
-					timestamp{ other.timestamp },
-					device{ other.device },
-					date{ other.date },
-					sgv{ other.sgv },
-					type{ other.type },
-					previous_sgv_not_active{ other.previous_sgv_not_active } {
-
-				link_values( );
-			}
-
-			ns_entries_t::ns_entries_t( ns_entries_t && other ):
-					daw::json::JsonLink<ns_entries_t>{ },
-					id{ std::move( other.id ) },
-					direction{ std::move( other.direction ) },
-					previous_sgv{ std::move( other.previous_sgv ) },
-					timestamp{ std::move( other.timestamp ) },
-					device{ std::move( other.device ) },
-					date{ std::move( other.date ) },
-					sgv{ std::move( other.sgv ) },
-					type{ std::move( other.type ) },
-					previous_sgv_not_active{ std::move( other.previous_sgv_not_active ) } {
-
-				link_values( );
-			}
-
-			std::ostream & operator<<( std::ostream & os, entry_type_t const & tb ) {
+			std::ostream &operator<<( std::ostream &os, entry_type_t const &tb ) {
 				using namespace std::string_literals;
 				static std::unordered_map<entry_type_t, std::string> const entry_types {
 					{ entry_type_t::sgv, "sgv"s },

@@ -15,10 +15,14 @@ find_package( Threads REQUIRED )
 if( ${CMAKE_CXX_COMPILER_ID} STREQUAL 'MSVC' )
 	add_compile_options( -D_WIN32_WINNT=0x0601 /std:c++latest ) 
 else( )
-	if( ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" )
-		add_compile_options(-std=c++14 -Weverything -pthread -Wno-c++98-compat -g -Wno-covered-switch-default -Wno-padded -Wno-exit-time-destructors -Wno-c++98-compat-pedantic -Wno-unused-parameter -Wno-missing-noreturn -Wno-missing-prototypes -Wno-disabled-macro-expansion -Wno-c99-compat)
+	if( ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" )
+		add_compile_options(-std=c++14 -march=native -pthread -Weverything -Wno-c++98-compat -Wno-covered-switch-default -Wno-padded -Wno-exit-time-destructors -Wno-c++98-compat-pedantic -Wno-unused-parameter -Wno-missing-noreturn -Wno-missing-prototypes -Wno-disabled-macro-expansion)
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 	elseif( ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" )
-		add_compile_options(-std=c++14 -ggdb -Wall -pthread -Wno-deprecated-declarations -march=native )
+		add_compile_options(-std=c++14 -march=native -pthread -Wall -Wno-deprecated-declarations)
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 	endif( )
 endif( )
 
@@ -41,9 +45,9 @@ externalproject_add(
 )
 
 externalproject_add(
-    parse_json_prj
-    GIT_REPOSITORY "https://github.com/beached/parse_json.git"
-    SOURCE_DIR "${CMAKE_BINARY_DIR}/dependencies/parse_json"
+    daw_json_link_prj
+    GIT_REPOSITORY "https://github.com/beached/daw_json_link.git"
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/dependencies/daw_json_link"
     GIT_TAG "master"
     INSTALL_DIR "${CMAKE_BINARY_DIR}/install"
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
@@ -57,7 +61,6 @@ externalproject_add(
     INSTALL_DIR "${CMAKE_BINARY_DIR}/install"
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/install
 )
-
 
 externalproject_add(
     char_range_prj
@@ -159,26 +162,26 @@ set( SOURCE_FILES
 )
 
 add_library( oref0 ${HEADER_FILES} ${SOURCE_FILES} )
-add_dependencies( oref0 function_stream_prj header_libraries_prj parse_json_prj curl_wrapper_prj char_range_prj date_prj )
-target_link_libraries( oref0 parse_json tz char_range curl_wrapper ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+add_dependencies( oref0 function_stream_prj header_libraries_prj daw_json_link_prj curl_wrapper_prj char_range_prj date_prj )
+target_link_libraries( oref0 tz char_range curl_wrapper ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 add_executable( simulator_bin ${HEADER_FILES} ${SOURCE_FOLDER}/simulator.cpp )
-target_link_libraries( simulator_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+target_link_libraries( simulator_bin oref0 char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 add_executable( iob_calc_test_bin ${HEADER_FILES} ${TEST_FOLDER}/iob_calc_test.cpp )
-target_link_libraries( iob_calc_test_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+target_link_libraries( iob_calc_test_bin oref0 char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 add_executable( cob_calc_test_bin ${HEADER_FILES} ${TEST_FOLDER}/cob_calc_test.cpp )
-target_link_libraries( cob_calc_test_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+target_link_libraries( cob_calc_test_bin oref0 char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 add_executable( glucose_unit_test_bin ${HEADER_FILES} ${TEST_FOLDER}/glucose_unit_test.cpp )
-target_link_libraries( glucose_unit_test_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+target_link_libraries( glucose_unit_test_bin oref0 char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 add_executable( ns_entries_test_bin ${HEADER_FILES} ${TEST_FOLDER}/ns_entries_test.cpp )
-target_link_libraries( ns_entries_test_bin oref0 parse_json char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+target_link_libraries( ns_entries_test_bin oref0 char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 add_executable( autotune_tune_bin ${HEADER_FILES} ${TEST_FOLDER}/autotune_test.cpp )
-target_link_libraries( autotune_tune_bin oref0 parse_json curl_wrapper char_range ${Boost_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+target_link_libraries( autotune_tune_bin oref0 daw_json_link curl_wrapper char_range ${Boost_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 #add_executable( sha1_test_bin ${HEADER_FOLDER}/sha1.h ${SOURCE_FOLDER}/sha1.cpp ${TEST_FOLDER}/sha1_test.cpp )
 #target_link_libraries( sha1_test_bin ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )

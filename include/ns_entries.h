@@ -58,7 +58,7 @@ namespace ns {
 			std::ostream & operator<<( std::ostream & os, entry_type_t const & tb );
 			std::istream & operator>>( std::istream & is, entry_type_t & tb );
 
-			struct ns_entries_t: public daw::json::JsonLink<ns_entries_t> {
+			struct ns_entries_t: public daw::json::daw_json_link<ns_entries_t> {
 				std::string id;
 				boost::optional<nightscout_direction> direction;
 				boost::optional<ns::glucose_t> previous_sgv;
@@ -70,19 +70,7 @@ namespace ns {
 				boost::optional<bool> previous_sgv_not_active;
 
 				ns_entries_t( );
-
-				~ns_entries_t( );
-
-				ns_entries_t( ns_entries_t const & other );
-
-				ns_entries_t( ns_entries_t && other );
-
-				ns_entries_t & operator=( ns_entries_t const & ) = default;
-
-				ns_entries_t & operator=( ns_entries_t && ) = default;
-
-			private:
-				void link_values( );
+				static void json_link_map( );
 			};    // nightscout_entries
 		}	// namespace entries
 	} 	// namespace data

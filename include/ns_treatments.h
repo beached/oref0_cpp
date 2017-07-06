@@ -44,7 +44,7 @@ namespace ns {
 			std::ostream & operator<<( std::ostream & os, event_type_t const & tb );
 			std::istream & operator>>( std::istream & is, event_type_t & tb );
 
-			struct ns_treatments_t: public daw::json::JsonLink<ns_treatments_t> {
+			struct ns_treatments_t: public daw::json::daw_json_link<ns_treatments_t> {
 				ns::timestamp_t created_at;
 				boost::optional<temp_basal_t> temp;
 				boost::optional<ns::insulin_t> insulin;
@@ -70,10 +70,7 @@ namespace ns {
 				ns_treatments_t( ns_treatments_t && other );
 				~ns_treatments_t( );
 
-				ns_treatments_t & operator=( ns_treatments_t const & ) = default;
-				ns_treatments_t & operator=( ns_treatments_t && ) = default;
-				private:
-				void set_links( );
+				static void json_link_map( );
 			};	// ns_treatments_t
 		}	// namespace treatmetns
 	}	// namespace data

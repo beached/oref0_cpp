@@ -31,7 +31,7 @@ namespace ns {
 	namespace impl {
 		template<typename Object, typename Member>
 		void link_real_duration( boost::string_view json_name, Object obj, boost::optional<Member> & member) {
-			using json_real_t = typename daw::json::impl::value_t::real_t;
+			using json_real_t = double;
 			static auto const to_duration = []( json_real_t const & i ) -> Member {
 				return Member{ i };
 			};
@@ -46,7 +46,7 @@ namespace ns {
 
 		template<typename Object, typename Duration>
 		void link_real_duration( boost::string_view json_name, Object obj, Duration & value) {
-			using json_real_t = typename daw::json::impl::value_t::real_t;
+			using json_real_t = double;
 			static auto const to_duration = []( json_real_t const & i ) -> Duration {
 				return Duration{ static_cast<long int>(i) };
 			};
@@ -58,7 +58,7 @@ namespace ns {
 
 		template<typename Object, typename Member>
 		void link_int_duration( boost::string_view json_name, Object obj, boost::optional<Member> & member) {
-			using json_int_t = typename daw::json::impl::value_t::integral_t;
+			using json_int_t = int64_t;
 			static auto const to_duration = []( json_int_t const & i ) -> Member {
 				return Member{ static_cast<long int>( i ) };
 			};
@@ -72,7 +72,7 @@ namespace ns {
 		}
 		template<typename Object, typename Member>
 		void link_int_duration( boost::string_view json_name, Object obj, Member & member) {
-			using json_int_t = typename daw::json::impl::value_t::integral_t;
+			using json_int_t = int64_t;
 			static auto const to_duration = []( json_int_t const & i ) -> Member {
 				return Member{ i };
 			};

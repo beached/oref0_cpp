@@ -42,7 +42,7 @@ namespace ns {
 	}
 
 	iob_data_t::iob_data_t( double bolusSnooze, insulin_t Activity, insulin_t Iob, boost::optional<insulin_t> basalIob, boost::optional<insulin_t> netBasalInsulin, boost::optional<insulin_t> highTempInsulin ):
-			daw::json::JsonLink<iob_data_t>{ },
+			daw::json::daw_json_link<iob_data_t>{ },
 			bolussnooze{ std::move( bolusSnooze ) },
 			activity{ std::move( Activity ) },
 			iob{ std::move( Iob ) },

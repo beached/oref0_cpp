@@ -26,91 +26,60 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <string>
 
-#include <daw/json/JsonLink.h>
+#include <daw/json/daw_json_link.h>
 
 namespace ns {
-	struct device_status_pump_battery_item_t: public daw::json::JsonLink<device_status_pump_battery_item_t> {
+	struct device_status_pump_battery_item_t: public daw::json::daw_json_link<device_status_pump_battery_item_t> {
 		uint8_t percent;
 		device_status_pump_battery_item_t( );
-		~device_status_pump_battery_item_t( );
-		device_status_pump_battery_item_t( device_status_pump_battery_item_t const & other );
-		device_status_pump_battery_item_t( device_status_pump_battery_item_t && other );
 
-		device_status_pump_battery_item_t & operator=( device_status_pump_battery_item_t const & ) = default;
-		device_status_pump_battery_item_t & operator=( device_status_pump_battery_item_t && ) = default;
+		static void json_link_map( );
 	};
 
-	struct device_status_pump_iob_item_t: public daw::json::JsonLink<device_status_pump_iob_item_t> {
+	struct device_status_pump_iob_item_t: public daw::json::daw_json_link<device_status_pump_iob_item_t> {
 		boost::posix_time::ptime timestamp;
 		double bolus_iob;
 
 		device_status_pump_iob_item_t( );
-		~device_status_pump_iob_item_t( );
-		device_status_pump_iob_item_t( device_status_pump_iob_item_t const & other );
-		device_status_pump_iob_item_t( device_status_pump_iob_item_t && other );
-
-		device_status_pump_iob_item_t & operator=( device_status_pump_iob_item_t const & ) = default;
-		device_status_pump_iob_item_t & operator=( device_status_pump_iob_item_t && ) = default;
+		static void json_link_map( );
 	};
 
-	struct device_status_pump_item_t: public daw::json::JsonLink<device_status_pump_item_t> {
+	struct device_status_pump_item_t: public daw::json::daw_json_link<device_status_pump_item_t> {
 		device_status_pump_battery_item_t battery;
 		device_status_pump_iob_item_t iob;
 		double reservoir;
 		boost::posix_time::ptime clock;
 
-		device_status_pump_item_t( );
-		~device_status_pump_item_t( ); 
-		device_status_pump_item_t( device_status_pump_item_t const & other );
-		device_status_pump_item_t( device_status_pump_item_t && other ); 
-
-		device_status_pump_item_t & operator=( device_status_pump_item_t const & ) = default;
-		device_status_pump_item_t & operator=( device_status_pump_item_t && ) = default;
+		static void json_link_map( );
 	};
 
-	struct device_status_device_item_t: public daw::json::JsonLink<device_status_device_item_t> {
+	struct device_status_device_item_t: public daw::json::daw_json_link<device_status_device_item_t> {
 		std::string id;
 
-		device_status_device_item_t( );
-		~device_status_device_item_t( );
-		device_status_device_item_t( device_status_device_item_t const & other );
-		device_status_device_item_t( device_status_device_item_t && other );
-
-		device_status_device_item_t & operator=( device_status_device_item_t const & ) = default;
-		device_status_device_item_t & operator=( device_status_device_item_t && ) = default;
+		static void json_link_map( );
 	};
 
-	struct device_status_uploader_item_t: public daw::json::JsonLink<device_status_uploader_item_t> {
+	struct device_status_uploader_item_t: public daw::json::daw_json_link<device_status_uploader_item_t> {
 		uint8_t battery;
 
-		device_status_uploader_item_t( );
-		~device_status_uploader_item_t( );
-		device_status_uploader_item_t( device_status_uploader_item_t const & other );
-		device_status_uploader_item_t( device_status_uploader_item_t && other );
-
-		device_status_uploader_item_t & operator=( device_status_uploader_item_t const & ) = default;
-		device_status_uploader_item_t & operator=( device_status_uploader_item_t && ) = default;
+		static void json_link_map( );
 	};
 
-	struct device_status_sensor_item_t: public daw::json::JsonLink<device_status_sensor_item_t> {
+	struct device_status_sensor_item_t: public daw::json::daw_json_link<device_status_sensor_item_t> {
 		uint8_t sensor_age;
 		uint8_t sensor_remaining;
 
-		device_status_sensor_item_t( );
-		device_status_sensor_item_t( device_status_sensor_item_t const & other );
-		device_status_sensor_item_t & operator=( device_status_sensor_item_t const & rhs );
-
-		device_status_sensor_item_t( device_status_sensor_item_t && ) = default;
-		device_status_sensor_item_t & operator=( device_status_sensor_item_t && ) = default;
-		~device_status_sensor_item_t( ) = default;
+		static void json_link_map( );
 	};
 
-	struct device_status_loop_item_t: public daw::json::JsonLink<device_status_loop_item_t> {
+	struct device_status_loop_item_t: public daw::json::daw_json_link<device_status_loop_item_t> {
 		std::string version;
-		boost::optional<device_status_loop_rec
+//		boost::optional<device_status_loop_rec
+
+		static void json_link_map( );
 	};
 
-	struct device_status_item_t: public daw::json::JsonLink<device_status_item_t> {
+	struct device_status_item_t: public daw::json::daw_json_link<device_status_item_t> {
 		std::string id;
 		boost::posix_time::ptime created_at;
 		boost::optional<device_status_pump_item_t> pump;
@@ -120,13 +89,7 @@ namespace ns {
 		boost::optional<bool> sensor_not_active;
 		boost::optional<device_status_loop_item_t> loop;
 
-		device_status_item_t( );
-		device_status_item_t( device_status_item_t const & other );
-		device_status_item_t & operator=( device_status_item_t const & rhs );
-
-		device_status_item_t( device_status_item_t && ) = default;
-		device_status_item_t & operator=( device_status_item_t && ) = default;
-		~device_status_item_t( ) = default;
+		static void json_link_map( );
 	};	// device_status_item_t
 }    // namespace ns 
 

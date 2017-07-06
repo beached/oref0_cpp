@@ -29,7 +29,7 @@
 namespace ns {
 	template<typename ObjectPtr, typename Member>
 	void json_link_glucose_t( boost::string_view json_name, ObjectPtr entries, Member & member ) {
-		using json_real_t = daw::json::impl::value_t::real_t;
+		using json_real_t = double;
 		static auto const to_glucose = []( auto const & json_real ) {
 			return ns::glucose_t{ static_cast<ns::real_t>( json_real ) };
 		};
@@ -41,7 +41,7 @@ namespace ns {
 
 	template<typename ObjectPtr, typename Member>
 	void json_link_glucose_t( boost::string_view json_name, ObjectPtr entries, boost::optional<Member> & member ) {
-		using json_real_t = daw::json::impl::value_t::real_t;
+		using json_real_t = double;
 		static auto const to_glucose = []( auto const & json_real ) {
 			return ns::glucose_t{ static_cast<double>( json_real ) };
 		};

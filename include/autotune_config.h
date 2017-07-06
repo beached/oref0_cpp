@@ -28,20 +28,11 @@
 #include <daw/json/daw_json_link.h>
 
 namespace ns {
-	struct autotune_config_t: public daw::json::JsonLink<autotune_config_t> {
+	struct autotune_config_t : public daw::json::daw_json_link<autotune_config_t> {
 		boost::optional<std::string> api_key;
 		std::string nightscout_base_url;
 
-		autotune_config_t( );
-		~autotune_config_t( );
-		autotune_config_t( autotune_config_t && other );
-		autotune_config_t( autotune_config_t const & other );
-
-		autotune_config_t & operator=( autotune_config_t const & ) = default;
-		autotune_config_t & operator=( autotune_config_t && ) = default;
-	private:
-		void link_json( );
-	};	// autotune_config_t
-}    // namespace ns 
-
+		static void json_link_map( );
+	}; // autotune_config_t
+} // namespace ns
 

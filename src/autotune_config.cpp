@@ -23,35 +23,9 @@
 #include "autotune_config.h"
 
 namespace ns {
-	autotune_config_t::~autotune_config_t( ) { }
-
-	autotune_config_t::autotune_config_t( ):
-			daw::json::JsonLink<autotune_config_t>{ },
-			api_key{ },
-			nightscout_base_url{ } {
-
-		link_json( );
-	}
-
-	autotune_config_t::autotune_config_t( autotune_config_t const & other ):
-			daw::json::JsonLink<autotune_config_t>{ },
-			api_key{ other.api_key },
-			nightscout_base_url{ other.nightscout_base_url } {
-
-		link_json( );
-	}
-
-	autotune_config_t::autotune_config_t( autotune_config_t && other ):
-			daw::json::JsonLink<autotune_config_t>{ },
-			api_key{ std::move( other ).api_key },
-			nightscout_base_url{ std::move( other ).nightscout_base_url } {
-
-		link_json( );
-	}
-
-	void autotune_config_t::link_json( ) {
-		link_string( "api_key", api_key );
-		link_string( "nightscout_base_url", nightscout_base_url );
+	void autotune_config_t::json_link_map( ) {
+		link_json_string( "api_key", api_key );
+		link_json_string( "nightscout_base_url", nightscout_base_url );
 	}
 }
 

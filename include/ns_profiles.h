@@ -33,87 +33,57 @@
 namespace ns {
 	namespace data {
 		namespace profiles {
-			struct carb_ratio_element_t: public daw::json::JsonLink<carb_ratio_element_t> {
+			struct carb_ratio_element_t : public daw::json::daw_json_link<carb_ratio_element_t> {
 				boost::optional<uint32_t> time_as_seconds;
 				double value;
 				std::string time;
 
-				carb_ratio_element_t( );
-				carb_ratio_element_t( carb_ratio_element_t const & other );
-				carb_ratio_element_t( carb_ratio_element_t && other );
-				~carb_ratio_element_t( );
+				static void json_link_map( );
+			}; // carb_ratio_element_t
 
-				carb_ratio_element_t & operator=( carb_ratio_element_t const & ) = default;
-				carb_ratio_element_t & operator=( carb_ratio_element_t && ) = default;
-			private:
-				void set_links( );
-			};	// carb_ratio_element_t
-
-			struct sens_element_t: public daw::json::JsonLink<sens_element_t> {
+			struct sens_element_t : public daw::json::daw_json_link<sens_element_t> {
 				boost::optional<uint32_t> time_as_seconds;
 				double value;
 				std::string time;
 
-				sens_element_t( );
-				sens_element_t( sens_element_t const & other );
-				sens_element_t( sens_element_t && other );
-				~sens_element_t( );
+				static void json_link_map( );
+			}; // sens_element_t
 
-				sens_element_t & operator=( sens_element_t const & ) = default;
-				sens_element_t & operator=( sens_element_t && ) = default;
-			private:
-				void set_links( );
-			};	// sens_element_t
-
-			struct basal_element_t: public daw::json::JsonLink<basal_element_t> {
+			struct basal_element_t : public daw::json::daw_json_link<basal_element_t> {
 				boost::optional<uint32_t> time_as_seconds;
 				double value;
 				std::string time;
 
-				basal_element_t( );
-				basal_element_t( basal_element_t const & other );
-				basal_element_t( basal_element_t && other );
-				~basal_element_t( );
+				static void json_link_map( );
+			}; // basal_element_t
 
-				basal_element_t & operator=( basal_element_t const & ) = default;
-				basal_element_t & operator=( basal_element_t && ) = default;
-			private:
-				void set_links( );
-			};	// basal_element_t
-
-			struct target_low_element_t: public daw::json::JsonLink<target_low_element_t> {
+			struct target_low_element_t : public daw::json::daw_json_link<target_low_element_t> {
 				boost::optional<uint32_t> time_as_seconds;
 				double value;
 				std::string time;
 
+				static void json_link_map( );
 				target_low_element_t( );
-				target_low_element_t( target_low_element_t const & other );
-				target_low_element_t( target_low_element_t && other );
+				target_low_element_t( target_low_element_t const &other );
+				target_low_element_t( target_low_element_t &&other );
 				~target_low_element_t( );
 
-				target_low_element_t & operator=( target_low_element_t const & ) = default;
-				target_low_element_t & operator=( target_low_element_t && ) = default;
-			private:
-				void set_links( );
-			};	// target_low_element_t
+				target_low_element_t &operator=( target_low_element_t const & ) = default;
+				target_low_element_t &operator=( target_low_element_t && ) = default;
 
-			struct target_high_element_t: public daw::json::JsonLink<target_high_element_t> {
+			  private:
+				void set_links( );
+			}; // target_low_element_t
+
+			struct target_high_element_t : public daw::json::daw_json_link<target_high_element_t> {
 				boost::optional<uint32_t> time_as_seconds;
 				double value;
 				std::string time;
 
-				target_high_element_t( );
-				target_high_element_t( target_high_element_t const & other );
-				target_high_element_t( target_high_element_t && other );
-				~target_high_element_t( );
+				static void json_link_map( );
+			}; // target_high_element_t
 
-				target_high_element_t & operator=( target_high_element_t const & ) = default;
-				target_high_element_t & operator=( target_high_element_t && ) = default;
-			private:
-				void set_links( );
-			};	// target_high_element_t
-
-			struct Default_t: public daw::json::JsonLink<Default_t> {
+			struct Default_t : public daw::json::daw_json_link<Default_t> {
 				std::string units;
 				uint32_t delay;
 				std::vector<basal_element_t> basal;
@@ -126,32 +96,16 @@ namespace ns {
 				std::vector<sens_element_t> sens;
 				ns::timestamp_t start_date;
 
-				Default_t( );
-				Default_t( Default_t const & other );
-				Default_t( Default_t && other );
-				~Default_t( );
+				static void json_link_map( );
+			}; // Default_t
 
-				Default_t & operator=( Default_t const & ) = default;
-				Default_t & operator=( Default_t && ) = default;
-			private:
-				void set_links( );
-			};	// Default_t
-
-			struct store_t: public daw::json::JsonLink<store_t> {
+			struct store_t : public daw::json::daw_json_link<store_t> {
 				Default_t Default;
 
-				store_t( );
-				store_t( store_t const & other );
-				store_t( store_t && other );
-				~store_t( );
+				static void json_link_map( );
+			}; // store_t
 
-				store_t & operator=( store_t const & ) = default;
-				store_t & operator=( store_t && ) = default;
-			private:
-				void set_links( );
-			};	// store_t
-
-			struct ns_profiles_t: public daw::json::JsonLink<ns_profiles_t> {
+			struct ns_profiles_t : public daw::json::daw_json_link<ns_profiles_t> {
 				ns::timestamp_t created_at;
 				boost::optional<uint64_t> mills;
 				std::string _id;
@@ -159,17 +113,9 @@ namespace ns {
 				boost::optional<store_t> store;
 				ns::timestamp_t start_date;
 
-				ns_profiles_t( );
-				ns_profiles_t( ns_profiles_t const & other );
-				ns_profiles_t( ns_profiles_t && other );
-				~ns_profiles_t( );
-
-				ns_profiles_t & operator=( ns_profiles_t const & ) = default;
-				ns_profiles_t & operator=( ns_profiles_t && ) = default;
-			private:
-				void set_links( );
-			};	// ns_profiles_t
-		}	// namespace profiles
-	}	// namespace data
-}	// namespace ns
+				static void json_link_map( );
+			}; // ns_profiles_t
+		}      // namespace profiles
+	}          // namespace data
+} // namespace ns
 

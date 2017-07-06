@@ -35,12 +35,10 @@
 
 namespace ns {
 	using real_t = boost::multiprecision::cpp_dec_float_50;
-	using json_t = daw::json::impl::value_t;
-	using json_real = typename json_t::real_t;
-	using json_obj_t = typename json_t::object_t;
+	using json_real = double;
 	using glucose_t = real_t;
 	using insulin_t = real_t;
-	using index_t = typename json_t::integral_t;
+	using index_t = int64_t;
 	using timestamp_t = std::chrono::time_point<std::chrono::system_clock>;
 	using duration_t = std::chrono::milliseconds;
 
@@ -54,7 +52,7 @@ namespace ns {
 	std::ostream & operator<<( std::ostream & os, profile_types t );
 	std::istream & operator>>( std::istream & is, profile_types & t );
 
-	struct profile_t: daw::json::JsonLink<profile_t> {
+	struct profile_t: daw::json::daw_json_link<profile_t> {
 		struct dia_t { };
 
 		bool autosens_adjust_targets;	// true
@@ -82,7 +80,7 @@ namespace ns {
 		profile_types type;	// current
 
 		profile_t( ):
-				daw::json::JsonLink<profile_t>{ },
+				daw::json::daw_json_link<profile_t>{ },
 				autosens_adjust_targets{ true },
 				override_high_target_with_low{ false },
 				skip_neutral_temps{ false },
@@ -108,29 +106,29 @@ namespace ns {
 				type{ profile_types::current } {
 
 				/*
-				link_boolean( "autosens_adjust_targets", autosens_adjust_targets );
-				link_boolean( "override_high_target_with_low", override_high_target_with_low );
-				link_boolean( "skip_neutral_temps", skip_neutral_temps );
-				link_boolean( "temp_target_set", temp_target_set );
-				//link_object( "dia", dia );
-				link_real( "sens", sens );
-				link_real( "max_bg", max_bg );
-				link_real( "min_bg", min_bg );
-				link_real( "target_bg", target_bg );
-				link_real( "current_basal", current_basal );
-				link_real( "max_basal", max_basal );
-				link_real( "max_daily_basal", max_daily_basal );
-				link_string( "model", model );
-				link_string( "out_units", out_units );
-				link_real( "autosens_max", autosens_max  );
-				link_real( "autosens_min", autosens_min  );
-				link_real( "bolussnooze_dia_divisor", bolussnooze_dia_divisor  );
-				link_real( "carbratio_adjustment_ratio", carbratio_adjustment_ratio  );
-				link_real( "current_basal_safety_multiplier", current_basal_safety_multiplier );
-				link_real( "max_dialy_safety_multiplier", max_dialy_safety_multiplier  );
-				link_real( "min_5m_carb_impact", min_5m_carb_impact  );	// mg/Dl/5m
-				link_real( "max_iob", max_iob  );
-				link_real( "_type", type );
+				link_json_boolean( "autosens_adjust_targets", autosens_adjust_targets );
+				link_json_boolean( "override_high_target_with_low", override_high_target_with_low );
+				link_json_boolean( "skip_neutral_temps", skip_neutral_temps );
+				link_json_boolean( "temp_target_set", temp_target_set );
+				//link_json_object( "dia", dia );
+				link_json_real( "sens", sens );
+				link_json_real( "max_bg", max_bg );
+				link_json_real( "min_bg", min_bg );
+				link_json_real( "target_bg", target_bg );
+				link_json_real( "current_basal", current_basal );
+				link_json_real( "max_basal", max_basal );
+				link_json_real( "max_daily_basal", max_daily_basal );
+				link_json_string( "model", model );
+				link_json_string( "out_units", out_units );
+				link_json_real( "autosens_max", autosens_max  );
+				link_json_real( "autosens_min", autosens_min  );
+				link_json_real( "bolussnooze_dia_divisor", bolussnooze_dia_divisor  );
+				link_json_real( "carbratio_adjustment_ratio", carbratio_adjustment_ratio  );
+				link_json_real( "current_basal_safety_multiplier", current_basal_safety_multiplier );
+				link_json_real( "max_dialy_safety_multiplier", max_dialy_safety_multiplier  );
+				link_json_real( "min_5m_carb_impact", min_5m_carb_impact  );	// mg/Dl/5m
+				link_json_real( "max_iob", max_iob  );
+				link_json_real( "_type", type );
 				*/
 		}
 		~profile_t( );
@@ -147,7 +145,7 @@ namespace ns {
 		glucose_t avg_delta;
 	};	// glucose_status_t
 
-	struct iob_data_t: public daw::json::JsonLink<iob_data_t> {
+	struct iob_data_t: public daw::json::daw_json_link<iob_data_t> {
 		double bolussnooze;
 		insulin_t activity;
 		insulin_t iob;

@@ -23,32 +23,19 @@
 #include "data_types.h"
 
 namespace ns {
-
-	iob_data_t::iob_data_t( double bolusSnooze, real_t Activity, real_t Iob, boost::optional<real_t> basalIob, boost::optional<real_t> netBasalInsulin, boost::optional<real_t> highTempInsulin ):
-			bolussnooze{ std::move( bolusSnooze ) },
-			activity{ std::move( Activity ) },
-			iob{ std::move( Iob ) },
-			basaliob{ std::move( basalIob ) },
-			hightempinsulin{ std::move( highTempInsulin ) } { }
-
-	iob_data_t::iob_data_t( ):
-			iob_data_t{ { }, { }, { }, boost::none, boost::none, boost::none } { }
-
-	iob_data_t::~iob_data_t( ) { }
-
 	namespace chrono_literals {
 		duration_hours_t operator"" _hours( long double d ) noexcept {
-			return duration_hours_t{ static_cast<long int>(d) };
+			return duration_hours_t{static_cast<long int>( d )};
 		}
 		duration_hours_t operator"" _hours( unsigned long long i ) noexcept {
-			return duration_hours_t{ static_cast<long int>(i) };
+			return duration_hours_t{static_cast<long int>( i )};
 		}
 		duration_minutes_t operator"" _mins( long double d ) noexcept {
-			return duration_minutes_t{ static_cast<long int>(d) };
+			return duration_minutes_t{static_cast<long int>( d )};
 		}
 		duration_minutes_t operator"" _mins( unsigned long long i ) noexcept {
-			return duration_minutes_t{ static_cast<long int>(i) };
+			return duration_minutes_t{static_cast<long int>( i )};
 		}
-	}	// namespace chrono_literals
+	} // namespace chrono_literals
+} // namespace ns
 
-}    // namespace ns 

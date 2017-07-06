@@ -83,7 +83,7 @@ namespace ns {
 
 	template<typename Object, typename Member>
 	void json_link_glucose_t( boost::string_view json_name, Object * entries, Member & member ) {
-		using json_int_t = daw::json::impl::value_t::integral_t;
+		using json_int_t = int64_t;
 		static auto const to_glucose = []( auto const & json_int ) {
 			return ns::glucose_t{ static_cast<ns::real_t>( json_int ) };
 		};
@@ -95,7 +95,7 @@ namespace ns {
 
 	template<typename Object, typename Member>
 	void json_link_glucose_t( boost::string_view json_name, Object * entries, boost::optional<Member> & member ) {
-		using json_int_t = daw::json::impl::value_t::integral_t;
+		using json_int_t = int64_t;
 		static auto const to_glucose = []( auto const & json_int ) {
 			return ns::glucose_t{ static_cast<double>( json_int ) };
 		};
