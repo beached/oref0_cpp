@@ -21,16 +21,18 @@
 // SOFTWARE.
 
 #include <boost/optional.hpp>
-#include <boost/utility/string_view.hpp>
+#include <daw/daw_string_view.h>
 #include <cstdint>
 #include <string>
 #include <vector>
+
 #include <daw/json/daw_json_link.h>
+#include <daw/json/daw_json_link_streams.h>
 
 namespace ns {
 	namespace impl {
 		template<typename Object, typename Member>
-		void link_real_duration( boost::string_view json_name, Object obj, boost::optional<Member> & member) {
+		void link_real_duration( daw::string_view json_name, Object obj, boost::optional<Member> & member) {
 			using json_real_t = double;
 			static auto const to_duration = []( json_real_t const & i ) -> Member {
 				return Member{ i };
@@ -45,7 +47,7 @@ namespace ns {
 		}
 
 		template<typename Object, typename Duration>
-		void link_real_duration( boost::string_view json_name, Object obj, Duration & value) {
+		void link_real_duration( daw::string_view json_name, Object obj, Duration & value) {
 			using json_real_t = double;
 			static auto const to_duration = []( json_real_t const & i ) -> Duration {
 				return Duration{ static_cast<long int>(i) };
@@ -57,7 +59,7 @@ namespace ns {
 		}
 
 		template<typename Object, typename Member>
-		void link_int_duration( boost::string_view json_name, Object obj, boost::optional<Member> & member) {
+		void link_int_duration( daw::string_view json_name, Object obj, boost::optional<Member> & member) {
 			using json_int_t = int64_t;
 			static auto const to_duration = []( json_int_t const & i ) -> Member {
 				return Member{ static_cast<long int>( i ) };
@@ -71,7 +73,7 @@ namespace ns {
 			obj->link_jsonintegral( json_name, member, from_duration, to_duration );
 		}
 		template<typename Object, typename Member>
-		void link_int_duration( boost::string_view json_name, Object obj, Member & member) {
+		void link_int_duration( daw::string_view json_name, Object obj, Member & member) {
 			using json_int_t = int64_t;
 			static auto const to_duration = []( json_int_t const & i ) -> Member {
 				return Member{ i };

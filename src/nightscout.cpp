@@ -20,10 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <daw/curl_wrapper.h>
 #include <chrono>
 #include <date/date.h>
 #include <string>
+
+#include <daw/curl_wrapper.h>
+#include <daw/daw_string_view.h>
 
 #include "nightscout.h"
 #include "sha1.h"
@@ -34,7 +36,7 @@ namespace ns {
 			return date::format( "%FT%TZ", tp );
 		}
 
-		auto build_nightscout_date_range( boost::string_view field, ns::timestamp_t const tp_start, ns::timestamp_t const tp_end ) {
+		auto build_nightscout_date_range( daw::string_view field, ns::timestamp_t const tp_start, ns::timestamp_t const tp_end ) {
 			std::stringstream ss;
 			ss << "find[" << field.data( ) << "][$gte]=";
 			ss << tp_to_iso_date_string( tp_start );
@@ -43,7 +45,7 @@ namespace ns {
 			return ss.str( );
 		}
 
-		std::string ns_download( boost::string_view url, ns::autotune_config_t const & config ) {
+		std::string ns_download( daw::string_view url, ns::autotune_config_t const & config ) {
 			daw::curl_wrapper cw;
 			if( config.api_key ) {
 				cw.add_header( "api-secret", daw::sha1( *config.api_key ) );
@@ -55,7 +57,7 @@ namespace ns {
 
 	ns_profile_data_t ns_get_profiles( ns::autotune_config_t const & config ) {
 		auto const profile_string_data = ns_download( config.nightscout_base_url + "/api/v1/profile.json", config );
-		auto result = daw::json::array_from_string<ns::data::profiles::ns_profiles_t>( profile_string_data, true );
+		auto result = ns::data::profiles::ns_profiles_t::from_json_array_string( profile_string_data );
 		std::sort( result.begin( ), result.end( ), []( auto const & lhs, auto const & rhs ) {
 			return lhs.start_date < rhs.start_date;
 		});
@@ -74,7 +76,7 @@ namespace ns {
 		auto const dte_rng = build_nightscout_date_range( "dateString", floor<date::days>(tp_start - 24_hours), tp_end );
 		std::string const url = config.nightscout_base_url + "/api/v1/times/{" + y_1 + ".." + y_2 + "}-{1..12}.json?count=1000000&" + dte_rng;
 		auto const profile_string_data = ns_download( url, config );
-		auto result = daw::json::array_from_string<ns::data::entries::ns_entries_t>( profile_string_data, true );
+		auto result = ns::data::entries::ns_entries_t::from_json_array_string( profile_string_data );
 		std::sort( result.begin( ), result.end( ), []( auto const & lhs, auto const & rhs ) {
 			return lhs.timestamp < rhs.timestamp;
 		});
@@ -89,7 +91,7 @@ namespace ns {
 		std::string const url = config.nightscout_base_url + "/api/v1/treatments.json?count=1000000&" + dte_rng;
 		auto const profile_string_data = ns_download( url, config );
 
-		auto result = daw::json::array_from_string<ns::data::treatments::ns_treatments_t>( profile_string_data, true );
+		auto result = ns::data::treatments::ns_treatments_t::from_json_array_string( profile_string_data );
 		std::sort( result.begin( ), result.end( ), []( auto const & lhs, auto const & rhs ) {
 			return lhs.timestamp < rhs.timestamp;
 		} );

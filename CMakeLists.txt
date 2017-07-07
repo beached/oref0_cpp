@@ -175,9 +175,11 @@ add_executable( cob_calc_test_bin ${HEADER_FILES} ${TEST_FOLDER}/cob_calc_test.c
 target_link_libraries( cob_calc_test_bin oref0 char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 add_executable( glucose_unit_test_bin ${HEADER_FILES} ${TEST_FOLDER}/glucose_unit_test.cpp )
+add_dependencies( glucose_unit_test_bin daw_json_link_prj )
 target_link_libraries( glucose_unit_test_bin oref0 char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 add_executable( ns_entries_test_bin ${HEADER_FILES} ${TEST_FOLDER}/ns_entries_test.cpp )
+add_dependencies( ns_entries_test_bin daw_json_link_prj )
 target_link_libraries( ns_entries_test_bin oref0 char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
 add_executable( autotune_tune_bin ${HEADER_FILES} ${TEST_FOLDER}/autotune_test.cpp )

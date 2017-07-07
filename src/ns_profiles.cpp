@@ -22,7 +22,9 @@
 
 #include <string>
 #include <vector>
+
 #include <daw/json/daw_json_link.h>
+#include <daw/json/daw_json_link_datetime.h>
 
 #include "ns_profiles.h"
 #include "time_json.h"
@@ -71,7 +73,7 @@ namespace ns {
 				link_json_string( "timezone", timezone );
 				ns::impl::link_real_duration( "dia", this, dia );
 				link_json_object_array( "sens", sens );
-				link_iso8601_timestamp( "startDate", start_date );
+				link_json_iso8601_timestamp( "startDate", start_date );
 			}
 
 			void store_t::json_link_map( ) {
@@ -79,12 +81,12 @@ namespace ns {
 			}
 
 			void ns_profiles_t::json_link_map( ) {
-				link_iso8601_timestamp( "created_at", created_at );
+				link_json_iso8601_timestamp( "created_at", created_at );
 				link_json_string_to_integral( "mills", mills );
 				link_json_string( "_id", _id );
-				link_string( "defaultProfile", default_profile );
-				link_object( "store", store );
-				link_iso8601_timestamp( "startDate", start_date );
+				link_json_string_optional( "defaultProfile", default_profile, boost::none );
+				link_json_object( "store", store );
+				link_json_iso8601_timestamp( "startDate", start_date );
 			}
 		}	// namespace profiles
 	}	// namespace data

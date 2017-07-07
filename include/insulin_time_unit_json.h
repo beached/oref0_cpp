@@ -22,13 +22,15 @@
 
 #pragma once
 
+#include <daw/daw_string_view.h>
 #include <daw/json/daw_json_link.h>
+#include <daw/json/daw_json_link_streams.h>
 
 #include "insulin_time_unit.h"
 
 namespace ns {
 	template<typename ObjectPtr, typename Member>
-	void json_link_insulin_rate_t( boost::string_view json_name, ObjectPtr entries, Member & member ) {
+	void json_link_insulin_rate_t( daw::string_view json_name, ObjectPtr entries, Member & member ) {
 		using json_real_t = double;
 		static auto const to_insulin_rate = []( auto const & json_real ) {
 			return ns::insulin_rate_t{ ns::insulin_t{ static_cast<ns::real_t>( json_real ) } };
@@ -40,7 +42,7 @@ namespace ns {
 	}
 
 	template<typename ObjectPtr, typename Member>
-	void json_link_insulin_rate_t( boost::string_view json_name, ObjectPtr entries, boost::optional<Member> & member ) {
+	void json_link_insulin_rate_t( daw::string_view json_name, ObjectPtr entries, boost::optional<Member> & member ) {
 		using json_real_t = double;
 		static auto const to_insulin_rate = []( auto const & json_real ) -> ns::insulin_rate_t {
 			return ns::insulin_t{ static_cast<double>( json_real ) }/std::chrono::hours{ 1 };

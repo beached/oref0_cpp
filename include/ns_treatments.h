@@ -28,7 +28,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
+
 #include <daw/json/daw_json_link.h>
+#include <daw/json/daw_json_link_streams.h>
 
 #include "carb_unit.h"
 #include "insulin_unit.h"
@@ -63,12 +65,6 @@ namespace ns {
 				boost::optional<double> programmed;
 				boost::optional<double> ratio;
 				boost::optional<double> unabsorbed;
-
-
-				ns_treatments_t( );
-				ns_treatments_t( ns_treatments_t const & other );
-				ns_treatments_t( ns_treatments_t && other );
-				~ns_treatments_t( );
 
 				static void json_link_map( );
 			};	// ns_treatments_t

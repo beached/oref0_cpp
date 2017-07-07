@@ -54,7 +54,7 @@ namespace daw {
 		friend dbl_error operator/( dbl_error const & lhs, dbl_error const & rhs ) noexcept;
 
 		friend dbl_error fabs( dbl_error value ) noexcept;
-		friend dbl_error pow( dbl_error const & base, dbl_error const & exponent ) noexcept;
+		friend dbl_error pow( dbl_error const & base, dbl_error const & exponent );
 		friend dbl_error sqrt( dbl_error const & value ) noexcept;
 
 		template<typename N> 
@@ -67,7 +67,7 @@ namespace daw {
 	dbl_error operator/( dbl_error const & lhs, dbl_error const & rhs ) noexcept;
 
 	dbl_error fabs( dbl_error value ) noexcept;
-	dbl_error pow( dbl_error const & base, dbl_error const & exponent ) noexcept;
+	dbl_error pow( dbl_error const & base, dbl_error const & exponent );
 	dbl_error sqrt( dbl_error const & value ) noexcept;
 
 	template<typename N>

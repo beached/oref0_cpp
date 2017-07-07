@@ -22,9 +22,9 @@
 
 #pragma once
 
-#include <boost/utility/string_view.hpp>
+#include <daw/daw_string_view.h>
 
 namespace daw {
-	std::string sha1( boost::string_view message );
+	std::string sha1( daw::string_view message );
 }	// namespace daw
 

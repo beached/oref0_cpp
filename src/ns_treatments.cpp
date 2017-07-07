@@ -24,7 +24,9 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+
 #include <daw/json/daw_json_link.h>
+#include <daw/json/daw_json_link_datetime.h>
 
 #include "ns_treatments.h"
 #include "carb_unit_json.h"
@@ -36,20 +38,20 @@ namespace ns {
 	namespace data {
 		namespace treatments {
 			void ns_treatments_t::json_link_map( ) {
-				link_iso8601_timestamp( "created_at", created_at );
+				link_json_iso8601_timestamp( "created_at", created_at );
 				link_streamable( "temp", temp );
 				ns::json_link_insulin_t( "insulin", this, insulin );
-				link_json_string( "glucoseType", glucose_type );
+				link_json_string_optional( "glucoseType", glucose_type, boost::none );
 				link_streamable( "eventType", eventType );
 				ns::json_link_carb_t( "carbs", this, carbs );
 				link_json_string( "_id", _id );
-				link_iso8601_timestamp( "timestamp", timestamp );
+				link_json_iso8601_timestamp( "timestamp", timestamp );
 				ns::impl::link_int_duration( "duration", this, duration );
 				link_json_string( "enteredBy", enteredBy );
 				ns::json_link_insulin_rate_t( "absolute", this, absolute );
 				link_json_real( "rate", rate );
 				link_json_real( "glucose", glucose );
-				link_json_string( "units", units );
+				link_json_string_optional( "units", units, boost::none );
 				ns::impl::link_int_duration( "absorptionTime", this, absorption_time );
 				link_json_real( "programmed", programmed );
 				link_json_real( "ratio", ratio );

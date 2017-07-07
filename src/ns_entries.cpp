@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 #include <boost/optional.hpp>
-#include <boost/utility/string_view.hpp>
 #include <cstdint>
 #include <string>
 #include <unordered_map>
@@ -29,7 +28,9 @@
 #include <date/tz.h>
 #include <chrono>
 
+#include <daw/daw_string_view.h>
 #include <daw/json/daw_json_link.h>
+#include <daw/json/daw_json_link_datetime.h>
 
 #include "ns_entries.h"
 #include "glucose_unit_json.h"
@@ -37,7 +38,6 @@
 namespace ns {
 	namespace data {
 		namespace entries {
-			namespace {
 				std::string to_string( nightscout_direction dir ) noexcept {
 					switch( dir ) {
 					case nightscout_direction::none: return "NONE";
@@ -54,46 +54,45 @@ namespace ns {
 					std::abort( );
 				}
 
-				nightscout_direction parse_direction( boost::string_view str ) {
-					static std::unordered_map<std::string, nightscout_direction> const results = {
-							{ "NONE", nightscout_direction::none },
-							{ "DoubleUp", nightscout_direction::double_up },
-							{ "SingleUp", nightscout_direction::single_up },
-							{ "FortyFiveUp", nightscout_direction::forty_five_up },
-							{ "Flat", nightscout_direction::flat },
-							{ "FortyFiveDown", nightscout_direction::forty_five_down },
-							{ "SingleDown", nightscout_direction::single_down },
-							{ "DoubleDown", nightscout_direction::double_down },
-							{ "NOT COMPUTABLE", nightscout_direction::not_computable },
-							{ "RATE OUT OF RANGE", nightscout_direction::rate_out_of_range }
-					};
-					return results.at( str.to_string( ) );
-				}
+			    namespace {
+				    nightscout_direction parse_direction( daw::string_view str ) {
+					    static std::unordered_map<std::string, nightscout_direction> const results = {
+					        {"NONE", nightscout_direction::none},
+					        {"DoubleUp", nightscout_direction::double_up},
+					        {"SingleUp", nightscout_direction::single_up},
+					        {"FortyFiveUp", nightscout_direction::forty_five_up},
+					        {"Flat", nightscout_direction::flat},
+					        {"FortyFiveDown", nightscout_direction::forty_five_down},
+					        {"SingleDown", nightscout_direction::single_down},
+					        {"DoubleDown", nightscout_direction::double_down},
+					        {"NOT COMPUTABLE", nightscout_direction::not_computable},
+					        {"RATE OUT OF RANGE", nightscout_direction::rate_out_of_range}};
+					    return results.at( str.to_string( ) );
+				    }
 			}	// namespace anonymous
 
-			std::ostream & operator<<( std::ostream & os, nightscout_direction dir ) {
+			std::ostream &operator<<( std::ostream &os, nightscout_direction dir ) {
 				os << to_string( dir );
 				return os;
 			}
 
-			std::istream & operator>>( std::istream & is, nightscout_direction & dir ) {
+			std::istream &operator>>( std::istream &is, nightscout_direction &dir ) {
 				std::string tmp;
 				is >> tmp;
 				dir = parse_direction( tmp );
 				return is;
 			}
-
 			void ns_entries_t::json_link_map( ) {
 				link_json_string( "_id", id );
-				link_json_streamable( "direction", direction );
-				ns::json_link_glucose_t( "previousSGV", this, previous_sgv );
-				link_iso8601_timestamp( "dateString", timestamp );
+				link_json_streamable_optional( "direction", direction, boost::none );
+				link_json_real_optional( "previousSGV", previous_sgv, boost::none );
+				link_json_iso8601_timestamp( "dateString", timestamp );
 
 				link_json_string( "device", device );
-				link_epoch_milliseconds_timestamp( "date", date );
-				ns::json_link_glucose_t( "sgv", this, sgv );
+				link_json_epoch_milliseconds_timestamp( "date", date );
+				link_json_real( "sgv", sgv );
 				link_json_streamable( "type", type );
-				link_json_boolean( "previousSGVNotActive", previous_sgv_not_active );
+				link_json_boolean_optional( "previousSGVNotActive", previous_sgv_not_active, boost::none );
 			}
 
 			ns_entries_t::ns_entries_t( )
@@ -130,4 +129,5 @@ namespace ns {
 		}	// namespace entries
 	} 	// namespace data
 }	// namespace ns
+
 

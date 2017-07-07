@@ -30,6 +30,7 @@
 #include <chrono>
 
 #include <daw/json/daw_json_link.h>
+#include <daw/json/daw_json_link_streams.h>
 
 #include "data_types.h"
 #include "glucose_unit.h"
@@ -50,9 +51,10 @@ namespace ns {
 				rate_out_of_range = 9
 			};
 
-			std::ostream & operator<<( std::ostream & os, nightscout_direction dir );
-
-			std::istream & operator>>( std::istream & is, nightscout_direction & dir );
+			std::string to_string( nightscout_direction dir ) noexcept;
+			
+			std::ostream &operator<<( std::ostream &os, nightscout_direction dir );
+			std::istream &operator>>( std::istream &is, nightscout_direction &dir );
 
 			enum class entry_type_t: uint8_t { sgv, normal };
 			std::ostream & operator<<( std::ostream & os, entry_type_t const & tb );

@@ -27,6 +27,7 @@
 
 #include <daw/daw_algorithm.h>
 #include <daw/daw_exception.h>
+#include <daw/daw_string_view.h>
 #include <daw/curl_wrapper.h>
 
 #include "autotune.h"
@@ -158,7 +159,7 @@ namespace ns {
 				return ns::duration_minutes_t{ get_current_profile( profile_data, timestamp ).dia.count( )*60 };
 			}
 
-			uint16_t to_tod( boost::string_view tod_str ) {
+			uint16_t to_tod( daw::string_view tod_str ) {
 				daw::exception::daw_throw_on_false( tod_str.size( ) == 5, "Time must be of format hh::mm" );
 				auto const hours = static_cast<uint16_t>((tod_str[0] - '0')*10 + (tod_str[1] - '0'));
 				auto const minutes = static_cast<uint16_t>( (tod_str[3] - '0'*10) + (tod_str[4] - '0') );
@@ -485,7 +486,8 @@ namespace ns {
 				boost::optional<ns::icr_t> icr;
 			};
 
-			void process_bgi( dose_values & results, auto const & bgi_data, ns_entries_data_t const & glucose_data, ns::timestamp_t tp_start ) {
+			template<typename BgiData>
+			void process_bgi( dose_values & results, BgiData const & bgi_data, ns_entries_data_t const & glucose_data, ns::timestamp_t tp_start ) {
 
 			}
 
@@ -498,8 +500,10 @@ namespace ns {
 				for( size_t n=0; n<new_doses.size( ); ++n ) {
 					new_doses[n].tod = n;
 				}
-
-				auto const bgi_tagged_data = process_bgi( 0, bgi_data, glucose_data, tp_start );
+				// DAW
+				dose_values dv;
+				//auto const bgi_tagged_data = 
+				process_bgi( dv, bgi_data, glucose_data, tp_start );
 				auto actual_bgi = calculate_actual_total_bgi( profile_data, glucose_data, tp_start );
 				return ns::data::profiles::ns_profiles_t{ };
 			}

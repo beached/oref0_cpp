@@ -21,11 +21,12 @@
 // SOFTWARE.
 
 #include <array>
-#include <boost/utility/string_view.hpp>
 #include <boost/uuid/sha1.hpp>
 #include <cstdint>
 #include <iomanip>
 #include <sstream>
+
+#include <daw/daw_string_view.h>
 
 #include "sha1.h"
 
@@ -34,11 +35,11 @@ namespace daw {
 		class sha1_t {
 			boost::uuids::detail::sha1 m_sha1;
 		public:
-			sha1_t( boost::string_view msg ): m_sha1{ } {
+			sha1_t( daw::string_view msg ): m_sha1{ } {
 				process( msg );
 			}
 
-			sha1_t & process( boost::string_view msg ) {
+			sha1_t & process( daw::string_view msg ) {
 				m_sha1.process_bytes( msg.data( ), msg.size( ) );
 				return *this;
 			}
@@ -57,7 +58,7 @@ namespace daw {
 		};	// sha1
 	}	// namespace anonymous
 
-	std::string sha1( boost::string_view message ) {
+	std::string sha1( daw::string_view message ) {
 		return sha1_t{ message }.to_string( );
 	}
 }	// namespace daw

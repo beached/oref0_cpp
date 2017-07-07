@@ -24,7 +24,7 @@
 
 namespace ns {
 	void autotune_config_t::json_link_map( ) {
-		link_json_string( "api_key", api_key );
+		link_json_string_optional( "api_key", api_key, boost::none );
 		link_json_string( "nightscout_base_url", nightscout_base_url );
 	}
 }

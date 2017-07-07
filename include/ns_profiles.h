@@ -27,6 +27,7 @@
 #include <vector>
 
 #include <daw/json/daw_json_link.h>
+#include <daw/json/daw_json_link_streams.h>
 
 #include "data_types.h"
 

@@ -104,7 +104,7 @@ namespace daw {
 			return value;
 		}
 
-		dbl_error pow( dbl_error const & base, dbl_error const & exponent ) noexcept {
+		dbl_error pow( dbl_error const & base, dbl_error const & exponent ) {
 			throw std::runtime_error{ "Not Implemented" };
 			//return dbl_error{ };
 		}

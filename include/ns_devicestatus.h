@@ -27,6 +27,7 @@
 #include <string>
 
 #include <daw/json/daw_json_link.h>
+#include <daw/json/daw_json_link_streams.h>
 
 namespace ns {
 	struct device_status_pump_battery_item_t: public daw::json::daw_json_link<device_status_pump_battery_item_t> {
