@@ -55,6 +55,12 @@ namespace ns {
 			return value;
 		}
 
+		~glucose_t( ) noexcept = default;
+		constexpr glucose_t( glucose_t const & ) = default;
+		constexpr glucose_t( glucose_t && ) noexcept = default;
+		constexpr glucose_t & operator=( glucose_t const & ) = default;
+		constexpr glucose_t & operator=( glucose_t && ) noexcept = default;
+	
 		std::string to_string( ) const;
 		std::string to_string( glucose_unit unit ) const;
 
@@ -98,6 +104,9 @@ namespace ns {
 			return value;
 		}
 	};	// glucose_t
+
+	std::string to_string( glucose_t const & g );
+	std::string to_string( glucose_t const & g, glucose_unit unit );
 
 	constexpr void swap( glucose_t &lhs, glucose_t &rhs ) noexcept {
 		auto tmp = lhs.value;
@@ -176,7 +185,7 @@ namespace ns {
 }	// namespace ns
 
 constexpr ns::glucose_t operator"" _mmol_L( long double d ) noexcept {
-	return ns::glucose_t{ ns::to_mg_dL( d ) };
+	return ns::glucose_t{ns::to_mg_dL( static_cast<double>( d ) )};
 }
 
 constexpr ns::glucose_t operator"" _mg_dL( long double d ) noexcept {

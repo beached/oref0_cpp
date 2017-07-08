@@ -57,6 +57,14 @@ namespace ns {
 		return to_string( get_static_glucose_unit( ) );
 	}
 
+	std::string to_string( glucose_t const &g ) {
+		return g.to_string( );
+	}
+
+	std::string to_string( glucose_t const &g, glucose_unit unit ) {
+		return g.to_string( unit );
+	}
+
 	std::ostream & operator<<( std::ostream & os, glucose_t const & glucose ) {
 		os << glucose.to_string( );
 		return os;

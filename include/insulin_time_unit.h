@@ -33,7 +33,8 @@ namespace ns {
 	struct insulin_rate_t {
 		insulin_t value;
 
-		explicit constexpr insulin_rate_t( insulin_t insulin ) noexcept : value{std::move( insulin )} {}
+		constexpr insulin_rate_t( insulin_t insulin ) noexcept : value{std::move( insulin )} {}
+		constexpr insulin_rate_t( double insulin ) noexcept : value{insulin_t{std::move( insulin )}} {}
 
 		constexpr insulin_t insulin_per( ns::duration_minutes_t const &time_period ) const noexcept {
 			real_t const factor = static_cast<real_t>( time_period.count( ) ) / 60.0;
@@ -55,6 +56,8 @@ namespace ns {
 		}
 
 	}; // insulin_rate_t
+
+	std::string to_string( insulin_rate_t const & i );
 
 	constexpr void swap( insulin_rate_t &lhs, insulin_rate_t &rhs ) noexcept {
 		using std::swap;

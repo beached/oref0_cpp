@@ -29,6 +29,11 @@ namespace ns {
 		return ss.str( );		
 	}
 
+
+	std::string to_string( insulin_rate_t const & i ) {
+		return i.to_string( );
+	}
+
 	std::ostream & operator<<( std::ostream & os, insulin_rate_t const & insulin_rate ) {
 		os << insulin_rate.to_string( );
 		return os;

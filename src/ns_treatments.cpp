@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <daw/json/daw_json_link.h>
+#include <daw/json/daw_json_link_fixes.h>
 #include <daw/json/daw_json_link_datetime.h>
 
 #include "ns_treatments.h"
@@ -38,23 +39,23 @@ namespace ns {
 		namespace treatments {
 			void ns_treatments_t::json_link_map( ) {
 				link_json_iso8601_timestamp( "created_at", created_at );
-				link_streamable( "temp", temp );
-				ns::json_link_insulin_t( "insulin", this, insulin );
+				link_json_streamable_optional( "temp", temp, boost::none );
+				link_json_real_optional( "insulin", insulin, boost::none );
 				link_json_string_optional( "glucoseType", glucose_type, boost::none );
-				link_streamable( "eventType", eventType );
-				ns::json_link_carb_t( "carbs", this, carbs );
+				link_json_streamable( "eventType", eventType );
+				link_json_real_optional( "carbs", carbs, boost::none );
 				link_json_string( "_id", _id );
 				link_json_iso8601_timestamp( "timestamp", timestamp );
-				ns::impl::link_int_duration( "duration", this, duration );
+				link_json_integer_duration_optional( "duration", duration, boost::none );
 				link_json_string( "enteredBy", enteredBy );
-				ns::json_link_insulin_rate_t( "absolute", this, absolute );
-				link_json_real( "rate", rate );
-				link_json_real( "glucose", glucose );
+				link_json_real_optional( "absolute", absolute, boost::none );
+				link_json_real_optional( "rate", rate, boost::none );
+				link_json_real_optional( "glucose", glucose, boost::none );
 				link_json_string_optional( "units", units, boost::none );
-				ns::impl::link_int_duration( "absorptionTime", this, absorption_time );
-				link_json_real( "programmed", programmed );
-				link_json_real( "ratio", ratio );
-				link_json_real( "unabsorbed", unabsorbed );
+				link_json_integer_duration_optional( "absorptionTime", absorption_time, boost::none );
+				link_json_real_optional( "programmed", programmed, boost::none );
+				link_json_real_optional( "ratio", ratio, boost::none );
+				link_json_real_optional( "unabsorbed", unabsorbed, boost::none );
 			}
 
 			std::ostream & operator<<( std::ostream & os, temp_basal_t const & tb ) {

@@ -34,6 +34,10 @@ namespace ns {
 		return ss.str( );
 	}
 
+	std::string to_string( carb_t const & c ) {
+		return c.to_string( );
+	}
+
 	std::ostream & operator<<( std::ostream & os, carb_t const & glucose ) {
 		os << glucose.to_string( );
 		return os;

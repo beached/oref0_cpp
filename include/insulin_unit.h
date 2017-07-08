@@ -29,7 +29,7 @@ namespace ns {
 	struct insulin_t {
 		real_t value;
 
-		explicit constexpr insulin_t( real_t d ) noexcept : value{std::move( d )} {}
+		constexpr insulin_t( real_t d ) noexcept : value{std::move( d )} {}
 
 		explicit constexpr operator real_t( ) noexcept {
 			return value;

@@ -25,35 +25,47 @@
 #include <cassert>
 #include <chrono>
 #include <cmath>
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 #include <iostream>
 
 #include <date/date.h>
 
-#include "iob_calc.h"
 #include "data_types.h"
+#include "iob_calc.h"
 
 using namespace date;
 using namespace ns::chrono_literals;
 namespace ns {
 	namespace {
-	std::ostream & operator<<( std::ostream & os, insulin_duration_t const & duration ) {
-		os << insulin_duration_to_min( duration ).count( );
-		return os;
-	}
-
-	std::istream & operator>>( std::istream & is, insulin_duration_t & duration ) {
-		int_fast16_t tmp;
-		is >> tmp;
-		switch( tmp ) {
-			case 180: duration = insulin_duration_t::t180; return is;
-			case 210: duration = insulin_duration_t::t210; return is;
-			case 240: duration = insulin_duration_t::t240; return is;
-			case 300: duration = insulin_duration_t::t300; return is;
-			case 360: duration = insulin_duration_t::t360; return is;
-			default: throw std::runtime_error( "Unknown insulin_duration_t value" );
+		std::ostream &operator<<( std::ostream &os, insulin_duration_t const &duration ) {
+			os << insulin_duration_to_min( duration ).count( );
+			return os;
 		}
-	}
-}	// namespace ns
+
+		std::istream &operator>>( std::istream &is, insulin_duration_t &duration ) {
+			int_fast16_t tmp;
+			is >> tmp;
+			switch( tmp ) {
+			case 180:
+				duration = insulin_duration_t::t180;
+				return is;
+			case 210:
+				duration = insulin_duration_t::t210;
+				return is;
+			case 240:
+				duration = insulin_duration_t::t240;
+				return is;
+			case 300:
+				duration = insulin_duration_t::t300;
+				return is;
+			case 360:
+				duration = insulin_duration_t::t360;
+				return is;
+			default:
+				throw std::runtime_error( "Unknown insulin_duration_t value" );
+			}
+		}
+	} // namespace
+} // namespace ns
 

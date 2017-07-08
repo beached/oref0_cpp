@@ -57,6 +57,8 @@ namespace ns {
 
 	};	// carb_t
 
+	std::string to_string( carb_t const & c );
+
 	constexpr void swap( carb_t & lhs, carb_t & rhs ) noexcept {
 		auto tmp = lhs.value;
 		lhs.value = rhs.value;

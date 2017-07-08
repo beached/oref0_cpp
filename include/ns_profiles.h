@@ -39,6 +39,13 @@ namespace ns {
 				double value;
 				std::string time;
 
+				carb_ratio_element_t( ) = default;
+				~carb_ratio_element_t( ) = default;
+				carb_ratio_element_t( carb_ratio_element_t const & ) = default;
+				carb_ratio_element_t( carb_ratio_element_t && ) = default;
+				carb_ratio_element_t & operator=( carb_ratio_element_t const & ) = default;
+				carb_ratio_element_t & operator=( carb_ratio_element_t && ) = default;
+
 				static void json_link_map( );
 			}; // carb_ratio_element_t
 
@@ -47,6 +54,13 @@ namespace ns {
 				double value;
 				std::string time;
 
+				sens_element_t( ) = default;
+				~sens_element_t( ) = default;
+				sens_element_t( sens_element_t const & ) = default;
+				sens_element_t( sens_element_t && ) = default;
+				sens_element_t & operator=( sens_element_t const & ) = default;
+				sens_element_t & operator=( sens_element_t && ) = default;
+
 				static void json_link_map( );
 			}; // sens_element_t
 
@@ -54,6 +68,13 @@ namespace ns {
 				boost::optional<uint32_t> time_as_seconds;
 				double value;
 				std::string time;
+
+				basal_element_t( ) = default;
+				~basal_element_t( ) = default;
+				basal_element_t( basal_element_t const & ) = default;
+				basal_element_t( basal_element_t && ) = default;
+				basal_element_t & operator=( basal_element_t const & ) = default;
+				basal_element_t &operator=( basal_element_t && ) = default;
 
 				static void json_link_map( );
 			}; // basal_element_t
@@ -64,22 +85,26 @@ namespace ns {
 				std::string time;
 
 				static void json_link_map( );
-				target_low_element_t( );
-				target_low_element_t( target_low_element_t const &other );
-				target_low_element_t( target_low_element_t &&other );
-				~target_low_element_t( );
 
+				target_low_element_t( ) = default;
+				~target_low_element_t( ) = default;
+				target_low_element_t( target_low_element_t const & ) = default;
+				target_low_element_t( target_low_element_t &&other ) = default;
 				target_low_element_t &operator=( target_low_element_t const & ) = default;
 				target_low_element_t &operator=( target_low_element_t && ) = default;
-
-			  private:
-				void set_links( );
 			}; // target_low_element_t
 
 			struct target_high_element_t : public daw::json::daw_json_link<target_high_element_t> {
 				boost::optional<uint32_t> time_as_seconds;
 				double value;
 				std::string time;
+
+				target_high_element_t( ) = default;
+				~target_high_element_t( ) = default;
+				target_high_element_t( target_high_element_t const & ) = default;
+				target_high_element_t( target_high_element_t && ) = default;
+				target_high_element_t & operator=( target_high_element_t const & ) = default;
+				target_high_element_t &operator=( target_high_element_t && ) = default;
 
 				static void json_link_map( );
 			}; // target_high_element_t
@@ -97,11 +122,26 @@ namespace ns {
 				std::vector<sens_element_t> sens;
 				ns::timestamp_t start_date;
 
+				Default_t( ) = default;
+				~Default_t( ) = default;
+				Default_t( Default_t const & ) = default;
+				Default_t( Default_t && ) = default;
+				Default_t & operator=( Default_t const & ) = default;
+				Default_t &operator=( Default_t && ) = default;
+
 				static void json_link_map( );
 			}; // Default_t
 
 			struct store_t : public daw::json::daw_json_link<store_t> {
 				Default_t Default;
+
+				store_t( ) = default;
+				store_t( Default_t d ) : Default{std::move( d )} {}
+				~store_t( ) = default;
+				store_t( store_t const & ) = default;
+				store_t( store_t && ) noexcept = default;
+				store_t & operator=( store_t const & ) = default;
+				store_t & operator=( store_t && ) noexcept = default;
 
 				static void json_link_map( );
 			}; // store_t
@@ -113,6 +153,13 @@ namespace ns {
 				boost::optional<std::string> default_profile;
 				boost::optional<store_t> store;
 				ns::timestamp_t start_date;
+
+				ns_profiles_t( ) = default;
+				~ns_profiles_t( ) = default;
+				ns_profiles_t( ns_profiles_t const & ) = default;
+				ns_profiles_t( ns_profiles_t && ) = default;
+				ns_profiles_t & operator=( ns_profiles_t const & ) = default;
+				ns_profiles_t &operator=( ns_profiles_t && ) = default;
 
 				static void json_link_map( );
 			}; // ns_profiles_t

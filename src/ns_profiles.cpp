@@ -33,31 +33,31 @@ namespace ns {
 	namespace data {
 		namespace profiles {
 			void carb_ratio_element_t::json_link_map( ) {
-				link_json_quoted_integer( "timeAsSeconds", time_as_seconds );
+				link_json_quoted_integer_optional( "timeAsSeconds", time_as_seconds, boost::none );
 				link_json_quoted_real( "value", value );
 				link_json_string( "time", time );
 			}
 
 			void sens_element_t::json_link_map( ) {
-				link_json_quoted_integer( "timeAsSeconds", time_as_seconds );
+				link_json_quoted_integer_optional( "timeAsSeconds", time_as_seconds, boost::none );
 				link_json_quoted_real( "value", value );
 				link_json_string( "time", time );
 			}
 
 			void basal_element_t::json_link_map( ) {
-				link_json_quoted_integer( "timeAsSeconds", time_as_seconds );
+				link_json_quoted_integer_optional( "timeAsSeconds", time_as_seconds, boost::none );
 				link_json_quoted_real( "value", value );
 				link_json_string( "time", time );
 			}
 
 			void target_low_element_t::json_link_map( ) {
-				link_json_quoted_integer( "timeAsSeconds", time_as_seconds );
+				link_json_quoted_integer_optional( "timeAsSeconds", time_as_seconds, boost::none );
 				link_json_quoted_real( "value", value );
 				link_json_string( "time", time );
 			}
 
 			void target_high_element_t::json_link_map( ) {
-				link_json_quoted_integer( "timeAsSeconds", time_as_seconds );
+				link_json_quoted_integer_optional( "timeAsSeconds", time_as_seconds, boost::none );
 				link_json_quoted_real( "value", value );
 				link_json_string( "time", time );
 			}
@@ -71,7 +71,7 @@ namespace ns {
 				link_json_quoted_real( "carbs_hr", carbs_hr );
 				link_json_object_array( "carbratio", carb_ratio );
 				link_json_string( "timezone", timezone );
-				ns::impl::link_real_duration( "dia", this, dia );
+				link_json_real_duration( "dia", dia );
 				link_json_object_array( "sens", sens );
 				link_json_iso8601_timestamp( "startDate", start_date );
 			}
@@ -82,10 +82,10 @@ namespace ns {
 
 			void ns_profiles_t::json_link_map( ) {
 				link_json_iso8601_timestamp( "created_at", created_at );
-				link_json_quoted_integer( "mills", mills );
+				link_json_quoted_integer_optional( "mills", mills, boost::none );
 				link_json_string( "_id", _id );
 				link_json_string_optional( "defaultProfile", default_profile, boost::none );
-				link_json_object( "store", store );
+				link_json_object_optional( "store", store, boost::none );
 				link_json_iso8601_timestamp( "startDate", start_date );
 			}
 		}	// namespace profiles
