@@ -32,83 +32,59 @@
 #include <random>
 
 #include <daw/json/daw_json_link.h>
+#include <daw/json/daw_json_link_file.h>
 
 #include "iob_calc.h"
 
-struct test_data_item_t: public daw::json::JsonLink<test_data_item_t> {
+struct test_data_item_t : public daw::json::daw_json_link<test_data_item_t> {
 	int16_t insulin_duration;
 	int16_t time_offset;
 	double expected;
 
+	test_data_item_t( int16_t duration, int16_t timeOffset, double expectedResult )
+	    : daw::json::daw_json_link<test_data_item_t>{}
+	    , insulin_duration{duration}
+	    , time_offset{timeOffset}
+	    , expected{expectedResult} {}
+
+	test_data_item_t( ) : test_data_item_t{180, 0, 1.0} {}
+
+	~test_data_item_t( ) = default;
+	test_data_item_t( test_data_item_t const & ) = default;
 	test_data_item_t( test_data_item_t && ) = default;
-	test_data_item_t & operator=( test_data_item_t && ) = default;
-	
-	test_data_item_t( int16_t duration, int16_t timeOffset, double expectedResult ):
-			daw::json::JsonLink<test_data_item_t>{ },
-			insulin_duration{ duration },
-			time_offset{ timeOffset },
-			expected{ expectedResult } {
-			
-		link_integral( "insulin_duration", insulin_duration );
-		link_integral( "time_offset", time_offset );
-		link_real( "expected", expected );
+	test_data_item_t &operator=( test_data_item_t const & ) = default;
+	test_data_item_t &operator=( test_data_item_t && ) = default;
+
+	static void json_link_map( ) {
+		link_json_integer( "insulin_duration", insulin_duration );
+		link_json_integer( "time_offset", time_offset );
+		link_json_real( "expected", expected );
 	}
 
-	test_data_item_t( ):
-			test_data_item_t{ 180, 0, 1.0 } { }
+}; // test_data_item_t
 
-	test_data_item_t( test_data_item_t const & other ):
-			test_data_item_t{ other.insulin_duration, other.time_offset, other.expected } { }
-
-	test_data_item_t & operator=( test_data_item_t const & rhs ) {
-		if( this != &rhs ) {
-			test_data_item_t tmp{ rhs };
-			using std::swap;
-			swap( *this, tmp );
-		}
-		return *this;
-	}
-
-	~test_data_item_t( );
-};	// test_data_item_t
-
-test_data_item_t::~test_data_item_t( ) { }
-
-struct test_data_t: public daw::json::JsonLink<test_data_t> {
+struct test_data_t: public daw::json::daw_json_link<test_data_t> {
 	std::vector<test_data_item_t> tests;
 
-	test_data_t( test_data_t && other ) = default;
-	test_data_t & operator=( test_data_t && ) = default;
-
 	test_data_t( std::vector<test_data_item_t> Tests ):
-			daw::json::JsonLink<test_data_t>{ },
+			daw::json::daw_json_link<test_data_t>{ },
 			tests{ std::move( Tests ) } {
-		
-		link_array( "tests", tests );
 	}
 
-	test_data_t( ):
-			test_data_t{ std::vector<test_data_item_t>{ } } { }
+	test_data_t( ) = default;
+	~test_data_t( ) = default;
+	test_data_t( test_data_t && other ) = default;
+	test_data_t & operator=( test_data_t && ) = default;
+	test_data_t( test_data_t const & ) = default;
+	test_data_t & operator=( test_data_t const & ) = default;
 
-	~test_data_t( );
-
-	test_data_t( test_data_t const & other ):
-			test_data_t{ other.tests } { }
-
-	test_data_t & operator=( test_data_t const & rhs ) {
-		if( this != &rhs ) {
-			using std::swap;
-			test_data_t tmp{ rhs };
-			swap( *this, tmp );
-		}
-		return *this;
+	static void json_link_map( ) {
+		link_json_object_array( "tests", tests );
 	}
 };	// test_data_t
 
-test_data_t::~test_data_t( ) { }
-
 BOOST_AUTO_TEST_CASE( insulin_on_board_pct, *boost::unit_test::tolerance( 1.0e-10 ) ) {
-	auto test_data = daw::json::from_file<test_data_t>( "../tests/iob_calc_test.json" );
+	auto test_data = daw::json::from_file<test_data_t>( "../tests/iob_calc_test.json" ).result;
 	for( auto const & test: test_data.tests ) {
 		auto const result = ns::insulin_on_board_pct( std::chrono::minutes{ test.time_offset }, std::chrono::minutes{ test.insulin_duration } );
 		std::cout << "insulin_action=" << test.insulin_duration << "min t=" << test.time_offset << "min" << std::setprecision( std::numeric_limits<double>::digits10 ) << " expected=" << test.expected << " result=" << result << " difference=" << (test.expected-result) << '\n';

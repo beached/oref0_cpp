@@ -24,6 +24,7 @@
 #include <iostream>
 
 #include <daw/daw_exception.h>
+#include <daw/json/daw_json_link_file.h>
 
 #include "ns_entries.h"
 
@@ -34,7 +35,7 @@ int main( int argc, char **argv ) {
 	auto entries  = daw::json::array_from_file<nightscout_entries>( argv[1] );
 	for( size_t n = 0; n<entries.size( ); ++n ) {
 		nightscout_entries const & entry = entries[n];
-		auto const str = entry.to_string( );
+		auto const str = entry.to_json_string( );
 		std::cout << str << '\n';
 	}
 

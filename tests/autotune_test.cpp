@@ -27,13 +27,14 @@
 #include <iostream>
 
 #include <daw/daw_exception.h>
+#include <daw/json/daw_json_link_file.h>
 
 #include "autotune.h"
 #include "autotune_config.h"
 
 int main( int argc, char ** argv ) {
 	daw::exception::daw_throw_on_false( argc >= 1, "Must supply base nightscout url" );
-	auto const config = daw::json::from_file<ns::autotune_config_t>( argv[1] );
+	auto const config = daw::json::from_file<ns::autotune_config_t>( argv[1] ).result;
 
 	auto const tp_start = std::chrono::system_clock::now( ) - date::weeks{ 1 };
 	auto const tp_end = std::chrono::system_clock::now( );

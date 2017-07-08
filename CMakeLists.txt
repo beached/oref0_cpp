@@ -179,8 +179,9 @@ add_executable( ns_entries_test_bin ${HEADER_FILES} ${TEST_FOLDER}/ns_entries_te
 add_dependencies( ns_entries_test_bin daw_json_link_prj )
 target_link_libraries( ns_entries_test_bin oref0 char_range ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
 
-add_executable( autotune_tune_bin ${HEADER_FILES} ${TEST_FOLDER}/autotune_test.cpp )
-target_link_libraries( autotune_tune_bin oref0 daw_json_link curl_wrapper char_range ${Boost_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+add_executable( autotune_bin ${HEADER_FILES} ${TEST_FOLDER}/autotune_test.cpp )
+target_link_libraries( autotune_bin oref0 curl_wrapper char_range ${Boost_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
+add_dependencies( autotune_bin daw_json_link_prj )
 
 #add_executable( sha1_test_bin ${HEADER_FOLDER}/sha1.h ${SOURCE_FOLDER}/sha1.cpp ${TEST_FOLDER}/sha1_test.cpp )
 #target_link_libraries( sha1_test_bin ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} )
