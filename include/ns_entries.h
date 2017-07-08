@@ -72,6 +72,7 @@ namespace ns {
 				boost::optional<bool> previous_sgv_not_active;
 
 				ns_entries_t( );
+
 				static void json_link_map( );
 			};    // nightscout_entries
 		}	// namespace entries

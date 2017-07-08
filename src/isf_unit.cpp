@@ -28,81 +28,15 @@
 #include "isf_unit.h"
 
 namespace ns {
-	isf_t::isf_t( glucose_t carb ) noexcept:
-			value{ std::move( carb ) } { }
-
-	isf_t::~isf_t( ) { }
-
 	std::string isf_t::to_string( ) const {
 		std::stringstream ss;
 		ss << value << "/U";
 		return ss.str( );
 	}
 
-	isf_t & isf_t::scale( real_t factor ) noexcept {
-		value.scale( factor );
-		return *this;
-	}
-
-	isf_t isf_t::scale( real_t factor ) const noexcept {
-		isf_t result{ *this };
-		result.scale( factor );
-		return result;
-	}
-
-	void swap( isf_t & lhs, isf_t & rhs ) noexcept {
-		using std::swap;
-		swap( lhs.value, rhs.value );
-	}
-
-	std::ostream & operator<<( std::ostream & os, isf_t const & isf ) {
+	std::ostream &operator<<( std::ostream &os, isf_t const &isf ) {
 		os << isf.to_string( );
 		return os;
 	}
-
-	insulin_t operator/( glucose_t const & lhs, isf_t const & rhs ) noexcept {
-		auto tmp = lhs.value/rhs.value.value;
-		insulin_t result;
-		result.value = tmp;
-		return result;
-	}
-
-	glucose_t operator*( insulin_t const & lhs, isf_t const & rhs ) noexcept {
-		auto tmp = lhs.value * rhs.value.value;
-		glucose_t result;
-		result.value = tmp;
-		return result;
-	}
-
-	glucose_t operator*( isf_t const & lhs, insulin_t const & rhs ) noexcept {
-		auto tmp = lhs.value.value * rhs.value;
-		glucose_t result;
-		result.value = tmp;
-		return result;
-	}
-
-	bool operator==( isf_t const & lhs, isf_t const & rhs ) noexcept {
-		return lhs.value == rhs.value;
-	}
-
-	bool operator!=( isf_t const & lhs, isf_t const & rhs ) noexcept {
-		return lhs.value != rhs.value;
-	}
-
-	bool operator<( isf_t const & lhs, isf_t const & rhs ) noexcept {
-		return lhs.value < rhs.value;
-	}
-
-	bool operator>( isf_t const & lhs, isf_t const & rhs ) noexcept {
-		return lhs.value > rhs.value;
-	}
-
-	bool operator<=( isf_t const & lhs, isf_t const & rhs ) noexcept {
-		return lhs.value <= rhs.value;
-	}
-
-	bool operator>=( isf_t const & lhs, isf_t const & rhs ) noexcept {
-		return lhs.value >= rhs.value;
-	}
-}    // namespace ns
+} // namespace ns
 

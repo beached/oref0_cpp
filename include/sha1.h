@@ -25,6 +25,6 @@
 #include <daw/daw_string_view.h>
 
 namespace daw {
-	std::string sha1( daw::string_view message );
+	std::string sha1( daw::string_view message ) noexcept;
 }	// namespace daw
 

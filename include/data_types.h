@@ -90,10 +90,21 @@ namespace ns {
 	};	// determine_basal_exception
 
 	namespace chrono_literals {
-		duration_hours_t operator"" _hours( long double d ) noexcept;
-		duration_hours_t operator"" _hours( unsigned long long i ) noexcept;
-		duration_minutes_t operator"" _mins( long double d ) noexcept;
-		duration_minutes_t operator"" _mins( unsigned long long i ) noexcept;
-	}	// namespace chrono_literals
+		constexpr duration_hours_t operator"" _hours( long double d ) noexcept {
+			return duration_hours_t{static_cast<long int>( d )};
+		}
+
+		constexpr duration_hours_t operator"" _hours( unsigned long long i ) noexcept {
+			return duration_hours_t{static_cast<long int>( i )};
+		}
+
+		constexpr duration_minutes_t operator"" _mins( long double d ) noexcept {
+			return duration_minutes_t{static_cast<long int>( d )};
+		}
+
+		constexpr duration_minutes_t operator"" _mins( unsigned long long i ) noexcept {
+			return duration_minutes_t{static_cast<long int>( i )};
+		}
+	} // namespace chrono_literals
 }    // namespace ns 
 

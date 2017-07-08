@@ -33,43 +33,78 @@ namespace ns {
 	struct glucose_rate_t{
 		glucose_t value;
 
-		explicit glucose_rate_t( glucose_t glucose ) noexcept;
-		glucose_t glucose_per( ns::duration_minutes_t const & time_period ) const;
-		~glucose_rate_t( );
+		explicit constexpr glucose_rate_t( glucose_t glucose ) noexcept : value{std::move( glucose )} {}
 
-		glucose_rate_t( ) = default;
-		glucose_rate_t( glucose_rate_t const & ) = default;
-		glucose_rate_t( glucose_rate_t && ) = default;
-		glucose_rate_t & operator=( glucose_rate_t const & ) = default;
-		glucose_rate_t & operator=( glucose_rate_t && ) = default;
+		constexpr glucose_t glucose_per( ns::duration_minutes_t const &time_period ) const noexcept {
+			real_t const factor = static_cast<real_t>( time_period.count( ) ) / 60.0;
+			auto result = value.scale( factor );
+			return result;
+		}
 
-		friend void swap( glucose_rate_t & lhs, glucose_rate_t & rhs ) noexcept;
 		std::string to_string( ) const;
-		glucose_rate_t & scale( real_t factor ) noexcept;
-		glucose_rate_t scale( real_t factor ) const noexcept;
 
+		constexpr glucose_rate_t &scale( real_t factor ) noexcept {
+			value.scale( factor );
+			return *this;
+		}
+
+		constexpr glucose_rate_t scale( real_t factor ) const noexcept {
+			glucose_rate_t result{*this};
+			result.scale( factor );
+			return result;
+		}
 	};	// glucose_rate_t
 
-	void swap( glucose_rate_t & lhs, glucose_rate_t & rhs ) noexcept;
+	constexpr void swap( glucose_rate_t &lhs, glucose_rate_t &rhs ) noexcept {
+		auto tmp = lhs.value;
+		lhs.value = rhs.value;
+		rhs.value = tmp;
+	}
 
-	bool operator==( glucose_rate_t const & lhs, glucose_rate_t const & rhs ) noexcept;
-	bool operator!=( glucose_rate_t const & lhs, glucose_rate_t const & rhs ) noexcept;
-	bool operator<( glucose_rate_t const & lhs, glucose_rate_t const & rhs ) noexcept;
-	bool operator>( glucose_rate_t const & lhs, glucose_rate_t const & rhs ) noexcept;
-	bool operator<=( glucose_rate_t const & lhs, glucose_rate_t const & rhs ) noexcept;
-	bool operator>=( glucose_rate_t const & lhs, glucose_rate_t const & rhs ) noexcept;
+	constexpr bool operator==( glucose_rate_t const &lhs, glucose_rate_t const &rhs ) noexcept {
+		return lhs.value == rhs.value;
+	}
+
+	constexpr bool operator!=( glucose_rate_t const &lhs, glucose_rate_t const &rhs ) noexcept {
+		return lhs.value != rhs.value;
+	}
+
+	constexpr bool operator<( glucose_rate_t const &lhs, glucose_rate_t const &rhs ) noexcept {
+		return lhs.value < rhs.value;
+	}
+
+	constexpr bool operator>( glucose_rate_t const &lhs, glucose_rate_t const &rhs ) noexcept {
+		return lhs.value > rhs.value;
+	}
+
+	constexpr bool operator<=( glucose_rate_t const &lhs, glucose_rate_t const &rhs ) noexcept {
+		return lhs.value <= rhs.value;
+	}
+
+	constexpr bool operator>=( glucose_rate_t const &lhs, glucose_rate_t const &rhs ) noexcept {
+		return lhs.value >= rhs.value;
+	}
 
 	template<typename... Args>
-	glucose_rate_t operator/( glucose_t const & lhs, std::chrono::duration<Args...> const & rhs ) noexcept {
+	constexpr glucose_rate_t operator/( glucose_t const & lhs, std::chrono::duration<Args...> const & rhs ) noexcept {
 		real_t const factor = static_cast<real_t>(std::chrono::duration_cast<std::chrono::seconds>( rhs ).count( ))/3600.0;
 		return glucose_rate_t{ lhs.scale( factor ) };
 	}
-
 	std::ostream & operator<<( std::ostream & os, glucose_rate_t const & glucose_rate );
 }    // namespace ns
 
-ns::glucose_rate_t operator"" _mg_dL_hr( long double d ) noexcept;
-ns::glucose_rate_t operator"" _mg_dL_hr( unsigned long long i ) noexcept;
-ns::glucose_rate_t operator"" _mmol_L_hr( long double d ) noexcept;
-ns::glucose_rate_t operator"" _mmol_L_hr( unsigned long long i ) noexcept;
+constexpr ns::glucose_rate_t operator"" _mg_dL_hr( long double d ) noexcept {
+	return ns::glucose_rate_t{ns::glucose_t{static_cast<double>( d )}};
+}
+constexpr ns::glucose_rate_t operator"" _mg_dL_hr( unsigned long long i ) noexcept {
+	return ns::glucose_rate_t{ns::glucose_t{static_cast<double>( i )}};
+}
+
+constexpr ns::glucose_rate_t operator"" _mmol_L_hr( long double d ) noexcept {
+	return ns::glucose_rate_t{ns::glucose_t{ns::to_mg_dL( d )}};
+}
+
+constexpr ns::glucose_rate_t operator"" _mmol_L_hr( unsigned long long i ) noexcept {
+	return ns::glucose_rate_t{ns::glucose_t{ns::to_mg_dL( i )}};
+}
 

@@ -31,9 +31,17 @@
 #include <isf_unit.h>
 
 namespace ns {
-	carb_rate_t operator*( insulin_rate_t const & lhs, icr_t const & rhs );
-	carb_rate_t operator*( icr_t const & lhs, insulin_rate_t const & rhs );
+	constexpr carb_rate_t operator*( insulin_rate_t lhs, icr_t const &rhs ) {
+		using namespace std::chrono_literals;
+		lhs.value.value *= rhs.value.value;
+		return carb_rate_t{lhs.value.value, 60min};
+	}
 
+	constexpr carb_rate_t operator*( icr_t lhs, insulin_rate_t const & rhs ) {
+		using namespace std::chrono_literals;
+		lhs.value.value *= rhs.value.value;
+		return carb_rate_t{lhs.value.value, 60min};
+	}
 }	// namespace ns
 
 

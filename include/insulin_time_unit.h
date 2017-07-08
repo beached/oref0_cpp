@@ -22,51 +22,83 @@
 
 #pragma once
 
+#include <chrono>
 #include <sstream>
 #include <string>
-#include <chrono>
 
 #include "data_types.h"
 #include "insulin_unit.h"
 
 namespace ns {
-	struct insulin_rate_t{
+	struct insulin_rate_t {
 		insulin_t value;
 
-		explicit insulin_rate_t( insulin_t insulin ) noexcept;
-		insulin_t insulin_per( ns::duration_minutes_t const & time_period ) const;
-		~insulin_rate_t( );
+		explicit constexpr insulin_rate_t( insulin_t insulin ) noexcept : value{std::move( insulin )} {}
 
-		insulin_rate_t( ) = default;
-		insulin_rate_t( insulin_rate_t const & ) = default;
-		insulin_rate_t( insulin_rate_t && ) = default;
-		insulin_rate_t & operator=( insulin_rate_t const & ) = default;
-		insulin_rate_t & operator=( insulin_rate_t && ) = default;
+		constexpr insulin_t insulin_per( ns::duration_minutes_t const &time_period ) const noexcept {
+			real_t const factor = static_cast<real_t>( time_period.count( ) ) / 60.0;
+			auto result = value.scale( factor );
+			return result;
+		}
 
-		friend void swap( insulin_rate_t & lhs, insulin_rate_t & rhs ) noexcept;
 		std::string to_string( ) const;
-		insulin_rate_t & scale( real_t factor ) noexcept;
-		insulin_rate_t scale( real_t factor ) const noexcept;
 
-	};	// insulin_rate_t
+		constexpr insulin_rate_t &scale( real_t factor ) noexcept {
+			value.scale( factor );
+			return *this;
+		}
 
-	void swap( insulin_rate_t & lhs, insulin_rate_t & rhs ) noexcept;
+		constexpr insulin_rate_t scale( real_t factor ) const noexcept {
+			insulin_rate_t result{*this};
+			result.scale( factor );
+			return result;
+		}
 
-	bool operator==( insulin_rate_t const & lhs, insulin_rate_t const & rhs ) noexcept;
-	bool operator!=( insulin_rate_t const & lhs, insulin_rate_t const & rhs ) noexcept;
-	bool operator<( insulin_rate_t const & lhs, insulin_rate_t const & rhs ) noexcept;
-	bool operator>( insulin_rate_t const & lhs, insulin_rate_t const & rhs ) noexcept;
-	bool operator<=( insulin_rate_t const & lhs, insulin_rate_t const & rhs ) noexcept;
-	bool operator>=( insulin_rate_t const & lhs, insulin_rate_t const & rhs ) noexcept;
+	}; // insulin_rate_t
 
-	template<typename... Args>
-	insulin_rate_t operator/( insulin_t const & lhs, std::chrono::duration<Args...> const & rhs ) noexcept {
-		real_t const factor = static_cast<real_t>(std::chrono::duration_cast<std::chrono::seconds>( rhs ).count( ))/3600.0;
-		return insulin_rate_t{ lhs.scale( factor ) };
+	constexpr void swap( insulin_rate_t &lhs, insulin_rate_t &rhs ) noexcept {
+		using std::swap;
+		swap( lhs.value, rhs.value );
 	}
 
-	std::ostream & operator<<( std::ostream & os, insulin_rate_t const & insulin_rate );
-}    // namespace ns
+	constexpr bool operator==( insulin_rate_t const &lhs, insulin_rate_t const &rhs ) noexcept {
+		return lhs.value == rhs.value;
+	}
 
-ns::insulin_rate_t operator"" _U_hr( long double d ) noexcept;
-ns::insulin_rate_t operator"" _U_hr( unsigned long long i ) noexcept;
+	constexpr bool operator!=( insulin_rate_t const &lhs, insulin_rate_t const &rhs ) noexcept {
+		return lhs.value != rhs.value;
+	}
+
+	constexpr bool operator<( insulin_rate_t const &lhs, insulin_rate_t const &rhs ) noexcept {
+		return lhs.value < rhs.value;
+	}
+
+	constexpr bool operator>( insulin_rate_t const &lhs, insulin_rate_t const &rhs ) noexcept {
+		return lhs.value > rhs.value;
+	}
+
+	constexpr bool operator<=( insulin_rate_t const &lhs, insulin_rate_t const &rhs ) noexcept {
+		return lhs.value <= rhs.value;
+	}
+
+	constexpr bool operator>=( insulin_rate_t const &lhs, insulin_rate_t const &rhs ) noexcept {
+		return lhs.value >= rhs.value;
+	}
+
+	template<typename... Args>
+	insulin_rate_t operator/( insulin_t const &lhs, std::chrono::duration<Args...> const &rhs ) noexcept {
+		real_t const factor =
+		    static_cast<real_t>( std::chrono::duration_cast<std::chrono::seconds>( rhs ).count( ) ) / 3600.0;
+		return insulin_rate_t{lhs.scale( factor )};
+	}
+
+	std::ostream &operator<<( std::ostream &os, insulin_rate_t const &insulin_rate );
+} // namespace ns
+
+constexpr ns::insulin_rate_t operator"" _U_hr( long double d ) noexcept {
+	return ns::insulin_rate_t{ns::insulin_t{static_cast<double>( d )}};
+}
+
+constexpr ns::insulin_rate_t operator"" _U_hr( unsigned long long i ) noexcept {
+	return ns::insulin_rate_t{ns::insulin_t{static_cast<double>( i )}};
+}

@@ -34,32 +34,33 @@ namespace daw {
 	namespace {
 		class sha1_t {
 			boost::uuids::detail::sha1 m_sha1;
-		public:
-			sha1_t( daw::string_view msg ): m_sha1{ } {
+
+		  public:
+			sha1_t( daw::string_view msg ) : m_sha1{} {
 				process( msg );
 			}
 
-			sha1_t & process( daw::string_view msg ) {
+			sha1_t &process( daw::string_view msg ) {
 				m_sha1.process_bytes( msg.data( ), msg.size( ) );
 				return *this;
 			}
-			
+
 			std::string to_string( ) {
 				unsigned int digest[5];
 				m_sha1.get_digest( digest );
 
 				std::ostringstream buf;
-				for( auto const & item: digest ) {
+				for( auto const &item : digest ) {
 					buf << std::hex << std::setfill( '0' ) << std::setw( 8 ) << item;
 				}
 				auto result = buf.str( );
 				return result;
 			}
-		};	// sha1
-	}	// namespace anonymous
+		}; // sha1
+	}      // namespace
 
-	std::string sha1( daw::string_view message ) {
-		return sha1_t{ message }.to_string( );
+	std::string sha1( daw::string_view message ) noexcept {
+		return sha1_t{message}.to_string( );
 	}
-}	// namespace daw
+} // namespace daw
 

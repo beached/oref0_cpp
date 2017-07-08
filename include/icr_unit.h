@@ -24,41 +24,77 @@
 
 #include <string>
 
-#include "data_types.h"
 #include "carb_unit.h"
+#include "data_types.h"
 #include "insulin_unit.h"
 
 namespace ns {
-	struct icr_t{
+	struct icr_t {
 		carb_t value;
 
-		explicit icr_t( carb_t carb ) noexcept;
-		~icr_t( );
+		explicit constexpr icr_t( carb_t carb ) noexcept : value{std::move( carb )} {}
 
-		icr_t( ) = default;
-		icr_t( icr_t const & ) = default;
-		icr_t( icr_t && ) = default;
-		icr_t & operator=( icr_t const & ) = default;
-		icr_t & operator=( icr_t && ) = default;
-		friend void swap( icr_t & lhs, icr_t & rhs ) noexcept;
 		std::string to_string( ) const;
 
-		icr_t & scale( real_t factor ) noexcept;
-		icr_t scale( real_t factor ) const noexcept;
-	};	// icr_t
+		constexpr icr_t &scale( real_t factor ) noexcept {
+			value.scale( factor );
+			return *this;
+		}
 
-	void swap( icr_t & lhs, icr_t & rhs ) noexcept;
-	std::ostream & operator<<( std::ostream & os, icr_t const & icr );	
+		constexpr icr_t scale( real_t factor ) const noexcept {
+			icr_t result{*this};
+			result.scale( factor );
+			return result;
+		}
+	}; // icr_t
 
-	insulin_t operator/( carb_t const & lhs, icr_t const & rhs ) noexcept;
-	carb_t operator*( icr_t const & lhs, insulin_t const & rhs ) noexcept;
-	carb_t operator*( insulin_t const & lhs, icr_t const & rhs ) noexcept;
+	constexpr void swap( icr_t &lhs, icr_t &rhs ) noexcept {
+		using std::swap;
+		swap( lhs.value, rhs.value );
+	}
 
-	bool operator==( icr_t const & lhs, icr_t const & rhs ) noexcept;
-	bool operator!=( icr_t const & lhs, icr_t const & rhs ) noexcept;
-	bool operator<( icr_t const & lhs, icr_t const & rhs ) noexcept;
-	bool operator>( icr_t const & lhs, icr_t const & rhs ) noexcept;
-	bool operator<=( icr_t const & lhs, icr_t const & rhs ) noexcept;
-	bool operator>=( icr_t const & lhs, icr_t const & rhs ) noexcept;
-}    // namespace ns
+	std::ostream &operator<<( std::ostream &os, icr_t const &icr );
+
+	constexpr insulin_t operator/( carb_t const &lhs, icr_t const &rhs ) noexcept {
+		auto tmp = lhs.value / rhs.value.value;
+		insulin_t result{std::move( tmp )};
+		return result;
+	}
+
+	constexpr carb_t operator*( icr_t const &lhs, insulin_t const &rhs ) noexcept {
+		auto tmp = lhs.value.value * rhs.value;
+		carb_t result{std::move( tmp )};
+		return result;
+	}
+
+	constexpr carb_t operator*( insulin_t const &lhs, icr_t const &rhs ) noexcept {
+		auto tmp = rhs.value.value * lhs.value;
+		carb_t result{std::move( tmp )};
+		return result;
+	}
+
+	constexpr bool operator==( icr_t const &lhs, icr_t const &rhs ) noexcept {
+		return lhs.value == rhs.value;
+	}
+
+	constexpr bool operator!=( icr_t const &lhs, icr_t const &rhs ) noexcept {
+		return lhs.value != rhs.value;
+	}
+
+	constexpr bool operator<( icr_t const &lhs, icr_t const &rhs ) noexcept {
+		return lhs.value < rhs.value;
+	}
+
+	constexpr bool operator>( icr_t const &lhs, icr_t const &rhs ) noexcept {
+		return lhs.value > rhs.value;
+	}
+
+	constexpr bool operator<=( icr_t const &lhs, icr_t const &rhs ) noexcept {
+		return lhs.value <= rhs.value;
+	}
+
+	constexpr bool operator>=( icr_t const &lhs, icr_t const &rhs ) noexcept {
+		return lhs.value >= rhs.value;
+	}
+} // namespace ns
 

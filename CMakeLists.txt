@@ -16,10 +16,12 @@ if( ${CMAKE_CXX_COMPILER_ID} STREQUAL 'MSVC' )
 	add_compile_options( -D_WIN32_WINNT=0x0601 /std:c++latest ) 
 else( )
 	if( ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "AppleClang" )
-		add_compile_options(-std=c++14 -march=native -pthread -Weverything -Wno-c++98-compat -Wno-covered-switch-default -Wno-padded -Wno-exit-time-destructors -Wno-c++98-compat-pedantic -Wno-unused-parameter -Wno-missing-noreturn -Wno-missing-prototypes -Wno-disabled-macro-expansion)
+		set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14" )
+		add_compile_options(-march=native -pthread -Weverything -Wno-c++98-compat -Wno-covered-switch-default -Wno-padded -Wno-exit-time-destructors -Wno-c++98-compat-pedantic -Wno-unused-parameter -Wno-missing-noreturn -Wno-missing-prototypes -Wno-disabled-macro-expansion)
 		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 	elseif( ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" )
+		set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14" )
 		add_compile_options(-std=c++14 -march=native -pthread -Wall -Wno-deprecated-declarations)
 		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
@@ -123,7 +125,6 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/insulin_unit_json.h
 	${HEADER_FOLDER}/iob_calc.h
 	${HEADER_FOLDER}/isf_unit.h
-	${HEADER_FOLDER}/time_json.h
 	${HEADER_FOLDER}/lib_iob_calculate.h
 	${HEADER_FOLDER}/nightscout.h
 	${HEADER_FOLDER}/ns_entries.h
@@ -132,7 +133,6 @@ set( HEADER_FILES
 	${HEADER_FOLDER}/requested_temp.h
 	${HEADER_FOLDER}/iob_calc.h
 	${HEADER_FOLDER}/sha1.h
-	${HEADER_FOLDER}/time_json.h
 	${HEADER_FOLDER}/units.h
 )
 
@@ -141,8 +141,6 @@ set( SOURCE_FILES
 	${SOURCE_FOLDER}/autotune_config.cpp
 	${SOURCE_FOLDER}/carb_time_unit.cpp
 	${SOURCE_FOLDER}/carb_unit.cpp
-	${SOURCE_FOLDER}/data_types.cpp
-	${SOURCE_FOLDER}/diabetic_calcs.cpp
 	${SOURCE_FOLDER}/dbl_error.cpp
 	${SOURCE_FOLDER}/glucose_unit.cpp
 	${SOURCE_FOLDER}/glucose_time_unit.cpp
@@ -158,7 +156,6 @@ set( SOURCE_FILES
 	${SOURCE_FOLDER}/ns_profiles.cpp
 	${SOURCE_FOLDER}/ns_treatments.cpp
 	${SOURCE_FOLDER}/sha1.cpp
-	${SOURCE_FOLDER}/units.cpp
 )
 
 add_library( oref0 ${HEADER_FILES} ${SOURCE_FILES} )

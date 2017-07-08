@@ -25,50 +25,50 @@
 
 #include <daw/json/daw_json_link.h>
 #include <daw/json/daw_json_link_datetime.h>
+#include <daw/json/daw_json_link_fixes.h>
 
 #include "ns_profiles.h"
-#include "time_json.h"
 
 namespace ns {
 	namespace data {
 		namespace profiles {
 			void carb_ratio_element_t::json_link_map( ) {
-				link_json_string_to_integral( "timeAsSeconds", time_as_seconds );
-				link_json_string_to_real( "value", value );
+				link_json_quoted_integer( "timeAsSeconds", time_as_seconds );
+				link_json_quoted_real( "value", value );
 				link_json_string( "time", time );
 			}
 
 			void sens_element_t::json_link_map( ) {
-				link_json_string_to_integral( "timeAsSeconds", time_as_seconds );
-				link_json_string_to_real( "value", value );
+				link_json_quoted_integer( "timeAsSeconds", time_as_seconds );
+				link_json_quoted_real( "value", value );
 				link_json_string( "time", time );
 			}
 
 			void basal_element_t::json_link_map( ) {
-				link_json_string_to_integral( "timeAsSeconds", time_as_seconds );
-				link_json_string_to_real( "value", value );
+				link_json_quoted_integer( "timeAsSeconds", time_as_seconds );
+				link_json_quoted_real( "value", value );
 				link_json_string( "time", time );
 			}
 
 			void target_low_element_t::json_link_map( ) {
-				link_json_string_to_integral( "timeAsSeconds", time_as_seconds );
-				link_json_string_to_real( "value", value );
+				link_json_quoted_integer( "timeAsSeconds", time_as_seconds );
+				link_json_quoted_real( "value", value );
 				link_json_string( "time", time );
 			}
 
 			void target_high_element_t::json_link_map( ) {
-				link_json_string_to_integral( "timeAsSeconds", time_as_seconds );
-				link_json_string_to_real( "value", value );
+				link_json_quoted_integer( "timeAsSeconds", time_as_seconds );
+				link_json_quoted_real( "value", value );
 				link_json_string( "time", time );
 			}
 
 			void Default_t::json_link_map( ) {
 				link_json_string( "units", units );
-				link_json_string_to_integral( "delay", delay );
+				link_json_quoted_integer( "delay", delay );
 				link_json_object_array( "basal", basal );
 				link_json_object_array( "target_low", target_low );
 				link_json_object_array( "target_high", target_high );
-				link_json_string_to_real( "carbs_hr", carbs_hr );
+				link_json_quoted_real( "carbs_hr", carbs_hr );
 				link_json_object_array( "carbratio", carb_ratio );
 				link_json_string( "timezone", timezone );
 				ns::impl::link_real_duration( "dia", this, dia );
@@ -82,7 +82,7 @@ namespace ns {
 
 			void ns_profiles_t::json_link_map( ) {
 				link_json_iso8601_timestamp( "created_at", created_at );
-				link_json_string_to_integral( "mills", mills );
+				link_json_quoted_integer( "mills", mills );
 				link_json_string( "_id", _id );
 				link_json_string_optional( "defaultProfile", default_profile, boost::none );
 				link_json_object( "store", store );

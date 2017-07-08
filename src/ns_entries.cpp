@@ -82,6 +82,7 @@ namespace ns {
 				dir = parse_direction( tmp );
 				return is;
 			}
+
 			void ns_entries_t::json_link_map( ) {
 				link_json_string( "_id", id );
 				link_json_streamable_optional( "direction", direction, boost::none );

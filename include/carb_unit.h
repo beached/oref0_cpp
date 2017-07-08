@@ -30,38 +30,86 @@ namespace ns {
 	struct carb_t{
 		real_t value;
 
-		explicit carb_t( real_t d ) noexcept;
-		~carb_t( );
+		constexpr carb_t( real_t d ) noexcept : value{std::move( d )} {}
 
-		carb_t( ) = default;
-		carb_t( carb_t const & ) = default;
-		carb_t( carb_t && ) = default;
-		carb_t & operator=( carb_t const & ) = default;
-		carb_t & operator=( carb_t && ) = default;
-
-		friend void swap( carb_t & lhs, carb_t & rhs ) noexcept;
 		std::string to_string( ) const;
 
-		carb_t & operator+=( carb_t const & rhs ) noexcept;
-		carb_t & operator-=( carb_t const & rhs ) noexcept;
+		constexpr carb_t &operator+=( carb_t const &rhs ) noexcept {
+			value += rhs.value;
+			return *this;
+		}
 
-		carb_t & scale( real_t factor ) noexcept;
-		carb_t scale( real_t factor ) const noexcept;
+		constexpr carb_t &operator-=( carb_t const &rhs ) noexcept {
+			value -= rhs.value;
+			return *this;
+		}
+
+		constexpr carb_t &scale( real_t factor ) noexcept {
+			value *= factor;
+			return *this;
+		}
+
+		constexpr carb_t scale( real_t factor ) const noexcept {
+			carb_t result{*this};
+			result.value *= factor;
+			return result;
+		}
+
 	};	// carb_t
 
-	void swap( carb_t & lhs, carb_t & rhs ) noexcept;
+	constexpr void swap( carb_t & lhs, carb_t & rhs ) noexcept {
+		auto tmp = lhs.value;
+		lhs.value = rhs.value;
+		rhs.value = tmp;
+	}
+
 	std::ostream & operator<<( std::ostream & os, carb_t const & glucose );	
 
-	carb_t operator+( carb_t const & lhs, carb_t const & rhs ) noexcept;
-	carb_t operator-( carb_t const & lhs, carb_t const & rhs ) noexcept;
-	carb_t operator-( carb_t rhs ) noexcept;
-	bool operator==( carb_t const & lhs, carb_t const & rhs ) noexcept;
-	bool operator!=( carb_t const & lhs, carb_t const & rhs ) noexcept;
-	bool operator<( carb_t const & lhs, carb_t const & rhs ) noexcept;
-	bool operator>( carb_t const & lhs, carb_t const & rhs ) noexcept;
-	bool operator<=( carb_t const & lhs, carb_t const & rhs ) noexcept;
-	bool operator>=( carb_t const & lhs, carb_t const & rhs ) noexcept;
+	constexpr carb_t operator+( carb_t lhs, carb_t const & rhs ) noexcept {
+		lhs.value += rhs.value;
+		return lhs;
+	}
+
+	constexpr carb_t operator-( carb_t lhs, carb_t const & rhs ) noexcept {
+		lhs.value -= rhs.value;
+		return lhs;
+	}
+
+	constexpr carb_t operator-( carb_t rhs ) noexcept {
+		rhs.value *= -1.0; 
+		return rhs;
+	}
+
+	constexpr bool operator==( carb_t const & lhs, carb_t const & rhs ) noexcept {
+		return lhs.value == rhs.value;
+	}
+
+	constexpr bool operator!=( carb_t const & lhs, carb_t const & rhs ) noexcept {
+		return lhs.value != rhs.value;
+	}
+
+	constexpr bool operator<( carb_t const & lhs, carb_t const & rhs ) noexcept {
+		return lhs.value < rhs.value;
+	}
+
+	constexpr bool operator>( carb_t const & lhs, carb_t const & rhs ) noexcept {
+		return lhs.value > rhs.value;
+	}
+
+	constexpr bool operator<=( carb_t const & lhs, carb_t const & rhs ) noexcept {
+		return lhs.value <= rhs.value;
+	}
+
+	constexpr bool operator>=( carb_t const & lhs, carb_t const & rhs ) noexcept {
+		return lhs.value >= rhs.value;
+	}
 }    // namespace ns
 
-ns::carb_t operator"" _g_CHO( long double d ) noexcept;
-ns::carb_t operator"" _g_CHO( unsigned long long i ) noexcept;
+constexpr ns::carb_t operator"" _g_CHO( long double d ) noexcept {
+	return ns::carb_t{ static_cast<double>( d ) };
+}
+
+constexpr ns::carb_t operator"" _g_CHO( unsigned long long i ) noexcept {
+	return ns::carb_t{ static_cast<double>( i ) };
+}
+

@@ -38,80 +38,6 @@ using namespace date;
 using namespace ns::chrono_literals;
 namespace ns {
 	namespace {
-		size_t insulin_duration_to_idx( ns::duration_minutes_t const duration ) noexcept {	
-			switch( static_cast<uint16_t>(duration.count( )) ) {
-				case 180: return 0;
-				case 210: return 1;
-				case 240: return 2;
-				case 300: return 3;
-				case 360: return 4;
-			}
-			std::abort( );
-		}
-
-		constexpr auto insulin_duration_to_min( insulin_duration_t const duration ) {	
-			switch( duration ) {
-				case insulin_duration_t::t180: return 180_mins;
-				case insulin_duration_t::t210: return 210_mins;
-				case insulin_duration_t::t240: return 240_mins;
-				case insulin_duration_t::t300: return 300_mins;
-				case insulin_duration_t::t360: return 360_mins;
-				default: return ns::duration_minutes_t{ ns::duration_minutes_t::max( ) };	// should never happen but may as well go for the stars
-			}
-		}
-
-
-		template<size_t N>
-			real_t to_power( real_t const & value ) noexcept {
-				static_assert( N > 0, "" );
-				real_t result = value;
-				for( size_t n=1; n<N; ++n ) {
-					result *= value;
-				}
-				return result;
-			}
-	}
-
-	real_t insulin_on_board_pct( ns::duration_minutes_t const time_from_bolus_min, ns::duration_minutes_t const insulin_duration ) noexcept {
-		real_t const params[5][5] = {
-			{  99.951000000,  0.092550000, -0.01759000,  0.000135400, -0.00000032030 },	// t=180
-			{  99.924242424,  0.282046657, -0.01489899,  0.000087168, -0.00000015900 },	// t=210 
-			{  99.950000000, -0.090860000, -0.00551000,  0.000025300, -0.00000003310 },	// t=240
-			{  99.300000000,  0.044900000, -0.00555000,  0.000023200, -0.00000002950 }, // t=300
-			{  99.700000000,  0.063650000, -0.00409500,  0.000014130, -0.00000001493 }	// t=360
-		};
-
-		if( time_from_bolus_min <= 0_mins ) {
-			return 1.0;
-		} else if( time_from_bolus_min >= insulin_duration ) {
-			return 0.0;
-		} 
-		real_t const t = time_from_bolus_min.count( );
-		auto const & param = params[insulin_duration_to_idx( insulin_duration )];
-		auto const p1 = param[1] * t;
-		auto const p2 = param[2] * to_power<2>( t );
-		auto const p3 = param[3] * to_power<3>( t );
-		auto const p4 = param[4] * to_power<4>( t );
-
-		auto percentage = (p4 + p3 + p2 + p1 + param[0])/100.0;
-
-		// clamp value
-		if( percentage > 1.0 ) {
-			return 1.0;
-		} else if( percentage < 0.0 ) {
-			return 0.0;
-		}
-		return percentage;
-	}
-
-	insulin_dose::insulin_dose( insulin_t how_much, insulin_duration_t dia, timestamp_t when ):
-			amount{ how_much },
-			dose_time{ when },
-			dose_dia{ insulin_duration_to_min( dia ) } { 
-
-		assert( amount > 0.0_U );
-	}
-
 	std::ostream & operator<<( std::ostream & os, insulin_duration_t const & duration ) {
 		os << insulin_duration_to_min( duration ).count( );
 		return os;
@@ -129,6 +55,5 @@ namespace ns {
 			default: throw std::runtime_error( "Unknown insulin_duration_t value" );
 		}
 	}
-
 }	// namespace ns
 

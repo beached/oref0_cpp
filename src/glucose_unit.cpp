@@ -30,7 +30,7 @@
 
 namespace ns {
 	namespace {
-		constexpr glucose_unit & get_static_glucose_unit( ) noexcept {
+		glucose_unit & get_static_glucose_unit( ) noexcept {
 			static glucose_unit result = glucose_unit::mmol_L;
 			return result;
 		}

@@ -29,36 +29,73 @@
 #include "insulin_unit.h"
 
 namespace ns {
-	struct isf_t{
+	struct isf_t {
 		glucose_t value;
 
-		explicit isf_t( glucose_t carb ) noexcept;
-		~isf_t( );
+		explicit constexpr isf_t( glucose_t carb ) noexcept : value{std::move( carb )} {}
 
-		isf_t( ) = default;
-		isf_t( isf_t const & ) = default;
-		isf_t( isf_t && ) = default;
-		isf_t & operator=( isf_t const & ) = default;
-		isf_t & operator=( isf_t && ) = default;
-		friend void swap( isf_t & lhs, isf_t & rhs ) noexcept;
 		std::string to_string( ) const;
 
-		isf_t & scale( real_t factor ) noexcept;
-		isf_t scale( real_t factor ) const noexcept;
-	};	// isf_t
+		constexpr isf_t &scale( real_t factor ) noexcept {
+			value.scale( factor );
+			return *this;
+		}
 
-	void swap( isf_t & lhs, isf_t & rhs ) noexcept;
-	std::ostream & operator<<( std::ostream & os, isf_t const & isf );	
+		constexpr isf_t scale( real_t factor ) const noexcept {
+			isf_t result{*this};
+			result.scale( factor );
+			return result;
+		}
+	}; // isf_t
 
-	insulin_t operator/( glucose_t const & lhs, isf_t const & rhs ) noexcept;
-	glucose_t operator*( insulin_t const & lhs, isf_t const & rhs ) noexcept;
-	glucose_t operator*( isf_t const & lhs, insulin_t const & rhs ) noexcept;
+	constexpr void swap( isf_t &lhs, isf_t &rhs ) noexcept {
+		auto tmp = lhs.value;
+		lhs.value = rhs.value;
+		rhs.value = tmp;
+	}
 
-	bool operator==( isf_t const & lhs, isf_t const & rhs ) noexcept;
-	bool operator!=( isf_t const & lhs, isf_t const & rhs ) noexcept;
-	bool operator<( isf_t const & lhs, isf_t const & rhs ) noexcept;
-	bool operator>( isf_t const & lhs, isf_t const & rhs ) noexcept;
-	bool operator<=( isf_t const & lhs, isf_t const & rhs ) noexcept;
-	bool operator>=( isf_t const & lhs, isf_t const & rhs ) noexcept;
-}    // namespace ns
+	std::ostream &operator<<( std::ostream &os, isf_t const &isf );
+
+	constexpr insulin_t operator/( glucose_t const &lhs, isf_t const &rhs ) noexcept {
+		auto tmp = lhs.value / rhs.value.value;
+		insulin_t result{std::move( tmp )};
+		return result;
+	}
+
+	constexpr glucose_t operator*( insulin_t const &lhs, isf_t const &rhs ) noexcept {
+		auto tmp = lhs.value * rhs.value.value;
+		glucose_t result{std::move( tmp )};
+		return result;
+	}
+
+	constexpr glucose_t operator*( isf_t const &lhs, insulin_t const &rhs ) noexcept {
+		auto tmp = lhs.value.value * rhs.value;
+		glucose_t result{std::move( tmp )};
+		return result;
+	}
+
+	constexpr bool operator==( isf_t const &lhs, isf_t const &rhs ) noexcept {
+		return lhs.value == rhs.value;
+	}
+
+	constexpr bool operator!=( isf_t const &lhs, isf_t const &rhs ) noexcept {
+		return lhs.value != rhs.value;
+	}
+
+	constexpr bool operator<( isf_t const &lhs, isf_t const &rhs ) noexcept {
+		return lhs.value < rhs.value;
+	}
+
+	constexpr bool operator>( isf_t const &lhs, isf_t const &rhs ) noexcept {
+		return lhs.value > rhs.value;
+	}
+
+	constexpr bool operator<=( isf_t const &lhs, isf_t const &rhs ) noexcept {
+		return lhs.value <= rhs.value;
+	}
+
+	constexpr bool operator>=( isf_t const &lhs, isf_t const &rhs ) noexcept {
+		return lhs.value >= rhs.value;
+	}
+} // namespace ns
 
