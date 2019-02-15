@@ -55,23 +55,7 @@ struct test_data_item_t: public daw::json::JsonLink<test_data_item_t> {
 
 	test_data_item_t( ):
 			test_data_item_t{ ns::insulin_duration_t::t180, 0, 1.0 } { }
-
-	test_data_item_t( test_data_item_t const & other ):
-			test_data_item_t{ other.insulin_duration, other.time_offset, other.expected } { }
-
-	test_data_item_t & operator=( test_data_item_t const & rhs ) {
-		if( this != &rhs ) {
-			test_data_item_t tmp{ rhs };
-			using std::swap;
-			swap( *this, tmp );
-		}
-		return *this;
-	}
-
-	~test_data_item_t( );
 };	// test_data_item_t
-
-test_data_item_t::~test_data_item_t( ) { }
 
 struct test_data_t: public daw::json::JsonLink<test_data_t> {
 	std::vector<test_data_item_t> tests;
@@ -88,23 +72,7 @@ struct test_data_t: public daw::json::JsonLink<test_data_t> {
 
 	test_data_t( ):
 			test_data_t{ std::vector<test_data_item_t>{ } } { }
-
-	~test_data_t( );
-
-	test_data_t( test_data_t const & other ):
-			test_data_t{ other.tests } { }
-
-	test_data_t & operator=( test_data_t const & rhs ) {
-		if( this != &rhs ) {
-			using std::swap;
-			test_data_t tmp{ rhs };
-			swap( *this, tmp );
-		}
-		return *this;
-	}
 };	// test_data_t
-
-test_data_t::~test_data_t( ) { }
 
 BOOST_AUTO_TEST_CASE( insulin_on_board_pct, *boost::unit_test::tolerance( 1.0e-10 ) ) {
 	auto test_data = daw::json::from_file<test_data_t>( "../tests/iob_calc_test.json" );

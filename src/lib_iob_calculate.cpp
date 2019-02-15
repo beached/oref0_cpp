@@ -32,11 +32,6 @@ namespace ns {
 			iob_calc_t::iob_calc_t( boost::optional<insulin_t> iob_contrib, boost::optional<insulin_t> activity_contrib ):
 					iobContrib{ std::move( iob_contrib ) },
 					activityContrib{ std::move( activity_contrib ) } { }
-
-			iob_calc_t::iob_calc_t( ):
-					iob_calc_t{ boost::none, boost::none } { }
-
-			iob_calc_t::~iob_calc_t( ) { }
 		}	// namespace iob
 	}	// namespace lib
 }    // namespace ns

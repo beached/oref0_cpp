@@ -38,20 +38,14 @@ namespace ns {
 				return local.second;
 			}
 			struct temp_bolus_t {
-				timestamp_t timestamp;
-				insulin_t insulin;
+				timestamp_t timestamp{};
+				insulin_t insulin{};
 
 				temp_bolus_t( timestamp_t ts, insulin_t ins ):
 						timestamp{ std::move( ts ) },
 						insulin{ std::move( ins ) } { }
 
-				temp_bolus_t( ):
-						temp_bolus_t{ { }, { } };
-				~temp_bolus_t( ) = default;
-				temp_bolus_t( temp_bolus_t const & ) = default;
-				temp_bolus_t( temp_bolus_t && ) = default;
-				temp_bolus_t & operator=( temp_bolus_t const & ) = default;
-				temp_bolus_t & operator=( temp_bolus_t && ) = default;
+				temp_bolus_t( ) = default;
 			};	// temp_bolus_t
 
 			enum class pump_history_types { Bolus, TempBasal, TempBasalDuration };

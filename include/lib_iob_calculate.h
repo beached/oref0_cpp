@@ -31,17 +31,11 @@ namespace ns {
 	namespace lib {
 		namespace iob {
 			struct iob_calc_t {
-				boost::optional<insulin_t> iobContrib;
-				boost::optional<insulin_t> activityContrib;
+				boost::optional<insulin_t> iobContrib = boost::none;
+				boost::optional<insulin_t> activityContrib = boost::none;
 				
 				iob_calc_t( boost::optional<insulin_t> iob_contrib, boost::optional<insulin_t> activity_contrib );
-				iob_calc_t( );
-				~iob_calc_t( );
-				iob_calc_t( iob_calc_t const & ) = default;
-				iob_calc_t( iob_calc_t && ) = default;
-				iob_calc_t & operator=( iob_calc_t const & ) = default;
-				iob_calc_t & operator=( iob_calc_t && ) = default;
-
+				iob_calc_t( ) noexcept = default;
 			};	// iob_calc_t
 
 			template<typename treatment_t, typename dia_t>
